@@ -272,13 +272,19 @@ def _run_multi_sample_pipeline(logger, **kwargs):
         log_level=kwargs['log_level']
     )
     
-    # Process all samples
+    # Process all samples - remove conflicting params from kwargs
+    processing_kwargs = kwargs.copy()
+    processing_kwargs.pop('assembly', None)
+    processing_kwargs.pop('reads_dir', None) 
+    processing_kwargs.pop('reads_pattern', None)
+    processing_kwargs.pop('out', None)
+    
     results = processor.process_samples_directory(
         assembly_file=kwargs['assembly'],
         reads_dir=kwargs['reads_dir'],
         reads_pattern=kwargs['reads_pattern'],
         output_dir=kwargs['out'],
-        **kwargs
+        **processing_kwargs
     )
     
     # Print summary

@@ -275,10 +275,10 @@ class MultiSampleProcessor:
                              assembly_file: str,
                              sample_files: Dict[str, Tuple[str, Optional[str]]],
                              output_dir: str,
-                             batch_size: int = 5,
                              **kwargs) -> Dict[str, str]:
         """Process samples in batches for memory efficiency."""
         
+        batch_size = kwargs.get('batch_size', 5)
         self.logger.info(f"Processing {len(sample_files)} samples in batches of {batch_size}")
         
         results = {}
@@ -527,10 +527,19 @@ def process_multi_sample_directory(assembly_file: str,
         log_level=kwargs.get('log_level', 'INFO')
     )
     
+    # Remove conflicting parameters from kwargs
+    clean_kwargs = kwargs.copy()
+    clean_kwargs.pop('assembly_file', None)
+    clean_kwargs.pop('reads_dir', None)
+    clean_kwargs.pop('reads_pattern', None)
+    clean_kwargs.pop('output_dir', None)
+    clean_kwargs.pop('processing_mode', None)
+    clean_kwargs.pop('max_workers', None)
+    
     return processor.process_samples_directory(
         assembly_file=assembly_file,
         reads_dir=reads_dir,
         reads_pattern=reads_pattern,
         output_dir=output_dir,
-        **kwargs
+        **clean_kwargs
     )
