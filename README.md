@@ -5,7 +5,6 @@
 [![PyPI version](https://badge.fury.io/py/chimeric-detective.svg)](https://badge.fury.io/py/chimeric-detective)
 [![Python](https://img.shields.io/pypi/pyversions/chimeric-detective.svg)](https://pypi.org/project/chimeric-detective/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Documentation](https://readthedocs.org/projects/chimeric-contig-detector/badge/?version=latest)](https://chimeric-contig-detector.readthedocs.io)
 
 A comprehensive command-line tool for detecting, analyzing, explaining, and resolving chimeric contigs in viral metagenomic assemblies.
 
@@ -66,19 +65,6 @@ results_dir/
 ├── chimeric_detective_results.json # Machine-readable results
 ├── splitting_decisions.tsv       # Table of all modifications made
 └── figures/                      # Static visualizations
-```
-
-## Documentation
-
-Full documentation is available at [https://chimeric-detective.readthedocs.io](https://chimeric-detective.readthedocs.io)
-
-## Citation
-
-If you use Chimeric Detective in your research, please cite:
-
-```
-Chimeric Detective: A comprehensive tool for detecting and resolving chimeric contigs 
-in viral metagenomic assemblies. [Year]. [Journal].
 ```
 
 ## License
