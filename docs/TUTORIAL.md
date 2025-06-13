@@ -14,28 +14,57 @@ This tutorial will guide you through using Chimeric Detective to detect and reso
 
 ## Installation
 
-### From PyPI (Recommended)
-```bash
-pip install chimeric-detective
-```
+### Method 1: Conda (Recommended)
 
-### From Source
+Conda automatically handles all dependencies including external bioinformatics tools:
+
 ```bash
-git clone https://github.com/yourusername/chimeric-detective.git
-cd chimeric-detective
+# Clone the repository
+git clone https://github.com/megjohnson1999/chimeric-contig-detector.git
+cd chimeric-contig-detector
+
+# Create conda environment with all dependencies
+conda env create -f environment.yml
+conda activate chimeric-detective
+
+# Install the package
 pip install -e .
 ```
 
-### External Dependencies
+### Method 2: Conda + Minimal Environment
 
-Chimeric Detective requires some external bioinformatics tools:
+For a lighter installation:
 
 ```bash
-# Install via conda (recommended)
-conda install -c bioconda bwa minimap2 samtools blast
+# Use minimal environment (essential tools only)
+conda env create -f environment-minimal.yml
+conda activate chimeric-detective-minimal
+pip install -e .
+```
 
-# Or via package manager (Ubuntu/Debian)
-sudo apt-get install bwa minimap2 samtools ncbi-blast+
+### Method 3: Manual Installation
+
+```bash
+# Install external dependencies first
+conda install -c bioconda bwa minimap2 samtools blast
+# Or: sudo apt-get install bwa minimap2 samtools ncbi-blast+
+# Or: brew install bwa minimap2 samtools blast
+
+# Then install the Python package
+pip install -e .
+```
+
+### Verify Installation
+
+```bash
+# Check external tools
+which bwa minimap2 samtools
+bwa 2>&1 | head -3
+samtools --version
+
+# Test the package
+chimeric_detective --help
+chimeric_detective --version
 ```
 
 ## Quick Start

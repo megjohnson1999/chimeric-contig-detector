@@ -1,0 +1,45 @@
+name: chimeric-detective
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  # Python
+  - python>=3.8
+  
+  # Core bioinformatics tools (external dependencies)
+  - bwa>=0.7.17
+  - minimap2>=2.20
+  - samtools>=1.15
+  - blast>=2.12.0
+  
+  # Python packages - core scientific computing
+  - numpy>=1.21.0
+  - scipy>=1.7.0
+  - pandas>=1.3.0
+  - scikit-learn>=1.0.0
+  
+  # Python packages - bioinformatics
+  - biopython>=1.79
+  - pysam>=0.19.0
+  
+  # Python packages - visualization
+  - matplotlib>=3.4.0
+  - seaborn>=0.11.0
+  - plotly>=5.0.0
+  
+  # Python packages - CLI and utilities
+  - click>=8.0.0
+  - tqdm>=4.62.0
+  - jinja2>=3.0.0
+  
+  # Development and testing (optional)
+  - pytest>=6.0
+  - pytest-cov>=2.0
+  - black>=22.0
+  - flake8>=4.0
+  
+  # Pip packages (if not available in conda)
+  - pip
+  - pip:
+    - chimeric-detective  # Once published to PyPI

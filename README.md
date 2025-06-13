@@ -19,17 +19,57 @@ A comprehensive command-line tool for detecting, analyzing, explaining, and reso
 
 ## Installation
 
+### Option 1: Conda (Recommended)
+
+Conda will automatically install all dependencies including external bioinformatics tools:
+
 ```bash
+# Clone the repository
+git clone https://github.com/megjohnson1999/chimeric-contig-detector.git
+cd chimeric-contig-detector
+
+# Create and activate conda environment
+conda env create -f environment.yml
+conda activate chimeric-detective
+
+# Install the package
+pip install -e .
+```
+
+### Option 2: Pip + Manual Dependencies
+
+```bash
+# Install external tools manually (Ubuntu/Debian)
+sudo apt-get install bwa minimap2 samtools ncbi-blast+
+
+# Or on macOS with Homebrew
+brew install bwa minimap2 samtools blast
+
+# Install Python package
 pip install chimeric-detective
 ```
 
-Or install from source:
+### Option 3: From Source
 
 ```bash
 git clone https://github.com/megjohnson1999/chimeric-contig-detector.git
 cd chimeric-contig-detector
 pip install -e .
+
+# You'll need to install external tools separately (see Option 2)
 ```
+
+### Dependencies
+
+**Python packages** (installed automatically):
+- biopython, pysam, numpy, pandas, scipy
+- scikit-learn, matplotlib, seaborn, plotly
+- click, tqdm, jinja2
+
+**External tools** (required for functionality):
+- BWA or minimap2 (for read alignment)
+- samtools (for BAM file processing)
+- BLAST (optional, for taxonomic classification)
 
 ## Quick Start
 
