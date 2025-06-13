@@ -132,11 +132,16 @@ def main(**kwargs):
         # Adjust parameters based on sensitivity
         detector_params, analyzer_params = _adjust_sensitivity_parameters(kwargs)
         
+        # Merge parameters to avoid conflicts
+        merged_kwargs = kwargs.copy()
+        merged_kwargs.update(detector_params)
+        merged_kwargs.update(analyzer_params)
+        
         # Check if this is multi-sample processing
         if kwargs['reads_dir']:
-            _run_multi_sample_pipeline(logger, **kwargs, **detector_params, **analyzer_params)
+            _run_multi_sample_pipeline(logger, **merged_kwargs)
         else:
-            _run_pipeline(logger, **kwargs, **detector_params, **analyzer_params)
+            _run_pipeline(logger, **merged_kwargs)
         
         logger.info("Analysis completed successfully!")
         click.echo(f"✅ Results written to: {kwargs['out']}")
