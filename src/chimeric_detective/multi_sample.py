@@ -4,6 +4,7 @@ Multi-sample processing module for handling directories with multiple samples.
 
 import os
 import logging
+import tempfile
 from pathlib import Path
 from typing import List, Dict, Tuple, Optional, Union
 import json
@@ -223,7 +224,6 @@ class MultiSampleProcessor:
         if candidates:
             # Create a temporary BAM file path for analysis
             # In real implementation, this would come from the detector
-            import tempfile
             with tempfile.NamedTemporaryFile(suffix='.bam', delete=False) as tmp_bam:
                 temp_bam_path = tmp_bam.name
             
