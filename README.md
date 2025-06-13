@@ -73,12 +73,14 @@ pip install -e .
 
 ## Quick Start
 
-### Basic usage with BAM file
+### Single Sample Analysis
+
+#### With BAM file
 ```bash
 chimeric_detective --assembly viral_assembly.fasta --bam reads_aligned.bam --out results_dir
 ```
 
-### Usage with raw reads (paired-end)
+#### With paired-end reads
 ```bash
 chimeric_detective --assembly viral_assembly.fasta \
                   --reads1 forward_reads.fastq.gz \
@@ -86,14 +88,119 @@ chimeric_detective --assembly viral_assembly.fasta \
                   --out results_dir
 ```
 
-### Usage with single-end reads
+#### With single-end reads
 ```bash
 chimeric_detective --assembly viral_assembly.fasta \
                   --reads single_reads.fastq \
                   --out results_dir
 ```
 
+### Multi-Sample Analysis
+
+#### Directory with paired-end reads
+```bash
+chimeric_detective --assembly viral_assembly.fasta \
+                  --reads-dir /path/to/reads_directory/ \
+                  --reads-pattern "*_R{1,2}.fastq.gz" \
+                  --out results_dir
+```
+
+#### Directory with single-end reads  
+```bash
+chimeric_detective --assembly viral_assembly.fasta \
+                  --reads-dir /path/to/reads_directory/ \
+                  --reads-pattern "*.fastq.gz" \
+                  --out results_dir
+```
+
+#### Custom file naming patterns
+
+The `--reads-pattern` option uses `{1,2}` to indicate paired-end read files. Common patterns:
+
+```bash
+# Standard Illumina naming: sample_R1.fastq.gz, sample_R2.fastq.gz
+chimeric_detective --assembly assembly.fasta \
+                  --reads-dir reads/ \
+                  --reads-pattern "*_R{1,2}.fastq.gz" \
+                  --out results/
+
+# Underscore separated: sample_1.fq.gz, sample_2.fq.gz  
+chimeric_detective --assembly assembly.fasta \
+                  --reads-dir reads/ \
+                  --reads-pattern "*_{1,2}.fq.gz" \
+                  --out results/
+
+# Dot separated: sample.R1.fastq, sample.R2.fastq
+chimeric_detective --assembly assembly.fasta \
+                  --reads-dir reads/ \
+                  --reads-pattern "*.R{1,2}.fastq" \
+                  --out results/
+
+# Single-end reads (no {1,2}): sample.fastq.gz
+chimeric_detective --assembly assembly.fasta \
+                  --reads-dir reads/ \
+                  --reads-pattern "*.fastq.gz" \
+                  --out results/
+```
+
+### Common Directory Structures
+
+Your reads directory might look like:
+
+```
+# Paired-end example
+reads_dir/
+├── sample1_R1.fastq.gz
+├── sample1_R2.fastq.gz  
+├── sample2_R1.fastq.gz
+├── sample2_R2.fastq.gz
+└── sample3_R1.fastq.gz
+└── sample3_R2.fastq.gz
+
+# Single-end example
+reads_dir/
+├── sample1.fastq.gz
+├── sample2.fastq.gz
+└── sample3.fastq.gz
+
+# Mixed compression
+reads_dir/
+├── sample1_R1.fastq.gz
+├── sample1_R2.fastq.gz
+├── sample2_R1.fastq     # Uncompressed files also work
+├── sample2_R2.fastq
+```
+
+### Multi-Sample Processing Modes
+
+#### Analyze each sample separately (default)
+```bash
+chimeric_detective --assembly assembly.fasta \
+                  --reads-dir reads/ \
+                  --multi-sample-mode separate \
+                  --out results/
+```
+
+#### Merge all samples for higher coverage
+```bash
+chimeric_detective --assembly assembly.fasta \
+                  --reads-dir reads/ \
+                  --multi-sample-mode merged \
+                  --out results/
+```
+
+#### Parallel processing with custom workers
+```bash
+chimeric_detective --assembly assembly.fasta \
+                  --reads-dir reads/ \
+                  --max-workers 8 \
+                  --parallel \
+                  --out results/
+```
+
 ## Output
+
+### Single Sample Output
 
 The tool creates a structured output directory:
 
@@ -106,6 +213,46 @@ results_dir/
 ├── splitting_decisions.tsv       # Table of all modifications made
 └── figures/                      # Static visualizations
 ```
+
+### Multi-Sample Output
+
+When processing multiple samples, the output structure depends on the processing mode:
+
+#### Separate Mode (default)
+```
+results_dir/
+├── sample1/                      # Individual sample results
+│   ├── cleaned_assembly.fasta
+│   ├── chimeric_detective_report.html
+│   └── ...
+├── sample2/
+│   ├── cleaned_assembly.fasta  
+│   ├── chimeric_detective_report.html
+│   └── ...
+├── multi_sample_summary.tsv     # Summary across all samples
+├── multi_sample_report.html     # Combined report
+└── processing_log.txt           # Processing details
+```
+
+#### Merged Mode
+```
+results_dir/
+├── merged_analysis/             # Combined analysis results
+│   ├── cleaned_assembly.fasta   # Assembly with all samples merged
+│   ├── chimeric_detective_report.html
+│   └── ...
+└── sample_contributions.tsv     # Which samples contributed to each detection
+```
+
+### Key Output Files
+
+| File | Description |
+|------|-------------|
+| `cleaned_assembly.fasta` | Assembly with technical chimeras split |
+| `chimeric_detective_report.html` | Interactive visualization and analysis |
+| `chimeric_detective_results.json` | Machine-readable results for downstream analysis |
+| `splitting_decisions.tsv` | Detailed table of all modifications made |
+| `multi_sample_summary.tsv` | Cross-sample comparison (multi-sample only) |
 
 ## Benchmarking and Evaluation
 
@@ -182,22 +329,28 @@ For detailed benchmarking documentation, see [`benchmarking/README.md`](benchmar
 
 ## Advanced Usage
 
-### Multi-sample Processing
+### Processing Mode Details
 
-Process multiple samples in parallel:
+#### When to Use Each Mode
+
+- **Separate mode**: Analyze each sample independently (default)
+  - Best for: Comparing contamination across samples, sample-specific analysis
+  - Output: Individual results for each sample + combined summary
+
+- **Merged mode**: Combine all reads for higher coverage analysis  
+  - Best for: Low-coverage samples, co-assembly analysis
+  - Output: Single analysis with all samples combined
+
+- **Batch mode**: Memory-efficient processing of many samples
+  - Best for: Large numbers of samples with limited RAM
+  - Output: Processed in chunks to manage memory usage
 
 ```bash
-# Analyze each sample separately
+# Memory-efficient batch processing
 chimeric_detective -a assembly.fasta --reads-dir samples/ \
-                  --reads-pattern "*_R{1,2}.fastq.gz" -o results/
-
-# Merge all samples for higher coverage
-chimeric_detective -a assembly.fasta --reads-dir samples/ \
-                  --multi-sample-mode merged -o results/
-
-# Parallel processing with custom workers
-chimeric_detective -a assembly.fasta --reads-dir samples/ \
-                  --max-workers 8 --parallel -o results/
+                  --multi-sample-mode batch \
+                  --batch-size 5 \
+                  --max-workers 4 -o results/
 ```
 
 ### Sensitivity Settings
