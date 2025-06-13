@@ -100,8 +100,8 @@ def check_dependencies():
     
     tools = {
         'chimeric_detective': 'chimeric_detective --version',
-        'vsearch': 'vsearch --version',
         'checkv': 'checkv -h',
+        'virsorter': 'virsorter -h',
         'quast': 'quast.py --version',
         'bwa': 'bwa',
         'samtools': 'samtools --version'
@@ -129,7 +129,13 @@ def check_dependencies():
     if missing:
         print("")
         print("🔧 To install missing tools:")
-        print("   conda install -c bioconda " + " ".join(missing))
+        conda_tools = [t for t in missing if t != 'chimeric_detective']
+        if conda_tools:
+            # Special handling for virsorter2
+            if 'virsorter' in conda_tools:
+                conda_tools.remove('virsorter')
+                conda_tools.append('virsorter=2')
+            print("   conda install -c bioconda " + " ".join(conda_tools))
         print("")
         if 'chimeric_detective' in missing:
             print("   For Chimeric Detective:")

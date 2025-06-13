@@ -44,14 +44,14 @@ while [[ $# -gt 0 ]]; do
         -h|--help)
             echo "Usage: $0 -a assembly.fasta -1 reads_R1.fastq.gz [-2 reads_R2.fastq.gz] [-b alignment.bam] [-o output_dir] [-t threads]"
             echo ""
-            echo "This script compares multiple chimera detection tools:"
+            echo "This script compares multiple contig-level chimera detection tools:"
             echo "  - Chimeric Detective (our tool)"
-            echo "  - VSEARCH (UCHIME algorithm)"
-            echo "  - CheckV (viral contamination detection)"
+            echo "  - CheckV (viral contamination detection)" 
+            echo "  - VirSorter2 (viral sequence identification)"
             echo "  - QUAST (assembly quality assessment)"
             echo ""
             echo "Required tools (install with conda/mamba):"
-            echo "  conda install -c bioconda vsearch checkv quast bwa samtools"
+            echo "  conda install -c bioconda checkv virsorter=2 quast bwa samtools"
             exit 0
             ;;
         *)
@@ -170,13 +170,13 @@ else
     echo ""
 fi
 
-# 2. Run VSEARCH (UCHIME)
-if command_exists vsearch; then
-    run_tool "VSEARCH (UCHIME)" \
-            "vsearch --uchime_denovo $ASSEMBLY --chimeras vsearch_results/chimeras.fasta --nonchimeras vsearch_results/nonchimeras.fasta --uchimeout vsearch_results/uchime.out --threads $THREADS" \
-            "vsearch_results"
+# 2. Run VirSorter2
+if command_exists virsorter; then
+    run_tool "VirSorter2" \
+            "virsorter run -w virsorter2_results -i $ASSEMBLY --min-length 1000 -j $THREADS" \
+            "virsorter2_results"
 else
-    echo "❌ VSEARCH not found. Install with: conda install -c bioconda vsearch"
+    echo "❌ VirSorter2 not found. Install with: conda install -c bioconda virsorter=2"
     echo ""
 fi
 
@@ -223,18 +223,18 @@ echo "==================================================================="
         echo -e "Chimeric_Detective\tNOT_RUN\t-\t-\tTool not available"
     fi
     
-    # VSEARCH
-    if [[ -f "vsearch_results/status.txt" ]]; then
-        status=$(cat vsearch_results/status.txt)
-        runtime=$(cat vsearch_results/runtime.txt)
-        if [[ -f "vsearch_results/chimeras.fasta" ]]; then
-            chimeras=$(grep -c "^>" vsearch_results/chimeras.fasta 2>/dev/null || echo "0")
+    # VirSorter2
+    if [[ -f "virsorter2_results/status.txt" ]]; then
+        status=$(cat virsorter2_results/status.txt)
+        runtime=$(cat virsorter2_results/runtime.txt)
+        if [[ -f "virsorter2_results/final-viral-score.tsv" ]]; then
+            chimeras=$(python3 -c "import pandas as pd; df=pd.read_csv('virsorter2_results/final-viral-score.tsv', sep='\t'); print(len(df[df['max_score'] < 0.7]))" 2>/dev/null || echo "0")
         else
             chimeras="0"
         fi
-        echo -e "VSEARCH_UCHIME\t$status\t$runtime\t$chimeras\tDe novo chimera detection"
+        echo -e "VirSorter2\t$status\t$runtime\t$chimeras\tLow-confidence viral sequences"
     else
-        echo -e "VSEARCH_UCHIME\tNOT_RUN\t-\t-\tTool not available"
+        echo -e "VirSorter2\tNOT_RUN\t-\t-\tTool not available"
     fi
     
     # CheckV
@@ -325,7 +325,7 @@ column -t -s $'\t' benchmark_summary.tsv
     echo "conda install -c conda-forge mamba"
     echo ""
     echo "# Install bioinformatics tools"
-    echo "mamba install -c bioconda vsearch checkv quast bwa samtools"
+    echo "mamba install -c bioconda checkv virsorter=2 quast bwa samtools"
     echo ""
     echo "# Install Chimeric Detective"
     echo "git clone https://github.com/megjohnson1999/chimeric-contig-detector.git"

@@ -98,13 +98,6 @@ class ChimeraBenchmarker:
                 required_files=['cleaned_assembly.fasta', 'results.json'],
                 parse_function=self._parse_chimeric_detective_results
             ),
-            'vsearch': ToolConfig(
-                name='VSEARCH (UCHIME)',
-                command_template='vsearch --uchime_denovo {assembly} --chimeras {output}/chimeras.fasta --nonchimeras {output}/nonchimeras.fasta --uchimeout {output}/uchime.out --threads {threads}',
-                check_command='vsearch --version',
-                required_files=['chimeras.fasta', 'uchime.out'],
-                parse_function=self._parse_vsearch_results
-            ),
             'checkv': ToolConfig(
                 name='CheckV',
                 command_template='checkv end_to_end {assembly} {output} -t {threads}',
@@ -112,16 +105,23 @@ class ChimeraBenchmarker:
                 required_files=['quality_summary.tsv', 'contamination.tsv'],
                 parse_function=self._parse_checkv_results
             ),
+            'virsorter2': ToolConfig(
+                name='VirSorter2',
+                command_template='virsorter run -w {output} -i {assembly} --min-length 1000 -j {threads}',
+                check_command='virsorter -h',
+                required_files=['final-viral-score.tsv', 'final-viral-combined.fa'],
+                parse_function=self._parse_virsorter2_results
+            ),
             'metaquast': ToolConfig(
                 name='metaQUAST',
-                command_template='metaquast.py {assembly} -o {output} --threads {threads} --max-ref-number 0',
+                command_template='metaquast.py {assembly} -o {output} --threads {threads} --max-ref-number 0 --min-contig 500',
                 check_command='metaquast.py --version',
                 required_files=['report.tsv', 'transposed_report.tsv'],
                 parse_function=self._parse_metaquast_results
             ),
             'quast': ToolConfig(
                 name='QUAST',
-                command_template='quast.py {assembly} -o {output} --threads {threads}',
+                command_template='quast.py {assembly} -o {output} --threads {threads} --min-contig 500',
                 check_command='quast.py --version',
                 required_files=['report.tsv'],
                 parse_function=self._parse_quast_results
@@ -298,18 +298,17 @@ class ChimeraBenchmarker:
         
         return chimeras_detected, output_files
     
-    def _parse_vsearch_results(self, output_dir: Path) -> Tuple[int, List[str]]:
-        """Parse VSEARCH results."""
-        chimeras_file = output_dir / "chimeras.fasta"
+    def _parse_virsorter2_results(self, output_dir: Path) -> Tuple[int, List[str]]:
+        """Parse VirSorter2 results."""
+        score_file = output_dir / "final-viral-score.tsv"
         output_files = []
         
-        if chimeras_file.exists():
-            # Count sequences in chimeras file
-            chimeras_detected = 0
-            with open(chimeras_file) as f:
-                for line in f:
-                    if line.startswith('>'):
-                        chimeras_detected += 1
+        if score_file.exists():
+            df = pd.read_csv(score_file, sep='\t')
+            # Count sequences identified as viral (potential chimeras are those with mixed scores)
+            # VirSorter2 doesn't directly detect chimeras, but low-confidence viral sequences
+            # might indicate chimeric content
+            chimeras_detected = len(df[df['max_score'] < 0.7])  # Low confidence threshold
             output_files = [str(f) for f in output_dir.iterdir() if f.is_file()]
         else:
             chimeras_detected = 0
@@ -525,7 +524,7 @@ def main():
     parser.add_argument('-o', '--output', default="benchmark_results", help="Output directory")
     parser.add_argument('-t', '--threads', type=int, default=4, help="Number of threads")
     parser.add_argument('--tools', nargs='+', 
-                       choices=['chimeric_detective', 'vsearch', 'checkv', 'metaquast', 'quast'],
+                       choices=['chimeric_detective', 'checkv', 'virsorter2', 'metaquast', 'quast'],
                        help="Tools to run (default: all available)")
     parser.add_argument('--create-test-data', action='store_true', 
                        help="Create synthetic test data")

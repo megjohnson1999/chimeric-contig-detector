@@ -13,7 +13,7 @@ Install comparison tools using conda/mamba:
 conda install -c conda-forge mamba
 
 # Install bioinformatics tools
-mamba install -c bioconda vsearch checkv quast bwa samtools pandas
+mamba install -c bioconda checkv virsorter=2 quast bwa samtools pandas
 ```
 
 ### Quick Benchmark
@@ -46,7 +46,7 @@ python benchmark_chimeric_detective.py --create-test-data -o comprehensive_bench
 python benchmark_chimeric_detective.py -a assembly.fasta -1 reads_R1.fastq.gz -2 reads_R2.fastq.gz -o results
 
 # Run specific tools only
-python benchmark_chimeric_detective.py -a assembly.fasta -1 reads_R1.fastq.gz -2 reads_R2.fastq.gz --tools chimeric_detective vsearch checkv
+python benchmark_chimeric_detective.py -a assembly.fasta -1 reads_R1.fastq.gz -2 reads_R2.fastq.gz --tools chimeric_detective checkv virsorter2
 ```
 
 ## Tools Compared
@@ -55,31 +55,35 @@ python benchmark_chimeric_detective.py -a assembly.fasta -1 reads_R1.fastq.gz -2
 
 1. **Chimeric Detective** (our tool)
    - Multi-method detection (coverage, GC content, k-mer composition)
-   - Machine learning classification
+   - Machine learning classification for viral contigs
    - Automated resolution and cleaning
    - Interactive HTML reports
 
-2. **VSEARCH (UCHIME)**
-   - Industry standard for chimera detection
-   - De novo and reference-based modes
-   - Fast and widely used
-
-3. **CheckV**
+2. **CheckV**
    - Specialized for viral sequences
-   - Detects host contamination
-   - Quality assessment
+   - Detects host contamination in viral contigs
+   - Quality assessment for viral genomes
+
+3. **VirSorter2**
+   - Viral contig identification and quality assessment
+   - Can identify chimeric/contaminated sequences
 
 ### Assembly Quality Assessment Tools
 
 4. **QUAST**
    - General assembly quality metrics
-   - Misassembly detection
-   - Comprehensive statistics
+   - Misassembly detection for contigs
+   - Comprehensive contig statistics
 
 5. **metaQUAST**
    - Metagenomic-specific version of QUAST
-   - Reference-free analysis
-   - Better for complex communities
+   - Reference-free contig analysis
+   - Better for complex metagenomic assemblies
+
+6. **Bandage**
+   - Assembly graph visualization
+   - Can identify problematic contig connections
+   - Useful for manual chimera inspection
 
 ## Output Files
 
