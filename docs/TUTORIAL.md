@@ -10,7 +10,8 @@ This tutorial will guide you through using Chimeric Detective to detect and reso
 4. [Basic Usage Examples](#basic-usage-examples)
 5. [Advanced Usage](#advanced-usage)
 6. [Understanding Results](#understanding-results)
-7. [Troubleshooting](#troubleshooting)
+7. [Benchmarking and Evaluation](#benchmarking-and-evaluation)
+8. [Troubleshooting](#troubleshooting)
 
 ## Installation
 
@@ -572,6 +573,61 @@ recombination. Confidence: HIGH.
 4. **Use reference databases** when available for better classification
 5. **Keep intermediate files** (`--keep-intermediates`) for troubleshooting
 6. **Document your parameters** for reproducibility
+
+## Benchmarking and Evaluation
+
+### Quick Performance Evaluation
+
+Compare Chimeric Detective against other contig-level quality assessment tools:
+
+```bash
+# Navigate to benchmarking directory
+cd benchmarking/
+
+# Run quick comparison
+./quick_benchmark.sh -a your_assembly.fasta -1 reads_R1.fastq.gz -2 reads_R2.fastq.gz
+```
+
+This compares against:
+- **CheckV** - Viral contamination detection
+- **VirSorter2** - Low-confidence viral sequences
+- **QUAST** - General assembly quality metrics
+
+### Comprehensive Benchmarking
+
+```bash
+# Create synthetic test data with known chimeras
+python benchmark_chimeric_detective.py --create-test-data --test-contigs 50 --chimera-fraction 0.25
+
+# Benchmark with real data
+python benchmark_chimeric_detective.py -a assembly.fasta -1 reads_R1.fastq.gz -2 reads_R2.fastq.gz
+```
+
+### Installing Comparison Tools
+
+```bash
+conda install -c bioconda checkv virsorter=2 quast bwa samtools
+```
+
+### Understanding Benchmark Results
+
+| Tool | What It Detects | Interpretation |
+|------|-----------------|----------------|
+| Chimeric Detective | Multi-method chimera detection | Comprehensive analysis with resolution |
+| CheckV | Host contamination | Conservative viral quality control |
+| VirSorter2 | Low-confidence viral sequences | Potential chimeric content |
+| QUAST | Assembly misassemblies | General structural problems |
+
+**Important**: Higher detection counts don't always mean better performance. Consider false positive rates and biological relevance.
+
+### Validation Tips
+
+1. **Manual inspection** - Review flagged sequences
+2. **Cross-tool consensus** - Look for chimeras detected by multiple tools  
+3. **Biological assessment** - Do results make biological sense?
+4. **Literature comparison** - Compare with published findings
+
+For detailed benchmarking instructions, see [BENCHMARKING_GUIDE.md](../BENCHMARKING_GUIDE.md).
 
 ## Performance Tips
 
