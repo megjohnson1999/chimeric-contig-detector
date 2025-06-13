@@ -7,7 +7,7 @@ import sys
 import tempfile
 import logging
 from pathlib import Path
-from typing import Optional, List, Tuple
+from typing import Optional, List, Tuple, Dict
 import click
 from tqdm import tqdm
 
