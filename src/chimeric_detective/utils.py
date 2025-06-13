@@ -46,9 +46,15 @@ def validate_file_exists(filepath: str, description: str = "File") -> None:
 
 def create_output_directory(output_dir: str) -> None:
     """Create output directory structure."""
-    Path(output_dir).mkdir(parents=True, exist_ok=True)
-    Path(output_dir, "chimeric_contigs").mkdir(exist_ok=True)
-    Path(output_dir, "figures").mkdir(exist_ok=True)
+    try:
+        Path(output_dir).mkdir(parents=True, exist_ok=True)
+        Path(output_dir, "chimeric_contigs").mkdir(exist_ok=True)
+        Path(output_dir, "figures").mkdir(exist_ok=True)
+    except PermissionError:
+        raise RuntimeError(f"Permission denied: Cannot create output directory '{output_dir}'. "
+                         "Check that you have write permissions to this location.")
+    except OSError as e:
+        raise RuntimeError(f"Failed to create output directory '{output_dir}': {e}")
 
 
 def calculate_gc_content(sequence: str, window_size: int = 1000) -> List[float]:

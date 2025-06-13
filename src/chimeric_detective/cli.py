@@ -115,6 +115,9 @@ def main(**kwargs):
                           --min-coverage 10 --threads 8 -o results/
     """
     try:
+        # Create output directory first (needed for log file)
+        create_output_directory(kwargs['out'])
+        
         # Setup logging
         log_file = Path(kwargs['out']) / 'chimeric_detective.log' if kwargs['out'] else None
         logger = setup_logging(kwargs['log_level'], str(log_file) if log_file else None)
@@ -125,9 +128,6 @@ def main(**kwargs):
         # Validate inputs and setup
         _validate_inputs(**kwargs)
         _check_dependencies(logger)
-        
-        # Create output directory
-        create_output_directory(kwargs['out'])
         
         # Adjust parameters based on sensitivity
         detector_params, analyzer_params = _adjust_sensitivity_parameters(kwargs)
