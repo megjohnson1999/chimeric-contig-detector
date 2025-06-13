@@ -137,10 +137,17 @@ class MultiSampleProcessor:
                 for sample_name, (reads1, reads2) in sample_files.items():
                     sample_output_dir = Path(output_dir) / f"sample_{sample_name}"
                     
+                    # Remove conflicting parameters from kwargs before passing
+                    sample_kwargs = kwargs.copy()
+                    sample_kwargs.pop('reads1', None)
+                    sample_kwargs.pop('reads2', None)
+                    sample_kwargs.pop('reads', None)
+                    sample_kwargs.pop('bam', None)
+                    
                     future = executor.submit(
                         self._process_single_sample,
                         assembly_file, reads1, reads2, sample_name, 
-                        str(sample_output_dir), **kwargs
+                        str(sample_output_dir), **sample_kwargs
                     )
                     futures[future] = sample_name
                 
@@ -164,9 +171,16 @@ class MultiSampleProcessor:
                 sample_output_dir = Path(output_dir) / f"sample_{sample_name}"
                 
                 try:
+                    # Remove conflicting parameters from kwargs before passing
+                    sample_kwargs = kwargs.copy()
+                    sample_kwargs.pop('reads1', None)
+                    sample_kwargs.pop('reads2', None)
+                    sample_kwargs.pop('reads', None)
+                    sample_kwargs.pop('bam', None)
+                    
                     sample_result = self._process_single_sample(
                         assembly_file, reads1, reads2, sample_name,
-                        str(sample_output_dir), **kwargs
+                        str(sample_output_dir), **sample_kwargs
                     )
                     results[sample_name] = sample_result
                     sample_outputs.append(sample_result)
@@ -263,10 +277,17 @@ class MultiSampleProcessor:
         # Merge all read files
         merged_reads1, merged_reads2 = self._merge_read_files(sample_files, output_dir)
         
+        # Remove conflicting parameters from kwargs before passing
+        sample_kwargs = kwargs.copy()
+        sample_kwargs.pop('reads1', None)
+        sample_kwargs.pop('reads2', None)
+        sample_kwargs.pop('reads', None)
+        sample_kwargs.pop('bam', None)
+        
         # Process as single sample
         result = self._process_single_sample(
             assembly_file, merged_reads1, merged_reads2, "merged_all",
-            output_dir, **kwargs
+            output_dir, **sample_kwargs
         )
         
         return {"merged_all": result}

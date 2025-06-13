@@ -278,6 +278,10 @@ def _run_multi_sample_pipeline(logger, **kwargs):
     processing_kwargs.pop('reads_dir', None) 
     processing_kwargs.pop('reads_pattern', None)
     processing_kwargs.pop('out', None)
+    processing_kwargs.pop('reads1', None)
+    processing_kwargs.pop('reads2', None)
+    processing_kwargs.pop('reads', None)
+    processing_kwargs.pop('bam', None)
     
     results = processor.process_samples_directory(
         assembly_file=kwargs['assembly'],
