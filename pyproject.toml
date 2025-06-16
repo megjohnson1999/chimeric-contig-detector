@@ -7,7 +7,7 @@ name = "chimeric-detective"
 version = "1.0.0"
 description = "A comprehensive tool for detecting and resolving chimeric contigs in viral metagenomic assemblies"
 readme = "README.md"
-license = {file = "LICENSE"}
+license = {text = "MIT"}
 authors = [
     {name = "Meg Johnson", email = "meganjohnson1w@gmail.com"}
 ]
@@ -26,7 +26,6 @@ classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering :: Bio-Informatics",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
@@ -89,8 +88,6 @@ package-dir = {"" = "src"}
 [tool.setuptools.packages.find]
 where = ["src"]
 
-[tool.setuptools.package-data]
-chimeric_detective = ["templates/*.html", "templates/*.css", "templates/*.js"]
 
 [tool.black]
 line-length = 100
