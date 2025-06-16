@@ -454,11 +454,7 @@ class MultiSampleProcessor:
             
             # Step 4: Resolve chimeras
             self.logger.info(f"Resolving {len(analyses)} chimera analyses")
-            contigs = detector._load_assembly(assembly_file)  # Load contigs for resolver
-            decisions = resolver.resolve_chimeras(analyses, contigs)
-            
-            # Step 5: Generate outputs
-            resolver.write_outputs(decisions, contigs, output_dir)
+            output_files = resolver.resolve_chimeras(analyses, assembly_file, output_dir)
             
             # Generate visualization report
             if kwargs.get('generate_report', True):
