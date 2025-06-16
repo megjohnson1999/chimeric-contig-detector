@@ -3,38 +3,6 @@
   "total_samples": 8,
   "sample_results": [
     {
-      "sample_name": "sample_sample_002",
-      "summary": {
-        "sample_name": "sample_sample_002",
-        "total_analyses": 0,
-        "contigs_split": 0,
-        "contigs_preserved": 0,
-        "contigs_flagged": 0,
-        "high_confidence": 0,
-        "medium_confidence": 0,
-        "low_confidence": 0
-      },
-      "timestamp": "2025-06-16T13:33:34.874086",
-      "processing_status": "failed",
-      "error_message": "\nImage export using the \"kaleido\" engine requires the Kaleido package,\nwhich can be installed using pip:\n\n    $ pip install --upgrade kaleido\n"
-    },
-    {
-      "sample_name": "sample_sample_001",
-      "summary": {
-        "sample_name": "sample_sample_001",
-        "total_analyses": 0,
-        "contigs_split": 0,
-        "contigs_preserved": 0,
-        "contigs_flagged": 0,
-        "high_confidence": 0,
-        "medium_confidence": 0,
-        "low_confidence": 0
-      },
-      "timestamp": "2025-06-16T13:33:35.277897",
-      "processing_status": "failed",
-      "error_message": "\nImage export using the \"kaleido\" engine requires the Kaleido package,\nwhich can be installed using pip:\n\n    $ pip install --upgrade kaleido\n"
-    },
-    {
       "sample_name": "sample_sample_004",
       "summary": {
         "sample_name": "sample_sample_004",
@@ -46,9 +14,25 @@
         "medium_confidence": 0,
         "low_confidence": 0
       },
-      "timestamp": "2025-06-16T13:33:35.696062",
+      "timestamp": "2025-06-16T13:53:38.116781",
       "processing_status": "failed",
-      "error_message": "\nImage export using the \"kaleido\" engine requires the Kaleido package,\nwhich can be installed using pip:\n\n    $ pip install --upgrade kaleido\n"
+      "error_message": "not all arguments converted during string formatting"
+    },
+    {
+      "sample_name": "sample_sample_002",
+      "summary": {
+        "sample_name": "sample_sample_002",
+        "total_analyses": 0,
+        "contigs_split": 0,
+        "contigs_preserved": 0,
+        "contigs_flagged": 0,
+        "high_confidence": 0,
+        "medium_confidence": 0,
+        "low_confidence": 0
+      },
+      "timestamp": "2025-06-16T13:53:39.853632",
+      "processing_status": "failed",
+      "error_message": "not all arguments converted during string formatting"
     },
     {
       "sample_name": "sample_sample_003",
@@ -62,14 +46,14 @@
         "medium_confidence": 0,
         "low_confidence": 0
       },
-      "timestamp": "2025-06-16T13:33:35.964096",
+      "timestamp": "2025-06-16T13:53:43.085332",
       "processing_status": "failed",
-      "error_message": "\nImage export using the \"kaleido\" engine requires the Kaleido package,\nwhich can be installed using pip:\n\n    $ pip install --upgrade kaleido\n"
+      "error_message": "not all arguments converted during string formatting"
     },
     {
-      "sample_name": "sample_sample_007",
+      "sample_name": "sample_sample_001",
       "summary": {
-        "sample_name": "sample_sample_007",
+        "sample_name": "sample_sample_001",
         "total_analyses": 0,
         "contigs_split": 0,
         "contigs_preserved": 0,
@@ -78,41 +62,9 @@
         "medium_confidence": 0,
         "low_confidence": 0
       },
-      "timestamp": "2025-06-16T13:33:37.293995",
+      "timestamp": "2025-06-16T13:53:43.144426",
       "processing_status": "failed",
-      "error_message": "\nImage export using the \"kaleido\" engine requires the Kaleido package,\nwhich can be installed using pip:\n\n    $ pip install --upgrade kaleido\n"
-    },
-    {
-      "sample_name": "sample_sample_005",
-      "summary": {
-        "sample_name": "sample_sample_005",
-        "total_analyses": 0,
-        "contigs_split": 0,
-        "contigs_preserved": 0,
-        "contigs_flagged": 0,
-        "high_confidence": 0,
-        "medium_confidence": 0,
-        "low_confidence": 0
-      },
-      "timestamp": "2025-06-16T13:33:37.998152",
-      "processing_status": "failed",
-      "error_message": "\nImage export using the \"kaleido\" engine requires the Kaleido package,\nwhich can be installed using pip:\n\n    $ pip install --upgrade kaleido\n"
-    },
-    {
-      "sample_name": "sample_sample_008",
-      "summary": {
-        "sample_name": "sample_sample_008",
-        "total_analyses": 0,
-        "contigs_split": 0,
-        "contigs_preserved": 0,
-        "contigs_flagged": 0,
-        "high_confidence": 0,
-        "medium_confidence": 0,
-        "low_confidence": 0
-      },
-      "timestamp": "2025-06-16T13:33:39.349984",
-      "processing_status": "failed",
-      "error_message": "\nImage export using the \"kaleido\" engine requires the Kaleido package,\nwhich can be installed using pip:\n\n    $ pip install --upgrade kaleido\n"
+      "error_message": "not all arguments converted during string formatting"
     },
     {
       "sample_name": "sample_sample_006",
@@ -126,9 +78,57 @@
         "medium_confidence": 0,
         "low_confidence": 0
       },
-      "timestamp": "2025-06-16T13:33:39.408965",
+      "timestamp": "2025-06-16T13:53:48.588575",
       "processing_status": "failed",
-      "error_message": "\nImage export using the \"kaleido\" engine requires the Kaleido package,\nwhich can be installed using pip:\n\n    $ pip install --upgrade kaleido\n"
+      "error_message": "not all arguments converted during string formatting"
+    },
+    {
+      "sample_name": "sample_sample_007",
+      "summary": {
+        "sample_name": "sample_sample_007",
+        "total_analyses": 0,
+        "contigs_split": 0,
+        "contigs_preserved": 0,
+        "contigs_flagged": 0,
+        "high_confidence": 0,
+        "medium_confidence": 0,
+        "low_confidence": 0
+      },
+      "timestamp": "2025-06-16T13:53:52.393810",
+      "processing_status": "failed",
+      "error_message": "not all arguments converted during string formatting"
+    },
+    {
+      "sample_name": "sample_sample_005",
+      "summary": {
+        "sample_name": "sample_sample_005",
+        "total_analyses": 0,
+        "contigs_split": 0,
+        "contigs_preserved": 0,
+        "contigs_flagged": 0,
+        "high_confidence": 0,
+        "medium_confidence": 0,
+        "low_confidence": 0
+      },
+      "timestamp": "2025-06-16T13:53:53.698385",
+      "processing_status": "failed",
+      "error_message": "not all arguments converted during string formatting"
+    },
+    {
+      "sample_name": "sample_sample_008",
+      "summary": {
+        "sample_name": "sample_sample_008",
+        "total_analyses": 0,
+        "contigs_split": 0,
+        "contigs_preserved": 0,
+        "contigs_flagged": 0,
+        "high_confidence": 0,
+        "medium_confidence": 0,
+        "low_confidence": 0
+      },
+      "timestamp": "2025-06-16T13:53:54.247662",
+      "processing_status": "failed",
+      "error_message": "not all arguments converted during string formatting"
     }
   ],
   "summary_statistics": {
