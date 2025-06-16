@@ -146,6 +146,11 @@ class ChimeraDetector:
         
         self.logger.info("Aligning reads to assembly")
         
+        # Check assembly size for memory considerations
+        assembly_size = os.path.getsize(assembly_file) / (1024 * 1024)  # Size in MB
+        if assembly_size > 500:  # Large assembly (>500MB)
+            self.logger.warning(f"Large assembly detected ({assembly_size:.1f}MB). This may require significant memory for alignment.")
+        
         # Check available tools first
         from .utils import check_external_tools
         available_tools = check_external_tools()
@@ -156,11 +161,13 @@ class ChimeraDetector:
         if available_tools.get('minimap2', False):
             try:
                 if reads2:
-                    # Paired-end
-                    cmd = ["minimap2", "-ax", "sr", assembly_file, reads1, reads2]
+                    # Paired-end with memory-efficient options for large assemblies
+                    cmd = ["minimap2", "-ax", "sr", "-t", "4", "--split-prefix", str(temp_dir / "tmp"),
+                           "-I", "8G", assembly_file, reads1, reads2]
                 else:
-                    # Single-end
-                    cmd = ["minimap2", "-ax", "sr", assembly_file, reads1]
+                    # Single-end with memory-efficient options
+                    cmd = ["minimap2", "-ax", "sr", "-t", "4", "--split-prefix", str(temp_dir / "tmp"),
+                           "-I", "8G", assembly_file, reads1]
                 
                 with open(sam_file, 'w') as f:
                     result = run_command(cmd, capture_output=True)
@@ -170,6 +177,9 @@ class ChimeraDetector:
                 
             except Exception as e:
                 self.logger.warning(f"minimap2 failed: {e}")
+                # If minimap2 fails due to memory, suggest BWA as it's more memory efficient
+                if "SIGKILL" in str(e) or "killed" in str(e).lower():
+                    self.logger.warning("minimap2 was killed (likely due to memory), trying BWA which is more memory efficient")
         else:
             self.logger.warning("minimap2 not available, trying BWA")
         
@@ -199,7 +209,13 @@ class ChimeraDetector:
             if not available_tools.get('minimap2', False) and not available_tools.get('bwa', False):
                 error_msg += "Neither minimap2 nor BWA are available. Please install one of these aligners."
             else:
-                error_msg += f"Available tools: {[k for k, v in available_tools.items() if v]}. Check tool installation and file paths."
+                error_msg += f"Available tools: {[k for k, v in available_tools.items() if v]}. "
+                if assembly_size > 500:
+                    error_msg += f"Large assembly ({assembly_size:.1f}MB) may be causing memory issues. "
+                    error_msg += "Consider: 1) Running on a machine with more RAM, 2) Filtering assembly to remove small contigs, "
+                    error_msg += "3) Using --max-workers 1 to reduce parallel processing, or 4) Splitting analysis by contig."
+                else:
+                    error_msg += "Check tool installation and file paths."
             raise RuntimeError(error_msg)
         
         # Check if samtools is available for BAM processing
