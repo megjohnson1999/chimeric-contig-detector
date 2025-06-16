@@ -203,7 +203,7 @@ def main(**kwargs):
         merged_kwargs.update(analyzer_params)
         
         # Check if this is multi-sample processing
-        if merged_kwargs['reads_dir']:
+        if merged_kwargs.get('reads_dir'):
             _run_multi_sample_pipeline(logger, **merged_kwargs)
         else:
             _run_pipeline(logger, **merged_kwargs)
@@ -225,11 +225,11 @@ def _validate_inputs(**kwargs):
     validate_file_exists(kwargs['assembly'], "Assembly file")
     
     # Check read inputs
-    has_bam = kwargs['bam'] is not None
-    has_reads1 = kwargs['reads1'] is not None
-    has_reads2 = kwargs['reads2'] is not None
-    has_single_reads = kwargs['reads'] is not None
-    has_reads_dir = kwargs['reads_dir'] is not None
+    has_bam = kwargs.get('bam') is not None
+    has_reads1 = kwargs.get('reads1') is not None
+    has_reads2 = kwargs.get('reads2') is not None
+    has_single_reads = kwargs.get('reads') is not None
+    has_reads_dir = kwargs.get('reads_dir') is not None
     
     read_input_count = sum([has_bam, has_reads1 or has_reads2, has_single_reads, has_reads_dir])
     
@@ -256,7 +256,7 @@ def _validate_inputs(**kwargs):
             raise click.BadParameter(f"Reads directory does not exist: {kwargs['reads_dir']}")
     
     # Validate reference database if provided
-    if kwargs['reference']:
+    if kwargs.get('reference'):
         validate_file_exists(kwargs['reference'], "Reference database")
     
     # Validate parameter ranges
@@ -460,16 +460,16 @@ def _run_pipeline(logger, **kwargs):
 def _prepare_reads_input(kwargs, temp_dir) -> Tuple[Optional[str], Optional[str], Optional[str]]:
     """Prepare reads input for the pipeline."""
     
-    if kwargs['bam']:
+    if kwargs.get('bam'):
         return kwargs['bam'], None, None
     
-    elif kwargs['reads1']:
-        return None, kwargs['reads1'], kwargs['reads2']
+    elif kwargs.get('reads1'):
+        return None, kwargs['reads1'], kwargs.get('reads2')
     
-    elif kwargs['reads']:
+    elif kwargs.get('reads'):
         return None, kwargs['reads'], None
     
-    elif kwargs['reads_dir']:
+    elif kwargs.get('reads_dir'):
         # Multiple samples - handle via multi-sample processor
         return None, None, None  # Will be handled by multi-sample processor
     
