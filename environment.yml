@@ -42,5 +42,5 @@ dependencies:
   
   # Pip packages (if not available in conda)
   - pip
-  - pip:
-    - chimeric-detective  # Once published to PyPI
+  # - pip:
+  #   - chimeric-detective  # Will be available once published to PyPI
