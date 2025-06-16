@@ -14,8 +14,8 @@
   "total_candidates": 15,
   "total_analyses": 15,
   "decisions": {
-    "split": 0,
-    "preserve": 5,
+    "split": 5,
+    "preserve": 0,
     "flag": 0
   },
   "multi_sample_statistics": {
