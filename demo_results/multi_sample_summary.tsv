@@ -1,9 +1,9 @@
 sample_name	total_analyses	contigs_split	contigs_preserved	contigs_flagged	high_confidence	medium_confidence	low_confidence
-sample_sample_004	0	0	0	0	0	0	0
-sample_sample_002	0	0	0	0	0	0	0
-sample_sample_003	0	0	0	0	0	0	0
-sample_sample_001	0	0	0	0	0	0	0
-sample_sample_006	0	0	0	0	0	0	0
-sample_sample_007	0	0	0	0	0	0	0
-sample_sample_005	0	0	0	0	0	0	0
-sample_sample_008	0	0	0	0	0	0	0
+sample_sample_004	15	0	5	0	0	0	0
+sample_sample_002	15	0	5	0	0	0	0
+sample_sample_001	15	0	5	0	0	0	0
+sample_sample_003	15	0	5	0	0	0	0
+sample_sample_005	15	0	5	0	0	0	0
+sample_sample_006	15	0	5	0	0	0	0
+sample_sample_007	15	0	5	0	0	0	0
+sample_sample_008	15	0	5	0	0	0	0

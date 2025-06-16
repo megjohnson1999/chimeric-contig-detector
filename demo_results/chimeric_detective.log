@@ -705,3 +705,335 @@ which can be installed using pip:
 2025-06-16 13:53:54,383 - chimeric_detective - INFO -   - Total contigs preserved: 0
 2025-06-16 13:53:54,396 - chimeric_detective - INFO - Multi-sample HTML report generated: demo_results/multi_sample_report.html
 2025-06-16 13:53:54,409 - chimeric_detective - INFO - Analysis completed successfully!
+2025-06-16 14:05:28,449 - chimeric_detective - INFO - Starting Chimeric Detective v1.0.0
+2025-06-16 14:05:28,451 - chimeric_detective - INFO - Command: /ref/sahlab/software/miniforge3/envs/ccd_env/bin/chimeric_detective -a test_data_large/large_test_assembly.fasta --reads-dir test_data_large/reads --reads-pattern *_R{1,2}.fastq.gz --log-level DEBUG -o demo_results/
+2025-06-16 14:05:28,486 - chimeric_detective - WARNING - Missing optional tools: bwa
+2025-06-16 14:05:28,487 - chimeric_detective - WARNING - Some functionality may be limited
+2025-06-16 14:05:28,489 - chimeric_detective - INFO - 🔬 Starting multi-sample analysis
+2025-06-16 14:05:28,490 - chimeric_detective - INFO - Processing mode: separate
+2025-06-16 14:05:28,491 - chimeric_detective - INFO - Max workers: 4
+2025-06-16 14:05:28,492 - chimeric_detective - INFO - Processing samples from directory: test_data_large/reads
+2025-06-16 14:05:28,493 - chimeric_detective - INFO - Using pattern: *_R{1,2}.fastq.gz
+2025-06-16 14:05:28,494 - chimeric_detective - INFO - Processing mode: separate
+2025-06-16 14:05:28,499 - chimeric_detective - INFO - Found 8 samples
+2025-06-16 14:05:28,500 - chimeric_detective - INFO - Processing 8 samples in parallel
+2025-06-16 14:05:28,524 - chimeric_detective - INFO - Starting chimera detection
+2025-06-16 14:05:28,524 - chimeric_detective - INFO - Starting chimera detection
+2025-06-16 14:05:28,525 - chimeric_detective - INFO - Starting chimera detection
+2025-06-16 14:05:28,525 - chimeric_detective - INFO - Starting chimera detection
+2025-06-16 14:05:28,559 - chimeric_detective - INFO - Loaded 28 contigs from assembly
+2025-06-16 14:05:28,559 - chimeric_detective - INFO - Loaded 28 contigs from assembly
+2025-06-16 14:05:28,559 - chimeric_detective - INFO - Loaded 28 contigs from assembly
+2025-06-16 14:05:28,559 - chimeric_detective - INFO - Loaded 28 contigs from assembly
+2025-06-16 14:05:28,561 - chimeric_detective - INFO - Aligning reads to assembly
+2025-06-16 14:05:28,562 - chimeric_detective - INFO - Aligning reads to assembly
+2025-06-16 14:05:28,562 - chimeric_detective - INFO - Aligning reads to assembly
+2025-06-16 14:05:28,563 - chimeric_detective - INFO - Aligning reads to assembly
+2025-06-16 14:05:29,137 - chimeric_detective - INFO - Successfully aligned reads using minimap2
+2025-06-16 14:05:29,138 - chimeric_detective - INFO - Successfully aligned reads using minimap2
+2025-06-16 14:05:29,142 - chimeric_detective - INFO - Successfully aligned reads using minimap2
+2025-06-16 14:05:29,154 - chimeric_detective - INFO - Successfully aligned reads using minimap2
+2025-06-16 14:05:29,375 - chimeric_detective - DEBUG - Analyzing contig contig_001
+2025-06-16 14:05:29,401 - chimeric_detective - DEBUG - Analyzing contig contig_001
+2025-06-16 14:05:29,403 - chimeric_detective - DEBUG - Analyzing contig contig_001
+2025-06-16 14:05:29,406 - chimeric_detective - DEBUG - Analyzing contig contig_002
+2025-06-16 14:05:29,408 - chimeric_detective - DEBUG - Analyzing contig contig_001
+2025-06-16 14:05:29,433 - chimeric_detective - DEBUG - Analyzing contig contig_002
+2025-06-16 14:05:29,435 - chimeric_detective - DEBUG - Analyzing contig contig_002
+2025-06-16 14:05:29,438 - chimeric_detective - DEBUG - Analyzing contig contig_002
+2025-06-16 14:05:29,478 - chimeric_detective - DEBUG - Analyzing contig contig_003
+2025-06-16 14:05:29,503 - chimeric_detective - DEBUG - Analyzing contig contig_003
+2025-06-16 14:05:29,505 - chimeric_detective - DEBUG - Analyzing contig contig_003
+2025-06-16 14:05:29,507 - chimeric_detective - DEBUG - Analyzing contig contig_003
+2025-06-16 14:05:29,546 - chimeric_detective - DEBUG - Analyzing contig contig_004
+2025-06-16 14:05:29,570 - chimeric_detective - DEBUG - Analyzing contig contig_004
+2025-06-16 14:05:29,571 - chimeric_detective - DEBUG - Analyzing contig contig_004
+2025-06-16 14:05:29,574 - chimeric_detective - DEBUG - Analyzing contig contig_004
+2025-06-16 14:05:29,643 - chimeric_detective - DEBUG - Analyzing contig contig_005
+2025-06-16 14:05:29,656 - chimeric_detective - DEBUG - Analyzing contig contig_006
+2025-06-16 14:05:29,669 - chimeric_detective - DEBUG - Analyzing contig contig_005
+2025-06-16 14:05:29,672 - chimeric_detective - DEBUG - Analyzing contig contig_005
+2025-06-16 14:05:29,672 - chimeric_detective - DEBUG - Analyzing contig contig_007
+2025-06-16 14:05:29,675 - chimeric_detective - DEBUG - Analyzing contig contig_005
+2025-06-16 14:05:29,681 - chimeric_detective - DEBUG - Analyzing contig contig_006
+2025-06-16 14:05:29,685 - chimeric_detective - DEBUG - Analyzing contig contig_006
+2025-06-16 14:05:29,688 - chimeric_detective - DEBUG - Analyzing contig contig_006
+2025-06-16 14:05:29,697 - chimeric_detective - DEBUG - Analyzing contig contig_007
+2025-06-16 14:05:29,702 - chimeric_detective - DEBUG - Analyzing contig contig_007
+2025-06-16 14:05:29,703 - chimeric_detective - DEBUG - Analyzing contig contig_007
+2025-06-16 14:05:29,708 - chimeric_detective - DEBUG - Analyzing contig contig_008
+2025-06-16 14:05:29,733 - chimeric_detective - DEBUG - Analyzing contig contig_008
+2025-06-16 14:05:29,736 - chimeric_detective - DEBUG - Analyzing contig contig_008
+2025-06-16 14:05:29,737 - chimeric_detective - DEBUG - Analyzing contig contig_008
+2025-06-16 14:05:29,755 - chimeric_detective - DEBUG - Analyzing contig contig_009
+2025-06-16 14:05:29,782 - chimeric_detective - DEBUG - Analyzing contig contig_009
+2025-06-16 14:05:29,783 - chimeric_detective - DEBUG - Analyzing contig contig_009
+2025-06-16 14:05:29,785 - chimeric_detective - DEBUG - Analyzing contig contig_009
+2025-06-16 14:05:29,844 - chimeric_detective - DEBUG - Analyzing contig contig_010
+2025-06-16 14:05:29,868 - chimeric_detective - DEBUG - Analyzing contig contig_010
+2025-06-16 14:05:29,872 - chimeric_detective - DEBUG - Analyzing contig contig_010
+2025-06-16 14:05:29,875 - chimeric_detective - DEBUG - Analyzing contig contig_010
+2025-06-16 14:05:29,906 - chimeric_detective - DEBUG - Analyzing contig contig_011
+2025-06-16 14:05:29,936 - chimeric_detective - DEBUG - Analyzing contig contig_011
+2025-06-16 14:05:29,936 - chimeric_detective - DEBUG - Analyzing contig contig_011
+2025-06-16 14:05:29,940 - chimeric_detective - DEBUG - Analyzing contig contig_011
+2025-06-16 14:05:29,966 - chimeric_detective - DEBUG - Analyzing contig contig_012
+2025-06-16 14:05:29,998 - chimeric_detective - DEBUG - Analyzing contig contig_012
+2025-06-16 14:05:29,998 - chimeric_detective - DEBUG - Analyzing contig contig_012
+2025-06-16 14:05:29,998 - chimeric_detective - DEBUG - Analyzing contig contig_012
+2025-06-16 14:05:30,063 - chimeric_detective - DEBUG - Analyzing contig contig_013
+2025-06-16 14:05:30,095 - chimeric_detective - DEBUG - Analyzing contig contig_013
+2025-06-16 14:05:30,097 - chimeric_detective - DEBUG - Analyzing contig contig_013
+2025-06-16 14:05:30,097 - chimeric_detective - DEBUG - Analyzing contig contig_013
+2025-06-16 14:05:30,179 - chimeric_detective - DEBUG - Analyzing contig contig_014
+2025-06-16 14:05:30,208 - chimeric_detective - DEBUG - Analyzing contig contig_014
+2025-06-16 14:05:30,209 - chimeric_detective - DEBUG - Analyzing contig contig_014
+2025-06-16 14:05:30,214 - chimeric_detective - DEBUG - Analyzing contig contig_014
+2025-06-16 14:05:30,218 - chimeric_detective - DEBUG - Analyzing contig contig_015
+2025-06-16 14:05:30,248 - chimeric_detective - DEBUG - Analyzing contig contig_015
+2025-06-16 14:05:30,248 - chimeric_detective - DEBUG - Analyzing contig contig_015
+2025-06-16 14:05:30,254 - chimeric_detective - DEBUG - Analyzing contig contig_015
+2025-06-16 14:05:30,288 - chimeric_detective - DEBUG - Analyzing contig contig_016
+2025-06-16 14:05:30,315 - chimeric_detective - DEBUG - Analyzing contig contig_016
+2025-06-16 14:05:30,316 - chimeric_detective - DEBUG - Analyzing contig contig_016
+2025-06-16 14:05:30,324 - chimeric_detective - DEBUG - Analyzing contig contig_016
+2025-06-16 14:05:30,343 - chimeric_detective - DEBUG - Analyzing contig contig_017
+2025-06-16 14:05:30,371 - chimeric_detective - DEBUG - Analyzing contig contig_017
+2025-06-16 14:05:30,371 - chimeric_detective - DEBUG - Analyzing contig contig_017
+2025-06-16 14:05:30,379 - chimeric_detective - DEBUG - Analyzing contig contig_017
+2025-06-16 14:05:30,394 - chimeric_detective - DEBUG - Analyzing contig contig_018
+2025-06-16 14:05:30,421 - chimeric_detective - DEBUG - Analyzing contig contig_018
+2025-06-16 14:05:30,421 - chimeric_detective - DEBUG - Analyzing contig contig_018
+2025-06-16 14:05:30,430 - chimeric_detective - DEBUG - Analyzing contig contig_018
+2025-06-16 14:05:30,465 - chimeric_detective - DEBUG - Analyzing contig contig_019
+2025-06-16 14:05:30,495 - chimeric_detective - DEBUG - Analyzing contig contig_019
+2025-06-16 14:05:30,495 - chimeric_detective - DEBUG - Analyzing contig contig_019
+2025-06-16 14:05:30,496 - chimeric_detective - DEBUG - Analyzing contig contig_020
+2025-06-16 14:05:30,503 - chimeric_detective - DEBUG - Analyzing contig contig_019
+2025-06-16 14:05:30,526 - chimeric_detective - DEBUG - Analyzing contig contig_020
+2025-06-16 14:05:30,526 - chimeric_detective - DEBUG - Analyzing contig contig_020
+2025-06-16 14:05:30,532 - chimeric_detective - DEBUG - Analyzing contig contig_020
+2025-06-16 14:05:30,620 - chimeric_detective - DEBUG - Analyzing contig chimeric_001
+2025-06-16 14:05:30,644 - chimeric_detective - DEBUG - Analyzing contig chimeric_001
+2025-06-16 14:05:30,645 - chimeric_detective - DEBUG - Analyzing contig chimeric_001
+2025-06-16 14:05:30,647 - chimeric_detective - DEBUG - Analyzing contig chimeric_002
+2025-06-16 14:05:30,651 - chimeric_detective - DEBUG - Analyzing contig chimeric_001
+2025-06-16 14:05:30,672 - chimeric_detective - DEBUG - Analyzing contig chimeric_002
+2025-06-16 14:05:30,672 - chimeric_detective - DEBUG - Analyzing contig chimeric_002
+2025-06-16 14:05:30,674 - chimeric_detective - DEBUG - Analyzing contig chimeric_003
+2025-06-16 14:05:30,680 - chimeric_detective - DEBUG - Analyzing contig chimeric_002
+2025-06-16 14:05:30,700 - chimeric_detective - DEBUG - Analyzing contig chimeric_003
+2025-06-16 14:05:30,701 - chimeric_detective - DEBUG - Analyzing contig chimeric_003
+2025-06-16 14:05:30,702 - chimeric_detective - DEBUG - Analyzing contig chimeric_004
+2025-06-16 14:05:30,709 - chimeric_detective - DEBUG - Analyzing contig chimeric_003
+2025-06-16 14:05:30,728 - chimeric_detective - DEBUG - Analyzing contig chimeric_004
+2025-06-16 14:05:30,730 - chimeric_detective - DEBUG - Analyzing contig chimeric_004
+2025-06-16 14:05:30,730 - chimeric_detective - DEBUG - Analyzing contig chimeric_005
+2025-06-16 14:05:30,739 - chimeric_detective - DEBUG - Analyzing contig chimeric_004
+2025-06-16 14:05:30,756 - chimeric_detective - DEBUG - Analyzing contig chimeric_005
+2025-06-16 14:05:30,757 - chimeric_detective - DEBUG - Analyzing contig cov_chimeric_001
+2025-06-16 14:05:30,758 - chimeric_detective - DEBUG - Analyzing contig chimeric_005
+2025-06-16 14:05:30,762 - chimeric_detective - DEBUG - Analyzing contig cov_chimeric_002
+2025-06-16 14:05:30,766 - chimeric_detective - DEBUG - Analyzing contig cov_chimeric_003
+2025-06-16 14:05:30,767 - chimeric_detective - DEBUG - Analyzing contig chimeric_005
+2025-06-16 14:05:30,771 - chimeric_detective - INFO - Detected 15 chimera candidates
+2025-06-16 14:05:30,772 - chimeric_detective - INFO - Analyzing 15 chimera candidates
+2025-06-16 14:05:30,782 - chimeric_detective - DEBUG - Analyzing contig cov_chimeric_001
+2025-06-16 14:05:30,786 - chimeric_detective - DEBUG - Analyzing contig cov_chimeric_001
+2025-06-16 14:05:30,787 - chimeric_detective - DEBUG - Analyzing contig cov_chimeric_002
+2025-06-16 14:05:30,790 - chimeric_detective - DEBUG - Analyzing contig cov_chimeric_002
+2025-06-16 14:05:30,792 - chimeric_detective - DEBUG - Analyzing contig cov_chimeric_003
+2025-06-16 14:05:30,795 - chimeric_detective - DEBUG - Analyzing contig cov_chimeric_001
+2025-06-16 14:05:30,795 - chimeric_detective - DEBUG - Analyzing contig cov_chimeric_003
+2025-06-16 14:05:30,797 - chimeric_detective - INFO - Detected 15 chimera candidates
+2025-06-16 14:05:30,798 - chimeric_detective - INFO - Analyzing 15 chimera candidates
+2025-06-16 14:05:30,800 - chimeric_detective - DEBUG - Analyzing contig cov_chimeric_002
+2025-06-16 14:05:30,800 - chimeric_detective - INFO - Detected 15 chimera candidates
+2025-06-16 14:05:30,801 - chimeric_detective - INFO - Analyzing 15 chimera candidates
+2025-06-16 14:05:30,804 - chimeric_detective - DEBUG - Analyzing contig cov_chimeric_003
+2025-06-16 14:05:30,807 - chimeric_detective - INFO - Detected 15 chimera candidates
+2025-06-16 14:05:30,809 - chimeric_detective - INFO - Analyzing 15 chimera candidates
+2025-06-16 14:05:31,073 - chimeric_detective - INFO - Completed analysis of 15 chimeras
+2025-06-16 14:05:31,075 - chimeric_detective - INFO - Resolving 15 chimera analyses
+2025-06-16 14:05:31,099 - chimeric_detective - INFO - Completed analysis of 15 chimeras
+2025-06-16 14:05:31,100 - chimeric_detective - INFO - Resolving 15 chimera analyses
+2025-06-16 14:05:31,102 - chimeric_detective - INFO - Resolution complete. 0 contigs split, 5 preserved
+2025-06-16 14:05:31,103 - chimeric_detective - INFO - Completed analysis of 15 chimeras
+2025-06-16 14:05:31,104 - chimeric_detective - INFO - Resolving 15 chimera analyses
+2025-06-16 14:05:31,105 - chimeric_detective - INFO - Creating interactive HTML report
+2025-06-16 14:05:31,111 - chimeric_detective - INFO - Completed analysis of 15 chimeras
+2025-06-16 14:05:31,112 - chimeric_detective - INFO - Resolving 15 chimera analyses
+2025-06-16 14:05:31,124 - chimeric_detective - INFO - Resolution complete. 0 contigs split, 5 preserved
+2025-06-16 14:05:31,127 - chimeric_detective - INFO - Creating interactive HTML report
+2025-06-16 14:05:31,128 - chimeric_detective - INFO - Resolution complete. 0 contigs split, 5 preserved
+2025-06-16 14:05:31,131 - chimeric_detective - INFO - Creating interactive HTML report
+2025-06-16 14:05:31,137 - chimeric_detective - INFO - Resolution complete. 0 contigs split, 5 preserved
+2025-06-16 14:05:31,140 - chimeric_detective - INFO - Creating interactive HTML report
+2025-06-16 14:05:42,458 - chimeric_detective - INFO - Report generated: demo_results/sample_sample_004/chimeric_detective_report.html
+2025-06-16 14:05:42,499 - chimeric_detective - INFO - Starting chimera detection
+2025-06-16 14:05:42,503 - chimeric_detective - INFO - Loaded 28 contigs from assembly
+2025-06-16 14:05:42,505 - chimeric_detective - INFO - Aligning reads to assembly
+2025-06-16 14:05:42,795 - chimeric_detective - INFO - Successfully aligned reads using minimap2
+2025-06-16 14:05:43,041 - chimeric_detective - DEBUG - Analyzing contig contig_001
+2025-06-16 14:05:43,074 - chimeric_detective - DEBUG - Analyzing contig contig_002
+2025-06-16 14:05:43,143 - chimeric_detective - DEBUG - Analyzing contig contig_003
+2025-06-16 14:05:43,208 - chimeric_detective - DEBUG - Analyzing contig contig_004
+2025-06-16 14:05:43,309 - chimeric_detective - DEBUG - Analyzing contig contig_005
+2025-06-16 14:05:43,322 - chimeric_detective - DEBUG - Analyzing contig contig_006
+2025-06-16 14:05:43,338 - chimeric_detective - DEBUG - Analyzing contig contig_007
+2025-06-16 14:05:43,374 - chimeric_detective - DEBUG - Analyzing contig contig_008
+2025-06-16 14:05:43,422 - chimeric_detective - DEBUG - Analyzing contig contig_009
+2025-06-16 14:05:43,510 - chimeric_detective - DEBUG - Analyzing contig contig_010
+2025-06-16 14:05:43,576 - chimeric_detective - DEBUG - Analyzing contig contig_011
+2025-06-16 14:05:43,634 - chimeric_detective - DEBUG - Analyzing contig contig_012
+2025-06-16 14:05:43,734 - chimeric_detective - DEBUG - Analyzing contig contig_013
+2025-06-16 14:05:43,852 - chimeric_detective - DEBUG - Analyzing contig contig_014
+2025-06-16 14:05:43,891 - chimeric_detective - DEBUG - Analyzing contig contig_015
+2025-06-16 14:05:43,962 - chimeric_detective - DEBUG - Analyzing contig contig_016
+2025-06-16 14:05:44,018 - chimeric_detective - DEBUG - Analyzing contig contig_017
+2025-06-16 14:05:44,068 - chimeric_detective - DEBUG - Analyzing contig contig_018
+2025-06-16 14:05:44,142 - chimeric_detective - DEBUG - Analyzing contig contig_019
+2025-06-16 14:05:44,173 - chimeric_detective - DEBUG - Analyzing contig contig_020
+2025-06-16 14:05:44,294 - chimeric_detective - DEBUG - Analyzing contig chimeric_001
+2025-06-16 14:05:44,323 - chimeric_detective - DEBUG - Analyzing contig chimeric_002
+2025-06-16 14:05:44,350 - chimeric_detective - DEBUG - Analyzing contig chimeric_003
+2025-06-16 14:05:44,379 - chimeric_detective - DEBUG - Analyzing contig chimeric_004
+2025-06-16 14:05:44,407 - chimeric_detective - DEBUG - Analyzing contig chimeric_005
+2025-06-16 14:05:44,434 - chimeric_detective - DEBUG - Analyzing contig cov_chimeric_001
+2025-06-16 14:05:44,439 - chimeric_detective - DEBUG - Analyzing contig cov_chimeric_002
+2025-06-16 14:05:44,444 - chimeric_detective - DEBUG - Analyzing contig cov_chimeric_003
+2025-06-16 14:05:44,449 - chimeric_detective - INFO - Detected 15 chimera candidates
+2025-06-16 14:05:44,450 - chimeric_detective - INFO - Analyzing 15 chimera candidates
+2025-06-16 14:05:44,751 - chimeric_detective - INFO - Completed analysis of 15 chimeras
+2025-06-16 14:05:44,753 - chimeric_detective - INFO - Resolving 15 chimera analyses
+2025-06-16 14:05:44,777 - chimeric_detective - INFO - Resolution complete. 0 contigs split, 5 preserved
+2025-06-16 14:05:44,780 - chimeric_detective - INFO - Creating interactive HTML report
+2025-06-16 14:05:47,937 - chimeric_detective - INFO - Report generated: demo_results/sample_sample_002/chimeric_detective_report.html
+2025-06-16 14:05:47,982 - chimeric_detective - INFO - Starting chimera detection
+2025-06-16 14:05:47,986 - chimeric_detective - INFO - Loaded 28 contigs from assembly
+2025-06-16 14:05:47,988 - chimeric_detective - INFO - Aligning reads to assembly
+2025-06-16 14:05:48,382 - chimeric_detective - INFO - Successfully aligned reads using minimap2
+2025-06-16 14:05:48,636 - chimeric_detective - DEBUG - Analyzing contig contig_001
+2025-06-16 14:05:48,668 - chimeric_detective - DEBUG - Analyzing contig contig_002
+2025-06-16 14:05:48,737 - chimeric_detective - DEBUG - Analyzing contig contig_003
+2025-06-16 14:05:48,804 - chimeric_detective - DEBUG - Analyzing contig contig_004
+2025-06-16 14:05:48,903 - chimeric_detective - DEBUG - Analyzing contig contig_005
+2025-06-16 14:05:48,915 - chimeric_detective - DEBUG - Analyzing contig contig_006
+2025-06-16 14:05:48,931 - chimeric_detective - DEBUG - Analyzing contig contig_007
+2025-06-16 14:05:48,966 - chimeric_detective - DEBUG - Analyzing contig contig_008
+2025-06-16 14:05:49,013 - chimeric_detective - DEBUG - Analyzing contig contig_009
+2025-06-16 14:05:49,101 - chimeric_detective - DEBUG - Analyzing contig contig_010
+2025-06-16 14:05:49,164 - chimeric_detective - DEBUG - Analyzing contig contig_011
+2025-06-16 14:05:49,224 - chimeric_detective - DEBUG - Analyzing contig contig_012
+2025-06-16 14:05:49,321 - chimeric_detective - DEBUG - Analyzing contig contig_013
+2025-06-16 14:05:49,438 - chimeric_detective - DEBUG - Analyzing contig contig_014
+2025-06-16 14:05:49,479 - chimeric_detective - DEBUG - Analyzing contig contig_015
+2025-06-16 14:05:49,548 - chimeric_detective - DEBUG - Analyzing contig contig_016
+2025-06-16 14:05:49,600 - chimeric_detective - DEBUG - Analyzing contig contig_017
+2025-06-16 14:05:49,653 - chimeric_detective - DEBUG - Analyzing contig contig_018
+2025-06-16 14:05:49,728 - chimeric_detective - DEBUG - Analyzing contig contig_019
+2025-06-16 14:05:49,756 - chimeric_detective - DEBUG - Analyzing contig contig_020
+2025-06-16 14:05:49,879 - chimeric_detective - DEBUG - Analyzing contig chimeric_001
+2025-06-16 14:05:49,908 - chimeric_detective - DEBUG - Analyzing contig chimeric_002
+2025-06-16 14:05:49,938 - chimeric_detective - DEBUG - Analyzing contig chimeric_003
+2025-06-16 14:05:49,966 - chimeric_detective - DEBUG - Analyzing contig chimeric_004
+2025-06-16 14:05:49,995 - chimeric_detective - DEBUG - Analyzing contig chimeric_005
+2025-06-16 14:05:50,026 - chimeric_detective - DEBUG - Analyzing contig cov_chimeric_001
+2025-06-16 14:05:50,030 - chimeric_detective - DEBUG - Analyzing contig cov_chimeric_002
+2025-06-16 14:05:50,035 - chimeric_detective - DEBUG - Analyzing contig cov_chimeric_003
+2025-06-16 14:05:50,039 - chimeric_detective - INFO - Detected 15 chimera candidates
+2025-06-16 14:05:50,040 - chimeric_detective - INFO - Analyzing 15 chimera candidates
+2025-06-16 14:05:50,343 - chimeric_detective - INFO - Completed analysis of 15 chimeras
+2025-06-16 14:05:50,345 - chimeric_detective - INFO - Resolving 15 chimera analyses
+2025-06-16 14:05:50,368 - chimeric_detective - INFO - Resolution complete. 0 contigs split, 5 preserved
+2025-06-16 14:05:50,371 - chimeric_detective - INFO - Creating interactive HTML report
+2025-06-16 14:05:50,568 - chimeric_detective - INFO - Report generated: demo_results/sample_sample_001/chimeric_detective_report.html
+2025-06-16 14:05:50,587 - chimeric_detective - INFO - Starting chimera detection
+2025-06-16 14:05:50,593 - chimeric_detective - INFO - Loaded 28 contigs from assembly
+2025-06-16 14:05:50,594 - chimeric_detective - INFO - Aligning reads to assembly
+2025-06-16 14:05:50,962 - chimeric_detective - INFO - Successfully aligned reads using minimap2
+2025-06-16 14:05:51,206 - chimeric_detective - INFO - Report generated: demo_results/sample_sample_003/chimeric_detective_report.html
+2025-06-16 14:05:51,239 - chimeric_detective - DEBUG - Analyzing contig contig_001
+2025-06-16 14:05:51,270 - chimeric_detective - DEBUG - Analyzing contig contig_002
+2025-06-16 14:05:51,278 - chimeric_detective - INFO - Starting chimera detection
+2025-06-16 14:05:51,282 - chimeric_detective - INFO - Loaded 28 contigs from assembly
+2025-06-16 14:05:51,284 - chimeric_detective - INFO - Aligning reads to assembly
+2025-06-16 14:05:51,341 - chimeric_detective - DEBUG - Analyzing contig contig_003
+2025-06-16 14:05:51,417 - chimeric_detective - DEBUG - Analyzing contig contig_004
+2025-06-16 14:05:51,543 - chimeric_detective - DEBUG - Analyzing contig contig_005
+2025-06-16 14:05:51,556 - chimeric_detective - DEBUG - Analyzing contig contig_006
+2025-06-16 14:05:51,572 - chimeric_detective - DEBUG - Analyzing contig contig_007
+2025-06-16 14:05:51,608 - chimeric_detective - DEBUG - Analyzing contig contig_008
+2025-06-16 14:05:51,649 - chimeric_detective - INFO - Successfully aligned reads using minimap2
+2025-06-16 14:05:51,656 - chimeric_detective - DEBUG - Analyzing contig contig_009
+2025-06-16 14:05:51,750 - chimeric_detective - DEBUG - Analyzing contig contig_010
+2025-06-16 14:05:51,818 - chimeric_detective - DEBUG - Analyzing contig contig_011
+2025-06-16 14:05:51,880 - chimeric_detective - DEBUG - Analyzing contig contig_012
+2025-06-16 14:05:51,918 - chimeric_detective - DEBUG - Analyzing contig contig_001
+2025-06-16 14:05:51,951 - chimeric_detective - DEBUG - Analyzing contig contig_002
+2025-06-16 14:05:51,987 - chimeric_detective - DEBUG - Analyzing contig contig_013
+2025-06-16 14:05:52,029 - chimeric_detective - DEBUG - Analyzing contig contig_003
+2025-06-16 14:05:52,099 - chimeric_detective - DEBUG - Analyzing contig contig_004
+2025-06-16 14:05:52,107 - chimeric_detective - DEBUG - Analyzing contig contig_014
+2025-06-16 14:05:52,147 - chimeric_detective - DEBUG - Analyzing contig contig_015
+2025-06-16 14:05:52,201 - chimeric_detective - DEBUG - Analyzing contig contig_005
+2025-06-16 14:05:52,215 - chimeric_detective - DEBUG - Analyzing contig contig_006
+2025-06-16 14:05:52,218 - chimeric_detective - DEBUG - Analyzing contig contig_016
+2025-06-16 14:05:52,232 - chimeric_detective - DEBUG - Analyzing contig contig_007
+2025-06-16 14:05:52,268 - chimeric_detective - DEBUG - Analyzing contig contig_008
+2025-06-16 14:05:52,275 - chimeric_detective - DEBUG - Analyzing contig contig_017
+2025-06-16 14:05:52,315 - chimeric_detective - DEBUG - Analyzing contig contig_009
+2025-06-16 14:05:52,328 - chimeric_detective - DEBUG - Analyzing contig contig_018
+2025-06-16 14:05:52,417 - chimeric_detective - DEBUG - Analyzing contig contig_019
+2025-06-16 14:05:52,427 - chimeric_detective - DEBUG - Analyzing contig contig_010
+2025-06-16 14:05:52,446 - chimeric_detective - DEBUG - Analyzing contig contig_020
+2025-06-16 14:05:52,490 - chimeric_detective - DEBUG - Analyzing contig contig_011
+2025-06-16 14:05:52,553 - chimeric_detective - DEBUG - Analyzing contig contig_012
+2025-06-16 14:05:52,570 - chimeric_detective - DEBUG - Analyzing contig chimeric_001
+2025-06-16 14:05:52,599 - chimeric_detective - DEBUG - Analyzing contig chimeric_002
+2025-06-16 14:05:52,629 - chimeric_detective - DEBUG - Analyzing contig chimeric_003
+2025-06-16 14:05:52,653 - chimeric_detective - DEBUG - Analyzing contig contig_013
+2025-06-16 14:05:52,656 - chimeric_detective - DEBUG - Analyzing contig chimeric_004
+2025-06-16 14:05:52,684 - chimeric_detective - DEBUG - Analyzing contig chimeric_005
+2025-06-16 14:05:52,712 - chimeric_detective - DEBUG - Analyzing contig cov_chimeric_001
+2025-06-16 14:05:52,717 - chimeric_detective - DEBUG - Analyzing contig cov_chimeric_002
+2025-06-16 14:05:52,720 - chimeric_detective - DEBUG - Analyzing contig cov_chimeric_003
+2025-06-16 14:05:52,726 - chimeric_detective - INFO - Detected 15 chimera candidates
+2025-06-16 14:05:52,727 - chimeric_detective - INFO - Analyzing 15 chimera candidates
+2025-06-16 14:05:52,768 - chimeric_detective - DEBUG - Analyzing contig contig_014
+2025-06-16 14:05:52,808 - chimeric_detective - DEBUG - Analyzing contig contig_015
+2025-06-16 14:05:52,885 - chimeric_detective - DEBUG - Analyzing contig contig_016
+2025-06-16 14:05:52,939 - chimeric_detective - DEBUG - Analyzing contig contig_017
+2025-06-16 14:05:53,006 - chimeric_detective - DEBUG - Analyzing contig contig_018
+2025-06-16 14:05:53,050 - chimeric_detective - INFO - Completed analysis of 15 chimeras
+2025-06-16 14:05:53,051 - chimeric_detective - INFO - Resolving 15 chimera analyses
+2025-06-16 14:05:53,075 - chimeric_detective - INFO - Resolution complete. 0 contigs split, 5 preserved
+2025-06-16 14:05:53,078 - chimeric_detective - INFO - Creating interactive HTML report
+2025-06-16 14:05:53,082 - chimeric_detective - DEBUG - Analyzing contig contig_019
+2025-06-16 14:05:53,112 - chimeric_detective - DEBUG - Analyzing contig contig_020
+2025-06-16 14:05:53,233 - chimeric_detective - DEBUG - Analyzing contig chimeric_001
+2025-06-16 14:05:53,263 - chimeric_detective - DEBUG - Analyzing contig chimeric_002
+2025-06-16 14:05:53,291 - chimeric_detective - DEBUG - Analyzing contig chimeric_003
+2025-06-16 14:05:53,321 - chimeric_detective - DEBUG - Analyzing contig chimeric_004
+2025-06-16 14:05:53,351 - chimeric_detective - DEBUG - Analyzing contig chimeric_005
+2025-06-16 14:05:53,380 - chimeric_detective - DEBUG - Analyzing contig cov_chimeric_001
+2025-06-16 14:05:53,385 - chimeric_detective - DEBUG - Analyzing contig cov_chimeric_002
+2025-06-16 14:05:53,389 - chimeric_detective - DEBUG - Analyzing contig cov_chimeric_003
+2025-06-16 14:05:53,394 - chimeric_detective - INFO - Detected 15 chimera candidates
+2025-06-16 14:05:53,395 - chimeric_detective - INFO - Analyzing 15 chimera candidates
+2025-06-16 14:05:53,702 - chimeric_detective - INFO - Completed analysis of 15 chimeras
+2025-06-16 14:05:53,703 - chimeric_detective - INFO - Resolving 15 chimera analyses
+2025-06-16 14:05:53,750 - chimeric_detective - INFO - Resolution complete. 0 contigs split, 5 preserved
+2025-06-16 14:05:53,763 - chimeric_detective - INFO - Creating interactive HTML report
+2025-06-16 14:05:53,799 - chimeric_detective - INFO - Report generated: demo_results/sample_sample_005/chimeric_detective_report.html
+2025-06-16 14:05:55,163 - chimeric_detective - INFO - Report generated: demo_results/sample_sample_006/chimeric_detective_report.html
+2025-06-16 14:05:57,642 - chimeric_detective - INFO - Report generated: demo_results/sample_sample_007/chimeric_detective_report.html
+2025-06-16 14:05:59,779 - chimeric_detective - INFO - Report generated: demo_results/sample_sample_008/chimeric_detective_report.html
+2025-06-16 14:05:59,939 - chimeric_detective - INFO - Generating multi-sample summary report
+2025-06-16 14:05:59,970 - chimeric_detective - INFO - Multi-sample summary:
+2025-06-16 14:05:59,972 - chimeric_detective - INFO -   - Total samples: 8
+2025-06-16 14:05:59,973 - chimeric_detective - INFO -   - Total chimera analyses: 120
+2025-06-16 14:05:59,974 - chimeric_detective - INFO -   - Total contigs split: 0
+2025-06-16 14:05:59,975 - chimeric_detective - INFO -   - Total contigs preserved: 40
+2025-06-16 14:06:00,214 - chimeric_detective - INFO - Multi-sample HTML report generated: demo_results/multi_sample_report.html
+2025-06-16 14:06:00,228 - chimeric_detective - INFO - Analysis completed successfully!
