@@ -139,8 +139,11 @@ class ChimeraVisualizer:
         
         # Save static version if requested
         if self.include_static:
-            png_path = figures_dir / "chimera_types.png"
-            fig.write_image(str(png_path), width=800, height=500)
+            try:
+                png_path = figures_dir / "chimera_types.png"
+                fig.write_image(str(png_path), width=800, height=500)
+            except Exception as e:
+                self.logger.warning(f"Could not save static image: {e}. Install kaleido for PNG export.")
         
         return str(html_path)
     
@@ -206,8 +209,11 @@ class ChimeraVisualizer:
         fig.write_html(str(html_path))
         
         if self.include_static:
-            png_path = figures_dir / "confidence_distribution.png"
-            fig.write_image(str(png_path), width=1000, height=400)
+            try:
+                png_path = figures_dir / "confidence_distribution.png"
+                fig.write_image(str(png_path), width=1000, height=400)
+            except Exception as e:
+                self.logger.warning(f"Could not save static image: {e}. Install kaleido for PNG export.")
         
         return str(html_path)
     
@@ -244,8 +250,11 @@ class ChimeraVisualizer:
         fig.write_html(str(html_path))
         
         if self.include_static:
-            png_path = figures_dir / "decision_summary.png"
-            fig.write_image(str(png_path), width=600, height=400)
+            try:
+                png_path = figures_dir / "decision_summary.png"
+                fig.write_image(str(png_path), width=600, height=400)
+            except Exception as e:
+                self.logger.warning(f"Could not save static image: {e}. Install kaleido for PNG export.")
         
         return str(html_path)
     
@@ -354,8 +363,11 @@ class ChimeraVisualizer:
             individual_plots.append(str(html_path))
             
             if self.include_static:
-                png_path = figures_dir / f"{contig_id}_detailed.png"
-                fig.write_image(str(png_path), width=1000, height=800)
+                try:
+                    png_path = figures_dir / f"{contig_id}_detailed.png"
+                    fig.write_image(str(png_path), width=1000, height=800)
+                except Exception as e:
+                    self.logger.warning(f"Could not save static image: {e}. Install kaleido for PNG export.")
         
         return individual_plots
     
@@ -392,8 +404,11 @@ class ChimeraVisualizer:
         fig.write_html(str(html_path))
         
         if self.include_static:
-            png_path = figures_dir / "evidence_overview.png"
-            fig.write_image(str(png_path), width=800, height=400)
+            try:
+                png_path = figures_dir / "evidence_overview.png"
+                fig.write_image(str(png_path), width=800, height=400)
+            except Exception as e:
+                self.logger.warning(f"Could not save static image: {e}. Install kaleido for PNG export.")
         
         return str(html_path)
     
