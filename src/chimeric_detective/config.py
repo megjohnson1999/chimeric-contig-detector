@@ -8,7 +8,7 @@ import os
 import yaml
 import json
 from pathlib import Path
-from typing import Dict, Any, Optional, Union
+from typing import Dict, Any, Optional, Union, List
 from dataclasses import dataclass, field, asdict
 import logging
 
@@ -366,7 +366,7 @@ class ConfigManager:
         return {name: preset["description"] for name, preset in PRESETS.items()}
     
     @staticmethod
-    def get_default_config_paths() -> list[Path]:
+    def get_default_config_paths() -> List[Path]:
         """Get default configuration file search paths."""
         paths = []
         
