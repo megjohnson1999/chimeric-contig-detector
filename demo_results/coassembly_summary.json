@@ -11,8 +11,8 @@
     "sample_007",
     "sample_008"
   ],
-  "total_candidates": 15,
-  "total_analyses": 15,
+  "total_candidates": 6,
+  "total_analyses": 6,
   "decisions": {
     "split": 5,
     "preserve": 0,
@@ -21,6 +21,6 @@
   "multi_sample_statistics": {
     "candidates_in_all_samples": 0,
     "candidates_in_multiple_samples": 0,
-    "candidates_in_single_sample": 15
+    "candidates_in_single_sample": 6
   }
 }
