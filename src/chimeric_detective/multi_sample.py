@@ -375,10 +375,25 @@ class MultiSampleProcessor:
         
         self.logger.info(f"Processing co-assembly with {len(sample_files)} samples")
         
-        # Initialize components
-        detector = ChimeraDetector(**kwargs)
-        analyzer = ChimeraAnalyzer(**kwargs)
-        resolver = ChimeraResolver(**kwargs)
+        # Initialize components with filtered kwargs
+        detector_kwargs = {k: v for k, v in kwargs.items() if k in [
+            'min_contig_length', 'min_coverage', 'coverage_fold_change', 
+            'gc_content_threshold', 'kmer_distance_threshold', 'window_size',
+            'step_size', 'min_spanning_reads', 'log_level'
+        ]}
+        
+        analyzer_kwargs = {k: v for k, v in kwargs.items() if k in [
+            'reference', 'log_level'
+        ]}
+        
+        resolver_kwargs = {k: v for k, v in kwargs.items() if k in [
+            'split_technical', 'split_pcr', 'preserve_biological',
+            'min_split_length', 'confidence_threshold', 'log_level'
+        ]}
+        
+        detector = ChimeraDetector(**detector_kwargs)
+        analyzer = ChimeraAnalyzer(**analyzer_kwargs)
+        resolver = ChimeraResolver(**resolver_kwargs)
         visualizer = ChimeraVisualizer()
         
         # Step 1: Map all samples' reads to the assembly and collect coverage data
