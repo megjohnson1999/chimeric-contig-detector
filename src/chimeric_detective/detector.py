@@ -313,7 +313,9 @@ class ChimeraDetector:
         kmer_profile = []
         seq_len = len(sequence)
         
-        for i in range(0, seq_len - self.window_size + 1, self.step_size):
+        # Ensure we don't create negative range endpoints
+        end_pos = max(1, seq_len - self.window_size + 1)
+        for i in range(0, end_pos, self.step_size):
             window_seq = sequence[i:i + self.window_size]
             kmers = calculate_kmer_frequencies(window_seq, k=4)
             kmer_profile.append(kmers)
@@ -333,7 +335,9 @@ class ChimeraDetector:
                 gc_profile.append(gc_content)
             return gc_profile
         
-        for i in range(0, seq_len - window_size + 1, step_size):
+        # Ensure we don't create negative range endpoints
+        end_pos = max(1, seq_len - window_size + 1)
+        for i in range(0, end_pos, step_size):
             window_seq = sequence[i:i + window_size]
             if len(window_seq) >= 20:  # Minimum sequence for meaningful analysis
                 gc_content = (window_seq.count('G') + window_seq.count('C')) / len(window_seq)
@@ -354,7 +358,9 @@ class ChimeraDetector:
                 kmer_profile.append(kmers)
             return kmer_profile
         
-        for i in range(0, seq_len - window_size + 1, step_size):
+        # Ensure we don't create negative range endpoints
+        end_pos = max(1, seq_len - window_size + 1)
+        for i in range(0, end_pos, step_size):
             window_seq = sequence[i:i + window_size]
             if len(window_seq) >= 20:  # Minimum sequence for meaningful analysis
                 kmers = calculate_kmer_frequencies(window_seq, k=4)
