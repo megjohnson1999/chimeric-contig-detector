@@ -73,7 +73,12 @@ class ChimeraVisualizer:
         figures_dir.mkdir(exist_ok=True)
         
         # Generate all visualizations
-        plots = self._generate_all_plots(analyses, decisions, figures_dir)
+        try:
+            plots = self._generate_all_plots(analyses, decisions, figures_dir)
+            self.logger.info(f"Generated {len(plots)} plot types")
+        except Exception as e:
+            self.logger.error(f"Failed to generate plots: {e}")
+            plots = {}
         
         # Create summary statistics
         summary_stats = self._calculate_summary_statistics(analyses, decisions)
@@ -94,15 +99,37 @@ class ChimeraVisualizer:
         plots = {}
         
         # Summary plots
-        plots['chimera_types'] = self._plot_chimera_types(analyses, figures_dir)
-        plots['confidence_distribution'] = self._plot_confidence_distribution(analyses, figures_dir)
-        plots['decision_summary'] = self._plot_decision_summary(decisions, figures_dir)
+        try:
+            self.logger.info("Generating chimera types plot...")
+            plots['chimera_types'] = self._plot_chimera_types(analyses, figures_dir)
+        except Exception as e:
+            self.logger.warning(f"Failed to generate chimera types plot: {e}")
+            
+        try:
+            self.logger.info("Generating confidence distribution plot...")
+            plots['confidence_distribution'] = self._plot_confidence_distribution(analyses, figures_dir)
+        except Exception as e:
+            self.logger.warning(f"Failed to generate confidence distribution plot: {e}")
+            
+        try:
+            self.logger.info("Generating decision summary plot...")
+            plots['decision_summary'] = self._plot_decision_summary(decisions, figures_dir)
+        except Exception as e:
+            self.logger.warning(f"Failed to generate decision summary plot: {e}")
         
         # Individual contig plots
-        plots['individual_contigs'] = self._plot_individual_contigs(analyses, figures_dir)
+        try:
+            self.logger.info("Generating individual contig plots...")
+            plots['individual_contigs'] = self._plot_individual_contigs(analyses, figures_dir)
+        except Exception as e:
+            self.logger.warning(f"Failed to generate individual contig plots: {e}")
         
         # Coverage and evidence plots
-        plots['evidence_overview'] = self._plot_evidence_overview(analyses, figures_dir)
+        try:
+            self.logger.info("Generating evidence overview plot...")
+            plots['evidence_overview'] = self._plot_evidence_overview(analyses, figures_dir)
+        except Exception as e:
+            self.logger.warning(f"Failed to generate evidence overview plot: {e}")
         
         return plots
     
