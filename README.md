@@ -6,16 +6,19 @@
 [![Python](https://img.shields.io/pypi/pyversions/chimeric-detective.svg)](https://pypi.org/project/chimeric-detective/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A comprehensive command-line tool for detecting, analyzing, explaining, and resolving chimeric contigs in viral metagenomic assemblies.
+A comprehensive command-line tool for detecting, analyzing, explaining, and resolving chimeric contigs in viral metagenomic assemblies. Optimized for large-scale processing with intelligent memory management and robust dependency handling.
 
 ## Features
 
-- **Chimera Detection**: Multiple methods including coverage discontinuities, taxonomic transitions, and sequence composition shifts
-- **Precise Breakpoint Identification**: Accurately locate chimeric junctions
-- **Intelligent Classification**: Distinguish between technical artifacts and biological recombination
+- **Multi-Method Chimera Detection**: Coverage discontinuities, GC content shifts, k-mer composition changes, and read orientation patterns
+- **Precise Breakpoint Identification**: Accurately locate chimeric junctions with statistical confidence
+- **Intelligent Classification**: Distinguish between technical artifacts (PCR chimeras, assembly errors) and biological recombination
 - **Automated Resolution**: Split technical chimeras while preserving biological events
-- **Interactive Visualization**: Generate HTML reports with detailed visualizations
-- **Flexible Input**: Support for FASTA assemblies with FASTQ reads or BAM alignments
+- **Memory-Optimized Processing**: Efficient handling of large assemblies (50K+ contigs) with configurable resource usage
+- **Multi-Sample Support**: Process hundreds of samples with parallel processing and batch modes
+- **Interactive Visualization**: Generate comprehensive HTML reports with detailed visualizations
+- **Flexible Input**: Support for FASTA assemblies with FASTQ reads or pre-aligned BAM files
+- **Robust Tool Integration**: Automatic fallback between minimap2 and BWA with intelligent error handling
 
 ## Installation
 
@@ -66,10 +69,12 @@ pip install -e .
 - scikit-learn, matplotlib, seaborn, plotly
 - click, tqdm, jinja2
 
-**External tools** (required for functionality):
-- BWA or minimap2 (for read alignment)
+**External tools** (installed automatically via conda):
+- BWA or minimap2 (for read alignment) 
 - samtools (for BAM file processing)
 - BLAST (optional, for taxonomic classification)
+
+**Note**: The tool automatically detects available aligners and uses minimap2 first (faster) with BWA as fallback (more memory-efficient). Both tools are installed with the conda environment.
 
 ## Quick Start
 
@@ -94,6 +99,71 @@ chimeric_detective --assembly viral_assembly.fasta \
                   --reads single_reads.fastq \
                   --out results_dir
 ```
+
+## Large Assembly Optimization
+
+For assemblies with many contigs (>10K) or large files (>500MB), use these optimizations:
+
+### Memory-Efficient Processing
+
+```bash
+# Analyze only longer contigs (recommended for large assemblies)
+chimeric_detective --assembly large_assembly.fasta \
+                  --reads-dir reads/ \
+                  --reads-pattern "*_R{1,2}.fastq.gz" \
+                  --min-contig-length 2000 \
+                  --max-workers 4 \
+                  --out results/
+```
+
+### Analyze Your Assembly First
+
+Use the included analysis tool to understand your assembly characteristics:
+
+```bash
+# Analyze contig length distribution and memory requirements
+python analyze_assembly_lengths.py your_assembly.fasta
+```
+
+This shows:
+- Contig count and size distribution  
+- Impact of different `--min-contig-length` thresholds
+- Computational savings vs sequence retention
+- Memory usage estimates
+
+### Recommended Settings for Large Assemblies
+
+| Assembly Size | Contigs | Min Length | Max Workers | Memory |
+|---------------|---------|------------|-------------|---------|
+| <100MB | <5K | 1000bp | 8 | 16GB |
+| 100-500MB | 5K-25K | 1500bp | 4 | 32GB |
+| >500MB | >25K | 2000bp | 2-4 | 64GB |
+
+### SLURM/HPC Example
+
+```bash
+#!/bin/bash
+#SBATCH --mem=64G
+#SBATCH --cpus-per-task=8
+#SBATCH --time=12:00:00
+
+# Activate environment
+conda activate chimeric-detective
+
+# Memory-optimized processing
+chimeric_detective --assembly huge_assembly.fasta \
+                  --reads-dir reads_subset/ \
+                  --reads-pattern "*_R{1,2}.fastq.gz" \
+                  --min-contig-length 2000 \
+                  --max-workers 4 \
+                  --out results/
+```
+
+**Key Points:**
+- Short contigs (<threshold) are **preserved unchanged** in output
+- Only longer contigs are **analyzed for chimeras**  
+- **Massive memory savings** (often 60-80% reduction) with minimal sequence loss
+- Tool automatically warns about large assemblies and suggests optimizations
 
 ### Multi-Sample Analysis
 
@@ -372,6 +442,141 @@ chimeric_detective -a assembly.fasta -b reads.bam -o results/ \
                   --gc-content-threshold 0.15 \
                   --confidence-threshold 0.7
 ```
+
+## Troubleshooting
+
+### Common Issues and Solutions
+
+#### Memory Issues (SIGKILL errors)
+```
+ERROR: minimap2 failed: Command died with <Signals.SIGKILL: 9>
+```
+
+**Solutions:**
+1. **Increase memory allocation** (especially on SLURM/HPC):
+   ```bash
+   #SBATCH --mem=64G  # Make sure this line is uncommented!
+   ```
+
+2. **Use higher `--min-contig-length` threshold**:
+   ```bash
+   chimeric_detective --min-contig-length 2000  # or 3000 for very large assemblies
+   ```
+
+3. **Reduce parallel processing**:
+   ```bash
+   chimeric_detective --max-workers 1  # Most memory-efficient
+   ```
+
+4. **Use BWA instead of minimap2** (more memory-efficient):
+   ```bash
+   # Tool automatically tries BWA if minimap2 fails
+   # Or install only BWA: conda install bwa
+   ```
+
+#### Tool Not Found Errors
+```
+ERROR: Neither minimap2 nor BWA are available
+```
+
+**Solutions:**
+1. **Install via conda** (recommended):
+   ```bash
+   conda install -c bioconda bwa minimap2 samtools
+   ```
+
+2. **Activate conda environment**:
+   ```bash
+   conda activate chimeric-detective
+   ```
+
+3. **Check tool availability**:
+   ```bash
+   which minimap2 bwa samtools
+   ```
+
+#### No Chimeras Detected
+```
+INFO: Detected 0 chimera candidates
+```
+
+**This could indicate:**
+- **Good assembly quality** (no chimeras present)
+- **Thresholds too strict** - try `--sensitivity high`
+- **Insufficient coverage** - check `--min-coverage` setting
+- **Short contigs** - lower `--min-contig-length` if appropriate
+
+#### Large Assembly Processing Tips
+
+**Before running**, analyze your assembly:
+```bash
+python analyze_assembly_lengths.py assembly.fasta
+```
+
+**Common optimizations:**
+- Assemblies >500MB: Use `--min-contig-length 2000` 
+- >50K contigs: Use `--max-workers 4` or less
+- Memory errors: Try `--max-workers 1` first
+
+#### File Permission Issues
+
+**On shared systems**, ensure write permissions:
+```bash
+chmod 755 output_directory/
+```
+
+#### Performance Issues
+
+**For faster processing:**
+- Use SSD storage for temporary files
+- Ensure adequate RAM (see memory requirements table)
+- Pre-filter assembly to remove very short contigs
+- Use appropriate `--min-contig-length` threshold
+
+### Getting Help
+
+If you encounter issues:
+
+1. **Check the log file**: `output_dir/chimeric_detective.log`
+2. **Run with debug logging**: `--log-level DEBUG` 
+3. **Test on small assembly first** to verify installation
+4. **Open an issue** on GitHub with:
+   - Command used
+   - Error message
+   - System information (OS, RAM, etc.)
+   - Assembly characteristics (size, contig count)
+
+## Testing and Validation
+
+### Test Your Installation
+
+```bash
+# Quick test with provided test data
+chimeric_detective --assembly test_data_minimal/test_assembly.fasta \
+                  --reads-dir test_data_minimal/reads \
+                  --reads-pattern "*_R{1,2}.fastq.gz" \
+                  --out test_output
+```
+
+### Create Synthetic Test Data
+
+```bash
+# Generate test assembly with known chimeric contigs
+python create_test_dataset.py
+chimeric_detective --assembly test_data_large/large_test_assembly.fasta \
+                  --reads-dir test_data_large/reads \
+                  --reads-pattern "*_R{1,2}.fastq.gz" \
+                  --out synthetic_test_output
+```
+
+### Validate Detection Accuracy
+
+```bash
+# Test core detection without full pipeline
+python simple_detection_test.py
+```
+
+This validates that chimeric contigs are correctly identified with expected confidence scores and evidence types.
 
 ## License
 
