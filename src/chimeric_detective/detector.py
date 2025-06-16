@@ -519,14 +519,19 @@ class ChimeraDetector:
         
         for i, diff in enumerate(gc_diffs):
             if diff >= self.gc_content_threshold:
-                # Check if this is a local maximum (actual discontinuity)
+                # Check if this is a local maximum or start of high region
                 is_peak = True
                 
-                # Compare with neighbors (if they exist)
-                if i > 0 and gc_diffs[i-1] >= diff:
+                # Compare with neighbors (if they exist) - use > instead of >= to allow plateaus
+                if i > 0 and gc_diffs[i-1] > diff:
                     is_peak = False
-                if i < len(gc_diffs) - 1 and gc_diffs[i+1] >= diff:
+                if i < len(gc_diffs) - 1 and gc_diffs[i+1] > diff:
                     is_peak = False
+                    
+                # Also accept the start of a high plateau (prev value much lower)
+                if not is_peak and i > 0:
+                    if gc_diffs[i-1] < self.gc_content_threshold and diff >= self.gc_content_threshold:
+                        is_peak = True  # Start of high region
                 
                 if is_peak:
                     # Calculate position as the boundary between windows
