@@ -365,3 +365,22 @@
 2025-06-16 16:07:13,041 - chimeric_detective - INFO - Report generated: demo_results/chimeric_detective_report.html
 2025-06-16 16:07:13,044 - chimeric_detective - INFO - Co-assembly analysis completed successfully!
 2025-06-16 16:07:13,052 - chimeric_detective - INFO - Analysis completed successfully!
+2025-06-16 16:31:40,374 - chimeric_detective - INFO - Starting Chimeric Detective v1.0.0
+2025-06-16 16:31:40,376 - chimeric_detective - INFO - Command: /ref/sahlab/software/miniforge3/envs/ccd_env/bin/chimeric_detective -a test_data_large/large_test_assembly.fasta --reads-dir test_data_large/reads --reads-pattern *_R{1,2}.fastq.gz --log-level DEBUG -o demo_results/
+2025-06-16 16:31:40,420 - chimeric_detective - WARNING - Missing optional tools: bwa
+2025-06-16 16:31:40,422 - chimeric_detective - WARNING - Some functionality may be limited
+2025-06-16 16:31:40,423 - chimeric_detective - INFO - 🔬 Starting multi-sample analysis
+2025-06-16 16:31:40,424 - chimeric_detective - INFO - Processing mode: coassembly
+2025-06-16 16:31:40,425 - chimeric_detective - INFO - Max workers: 4
+2025-06-16 16:31:40,427 - chimeric_detective - INFO - Processing samples from directory: test_data_large/reads
+2025-06-16 16:31:40,431 - chimeric_detective - INFO - Using pattern: *_R{1,2}.fastq.gz
+2025-06-16 16:31:40,432 - chimeric_detective - INFO - Processing mode: coassembly
+2025-06-16 16:31:40,438 - chimeric_detective - INFO - Found 8 samples
+2025-06-16 16:31:40,439 - chimeric_detective - INFO - Processing co-assembly with 8 samples
+2025-06-16 16:31:40,441 - chimeric_detective - INFO - Mapping all samples to co-assembly
+2025-06-16 16:31:40,443 - chimeric_detective - INFO - Running chimera detection for each sample
+2025-06-16 16:31:40,449 - chimeric_detective - INFO - Starting chimera detection
+2025-06-16 16:31:40,482 - chimeric_detective - INFO - Loaded 28 contigs from assembly
+2025-06-16 16:31:40,483 - chimeric_detective - INFO - Aligning reads to assembly
+2025-06-16 16:31:40,777 - chimeric_detective - INFO - Successfully aligned reads using minimap2
+2025-06-16 16:31:41,189 - chimeric_detective - ERROR - Pipeline failed: start out of range (-238)
