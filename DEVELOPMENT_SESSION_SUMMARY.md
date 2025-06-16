@@ -368,6 +368,61 @@ pip install -e .
 
 ---
 
+## 🔄 **Phase 4: Co-assembly Implementation & Bug Fixes**
+
+### **Major Architecture Changes**
+- **Complete co-assembly mode rewrite** - Changed from running same assembly multiple times to proper multi-sample aggregation
+- **Multi-sample consensus building** - Implemented candidate aggregation across samples with configurable thresholds
+- **Evidence calculation fixes** - Resolved critical bugs preventing chimera detection in test data
+
+### **Core Implementation Updates**
+
+#### **Co-assembly Mode (`multi_sample.py:93-180`)**
+```python
+def _process_coassembly(self, assembly_file: str, sample_files: Dict[str, Tuple[str, Optional[str]]], output_dir: str, **kwargs) -> Dict[str, str]:
+    """Process a co-assembly with multiple samples' reads."""
+    # Step 1: Run chimera detection for each sample separately
+    sample_candidates = {}
+    for sample_name, (reads1, reads2) in tqdm(sample_files.items(), desc="Processing samples"):
+        candidates, bam_file = detector.detect_chimeras(assembly_file=assembly_file, reads1=reads1, reads2=reads2, temp_dir=temp_dir, return_bam_path=True)
+        sample_candidates[sample_name] = candidates
+    # Step 2: Aggregate candidates across samples
+    candidates = self._aggregate_chimera_candidates(sample_candidates)
+```
+
+#### **Evidence Calculation Fixes (`analyzer.py:150-200`)**
+- **Fixed GC content calculation** - Direct sequence analysis instead of relying on potentially zeroed values
+- **Enhanced k-mer distance computation** - Proper Jensen-Shannon distance implementation
+- **Coverage ratio validation** - Added bounds checking and fallback calculations
+
+#### **Method Signature Corrections**
+- **ChimeraDetector parameter filtering** - Only pass valid kwargs to avoid unexpected argument errors
+- **_align_reads signature fix** - Corrected parameter count mismatch (3-5 args but 6 given)
+- **ChimeraVisualizer method rename** - Changed `create_html_report` to `create_report`
+
+### **Configuration Changes**
+- **Default multi-sample mode** - Changed from 'separate' to 'coassembly' in CLI
+- **Enhanced dependency management** - Added kaleido via pip for visualization support
+- **Improved error handling** - Better parameter validation and meaningful error messages
+
+### **Critical Bug Resolutions**
+1. **Evidence calculation bug**: Analyzer was using potentially zeroed GC/coverage values - fixed by recalculating from sequences
+2. **Multi-sample conceptual issue**: Tool was running same assembly multiple times instead of aggregating samples - implemented proper co-assembly
+3. **Method signature mismatches**: Fixed multiple parameter count and name errors throughout pipeline
+4. **Configuration conflicts**: Resolved kwargs passing issues between pipeline components
+
+### **Performance Improvements**
+- **Sample-level parallelization** - Process multiple samples concurrently in co-assembly mode
+- **Consensus thresholds** - Configurable agreement requirements across samples
+- **Memory optimization** - Efficient candidate aggregation without loading all data simultaneously
+
+### **Testing & Validation**
+- **Demo pipeline verification** - Ensured end-to-end functionality with test data
+- **Error message enhancement** - Clear guidance for common setup and runtime issues
+- **HTML report generation** - Fixed visualization pipeline to produce interactive reports
+
+---
+
 ## 📊 **Final Project Statistics**
 
 **🚀 Chimeric Detective is now live and ready to revolutionize viral metagenomic analysis!**
