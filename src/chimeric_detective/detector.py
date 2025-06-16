@@ -336,7 +336,14 @@ class ChimeraDetector:
     
     def _refine_breakpoint(self, sequence: str, initial_pos: int, window: int = 100) -> int:
         """Critical Fix #1: Actually refine breakpoint position at nucleotide resolution."""
-        if initial_pos < window or initial_pos > len(sequence) - window:
+        # Ensure we have sufficient sequence on both sides for analysis
+        min_margin = 50
+        if initial_pos < min_margin or initial_pos > len(sequence) - min_margin:
+            return initial_pos
+        
+        # Limit refinement window to avoid out-of-bounds issues
+        safe_window = min(window, initial_pos - min_margin, len(sequence) - initial_pos - min_margin)
+        if safe_window < 10:  # Too small to be meaningful
             return initial_pos
         
         # Analyze GC/k-mer patterns at 1bp resolution around initial_pos
@@ -344,13 +351,17 @@ class ChimeraDetector:
         best_position = initial_pos
         
         # Scan in fine resolution around the initial position
-        for pos in range(initial_pos - window, initial_pos + window + 1):
-            if pos < 50 or pos > len(sequence) - 50:
+        for pos in range(initial_pos - safe_window, initial_pos + safe_window + 1):
+            if pos < min_margin or pos > len(sequence) - min_margin:
                 continue
             
-            # Calculate GC content discontinuity at this position
-            left_seq = sequence[max(0, pos-50):pos]
-            right_seq = sequence[pos:min(len(sequence), pos+50)]
+            # Calculate GC content discontinuity at this position with safe bounds
+            analysis_size = min(50, pos, len(sequence) - pos)
+            if analysis_size < 20:  # Need minimum sequence for meaningful analysis
+                continue
+                
+            left_seq = sequence[pos-analysis_size:pos]
+            right_seq = sequence[pos:pos+analysis_size]
             
             if len(left_seq) >= 20 and len(right_seq) >= 20:
                 left_gc = (left_seq.count('G') + left_seq.count('C')) / len(left_seq)
@@ -406,13 +417,22 @@ class ChimeraDetector:
     
     def _quick_signal_check(self, sequence: str, pos: int, window: int = 100) -> bool:
         """Quick check for potential breakpoint signal at a position."""
-        if pos < window or pos > len(sequence) - window:
+        min_margin = 25  # Minimum sequence needed for meaningful GC analysis
+        if pos < min_margin or pos > len(sequence) - min_margin:
             return False
         
-        left_seq = sequence[pos-window:pos]
-        right_seq = sequence[pos:pos+window]
+        # Use safe window size
+        safe_window = min(window, pos, len(sequence) - pos)
+        if safe_window < min_margin:
+            return False
+        
+        left_seq = sequence[pos-safe_window:pos]
+        right_seq = sequence[pos:pos+safe_window]
         
         # Quick GC content check
+        if len(left_seq) < min_margin or len(right_seq) < min_margin:
+            return False
+            
         left_gc = (left_seq.count('G') + left_seq.count('C')) / len(left_seq)
         right_gc = (right_seq.count('G') + right_seq.count('C')) / len(right_seq)
         
@@ -697,9 +717,20 @@ class ChimeraDetector:
         # Calculate evidence scores with adaptive window
         evidence_types = []
         
-        # Coverage evidence
-        left_cov = np.mean(coverage[max(0, breakpoint-window_size):breakpoint])
-        right_cov = np.mean(coverage[breakpoint:min(len(coverage), breakpoint+window_size)])
+        # Ensure breakpoint is within valid bounds for analysis
+        if breakpoint < 50 or breakpoint > len(sequence) - 50:
+            return None
+        
+        # Use smaller analysis window to avoid out-of-bounds errors  
+        analysis_window = min(window_size, breakpoint, len(sequence) - breakpoint) // 2
+        analysis_window = max(25, analysis_window)  # Minimum 25bp window
+        
+        # Coverage evidence with safe bounds
+        left_start = max(0, breakpoint - analysis_window)
+        right_end = min(len(coverage), breakpoint + analysis_window)
+        
+        left_cov = np.mean(coverage[left_start:breakpoint]) if left_start < breakpoint else 0.0
+        right_cov = np.mean(coverage[breakpoint:right_end]) if breakpoint < right_end else 0.0
         
         cov_fold_change = 1.0
         if left_cov > 0 and right_cov > 0:
@@ -707,9 +738,13 @@ class ChimeraDetector:
             if cov_fold_change >= self.coverage_fold_change:
                 evidence_types.append("coverage_discontinuity")
         
-        # GC content evidence using high-resolution analysis
-        left_seq = sequence[max(0, breakpoint-50):breakpoint]
-        right_seq = sequence[breakpoint:min(len(sequence), breakpoint+50)]
+        # GC content evidence using high-resolution analysis with safe bounds
+        seq_window = min(50, analysis_window)
+        left_seq_start = max(0, breakpoint - seq_window)
+        right_seq_end = min(len(sequence), breakpoint + seq_window)
+        
+        left_seq = sequence[left_seq_start:breakpoint]
+        right_seq = sequence[breakpoint:right_seq_end]
         
         left_gc = 0.0
         right_gc = 0.0
