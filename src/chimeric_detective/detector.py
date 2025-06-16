@@ -323,45 +323,90 @@ class ChimeraDetector:
         return breakpoints
     
     def _detect_gc_breakpoints(self, gc_profile: List[float]) -> List[int]:
-        """Detect potential breakpoints based on GC content changes."""
+        """Detect potential breakpoints based on GC content changes using signal analysis."""
         breakpoints = []
         
         if len(gc_profile) < 4:
             return breakpoints
         
-        # Convert to positions in the sequence
-        step = self.window_size // 2
+        # Calculate GC differences between adjacent windows
+        gc_diffs = []
+        for i in range(len(gc_profile) - 1):
+            diff = abs(gc_profile[i+1] - gc_profile[i])
+            gc_diffs.append(diff)
         
-        for i in range(1, len(gc_profile) - 1):
-            left_gc = gc_profile[i-1]
-            right_gc = gc_profile[i+1]
-            
-            gc_diff = abs(left_gc - right_gc)
-            if gc_diff >= self.gc_content_threshold:
-                position = i * step
-                breakpoints.append(position)
+        # Find peaks in GC differences that exceed threshold
+        step = self.window_size // 2  # Position increment between windows
+        
+        for i, diff in enumerate(gc_diffs):
+            if diff >= self.gc_content_threshold:
+                # Check if this is a local maximum (actual discontinuity)
+                is_peak = True
+                
+                # Compare with neighbors (if they exist)
+                if i > 0 and gc_diffs[i-1] >= diff:
+                    is_peak = False
+                if i < len(gc_diffs) - 1 and gc_diffs[i+1] >= diff:
+                    is_peak = False
+                
+                if is_peak:
+                    # Calculate position as the boundary between windows
+                    position = (i + 1) * step
+                    
+                    # Refine breakpoint position by analyzing at higher resolution
+                    refined_position = self._refine_gc_breakpoint(gc_profile, i, step, position)
+                    breakpoints.append(refined_position)
         
         return breakpoints
     
     def _detect_kmer_breakpoints(self, kmer_profile: List[Dict[str, int]]) -> List[int]:
-        """Detect potential breakpoints based on k-mer composition changes."""
+        """Detect potential breakpoints based on k-mer composition changes using signal analysis."""
         breakpoints = []
         
-        if len(kmer_profile) < 4:
+        if len(kmer_profile) < 2:
             return breakpoints
         
-        step = self.step_size
+        # Calculate k-mer distances between adjacent windows
+        kmer_dists = []
+        for i in range(len(kmer_profile) - 1):
+            dist = calculate_kmer_distance(kmer_profile[i], kmer_profile[i+1])
+            kmer_dists.append(dist)
         
-        for i in range(1, len(kmer_profile) - 1):
-            left_kmers = kmer_profile[i-1]
-            right_kmers = kmer_profile[i+1]
-            
-            kmer_dist = calculate_kmer_distance(left_kmers, right_kmers)
-            if kmer_dist >= self.kmer_distance_threshold:
-                position = i * step
-                breakpoints.append(position)
+        # Find peaks in k-mer distances that exceed threshold
+        step = self.step_size  # Position increment between windows
+        
+        for i, dist in enumerate(kmer_dists):
+            if dist >= self.kmer_distance_threshold:
+                # Check if this is a local maximum (actual discontinuity)
+                is_peak = True
+                
+                # Compare with neighbors (if they exist) 
+                if i > 0 and kmer_dists[i-1] >= dist:
+                    is_peak = False
+                if i < len(kmer_dists) - 1 and kmer_dists[i+1] >= dist:
+                    is_peak = False
+                
+                if is_peak:
+                    # Calculate position as the boundary between windows
+                    position = (i + 1) * step
+                    
+                    # Refine breakpoint position by analyzing at higher resolution
+                    refined_position = self._refine_kmer_breakpoint(kmer_profile, i, step, position)
+                    breakpoints.append(refined_position)
         
         return breakpoints
+    
+    def _refine_gc_breakpoint(self, gc_profile: List[float], peak_idx: int, step: int, initial_position: int) -> int:
+        """Refine GC breakpoint position by analyzing at higher resolution."""
+        # For now, return the window boundary position
+        # Future enhancement: analyze GC content at single nucleotide resolution around this position
+        return initial_position
+    
+    def _refine_kmer_breakpoint(self, kmer_profile: List[Dict[str, int]], peak_idx: int, step: int, initial_position: int) -> int:
+        """Refine k-mer breakpoint position by analyzing at higher resolution."""
+        # For now, return the window boundary position  
+        # Future enhancement: analyze k-mer composition at higher resolution around this position
+        return initial_position
     
     def _evaluate_breakpoint(self, 
                            contig_id: str,
