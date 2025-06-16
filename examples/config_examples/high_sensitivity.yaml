@@ -1,0 +1,17 @@
+# High Sensitivity Configuration
+# Detects more chimeras but may have more false positives
+
+detection:
+  coverage_fold_change: 1.4        # Lower threshold = more sensitive
+  gc_content_threshold: 0.07       # More sensitive to GC changes
+  kmer_distance_threshold: 0.21    # More sensitive to k-mer differences
+  confidence_threshold: 0.4        # Lower confidence threshold
+
+behavior:
+  sensitivity: "high"              # High sensitivity mode
+  split_technical: true
+  split_pcr: true
+  preserve_biological: true        # Still preserve biological events
+
+output:
+  log_level: "DEBUG"              # More verbose logging for analysis

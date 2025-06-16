@@ -21,9 +21,18 @@ from .utils import (
     parse_reads_pattern, setup_logging
 )
 from .multi_sample import MultiSampleProcessor
+from .config import ConfigManager
 
 
 @click.command()
+@click.option('--config', '-c', type=click.Path(exists=True),
+              help='Configuration file (YAML or JSON)')
+@click.option('--preset', type=click.Choice(['small', 'large', 'sensitive', 'conservative', 'hpc', 'development']),
+              help='Use predefined configuration preset')
+@click.option('--generate-config', type=click.Path(),
+              help='Generate a configuration file with current settings and exit')
+@click.option('--list-presets', is_flag=True,
+              help='List available configuration presets and exit')
 @click.option('--assembly', '-a', required=True, type=click.Path(exists=True),
               help='Input assembly file in FASTA format')
 @click.option('--bam', '-b', type=click.Path(exists=True),
@@ -96,6 +105,20 @@ def main(**kwargs):
     With single-end reads:
         chimeric_detective -a assembly.fasta -r reads.fastq.gz -o results/
     
+    CONFIGURATION USAGE:
+    
+    With configuration file:
+        chimeric_detective -a assembly.fasta -1 reads_R1.fastq.gz -2 reads_R2.fastq.gz -c config.yaml -o results/
+    
+    With preset configuration:
+        chimeric_detective -a assembly.fasta -1 reads_R1.fastq.gz -2 reads_R2.fastq.gz --preset large -o results/
+    
+    Generate configuration file:
+        chimeric_detective --generate-config myconfig.yaml
+    
+    List available presets:
+        chimeric_detective --list-presets
+    
     MULTI-SAMPLE USAGE:
     
     With multiple samples (separate analysis):
@@ -115,36 +138,78 @@ def main(**kwargs):
                           --min-coverage 10 --threads 8 -o results/
     """
     try:
+        # Handle special commands first
+        if kwargs.get('list_presets'):
+            _list_presets()
+            return
+        
+        if kwargs.get('generate_config'):
+            _generate_config(kwargs)
+            return
+        
+        # Initialize configuration manager
+        config_manager = ConfigManager()
+        
+        # Load configuration from various sources (in order of precedence)
+        # 1. Auto-load from default locations
+        auto_config_path = config_manager.auto_load_config()
+        if auto_config_path:
+            click.echo(f"📁 Auto-loaded configuration from: {auto_config_path}")
+        
+        # 2. Load preset if specified
+        if kwargs.get('preset'):
+            config_manager.load_preset(kwargs['preset'])
+            click.echo(f"⚙️  Applied preset: {kwargs['preset']}")
+        
+        # 3. Load config file if specified (overrides preset)
+        if kwargs.get('config'):
+            config_manager.load_config(kwargs['config'])
+            click.echo(f"📁 Loaded configuration from: {kwargs['config']}")
+        
+        # 4. Apply environment variable overrides
+        config_manager.apply_env_overrides()
+        
+        # 5. Apply CLI argument overrides (highest precedence)
+        _apply_cli_overrides(config_manager, kwargs)
+        
+        # Validate final configuration
+        config_manager.validate_config()
+        
+        # Merge configuration with CLI arguments
+        merged_kwargs = config_manager.to_cli_args()
+        # CLI arguments override config (keep original CLI values if provided)
+        for key, value in kwargs.items():
+            if value is not None and key not in ['config', 'preset', 'generate_config', 'list_presets']:
+                merged_kwargs[key] = value
         # Create output directory first (needed for log file)
-        create_output_directory(kwargs['out'])
+        create_output_directory(merged_kwargs['out'])
         
         # Setup logging
-        log_file = Path(kwargs['out']) / 'chimeric_detective.log' if kwargs['out'] else None
-        logger = setup_logging(kwargs['log_level'], str(log_file) if log_file else None)
+        log_file = Path(merged_kwargs['out']) / 'chimeric_detective.log' if merged_kwargs['out'] else None
+        logger = setup_logging(merged_kwargs['log_level'], str(log_file) if log_file else None)
         
         logger.info(f"Starting Chimeric Detective v{__version__}")
         logger.info(f"Command: {' '.join(sys.argv)}")
         
         # Validate inputs and setup
-        _validate_inputs(**kwargs)
+        _validate_inputs(**merged_kwargs)
         _check_dependencies(logger)
         
         # Adjust parameters based on sensitivity
-        detector_params, analyzer_params = _adjust_sensitivity_parameters(kwargs)
+        detector_params, analyzer_params = _adjust_sensitivity_parameters(merged_kwargs)
         
-        # Merge parameters to avoid conflicts
-        merged_kwargs = kwargs.copy()
+        # Apply sensitivity adjustments to merged config
         merged_kwargs.update(detector_params)
         merged_kwargs.update(analyzer_params)
         
         # Check if this is multi-sample processing
-        if kwargs['reads_dir']:
+        if merged_kwargs['reads_dir']:
             _run_multi_sample_pipeline(logger, **merged_kwargs)
         else:
             _run_pipeline(logger, **merged_kwargs)
         
         logger.info("Analysis completed successfully!")
-        click.echo(f"✅ Results written to: {kwargs['out']}")
+        click.echo(f"✅ Results written to: {merged_kwargs['out']}")
         
     except Exception as e:
         if 'logger' in locals():
@@ -492,6 +557,106 @@ def _print_multi_sample_summary(results: Dict[str, str], processing_mode: str):
     click.echo(f"   - Adjust --max-workers based on your system resources")
     
     click.echo("\n🎉 Multi-sample analysis complete!")
+
+
+def _list_presets():
+    """List available configuration presets."""
+    click.echo("🎛️  Available Configuration Presets:\n")
+    
+    presets = ConfigManager.list_presets()
+    for name, description in presets.items():
+        click.echo(f"  {name:12} - {description}")
+    
+    click.echo(f"\nUsage: chimeric_detective --preset <name> [other options]")
+    click.echo(f"Example: chimeric_detective --preset large -a assembly.fasta -1 reads_R1.fastq.gz -2 reads_R2.fastq.gz -o results/")
+
+
+def _generate_config(kwargs):
+    """Generate a configuration file with current settings."""
+    config_path = kwargs['generate_config']
+    
+    # Initialize config manager and apply any settings
+    config_manager = ConfigManager()
+    
+    # Apply preset if specified
+    if kwargs.get('preset'):
+        config_manager.load_preset(kwargs['preset'])
+    
+    # Apply CLI overrides
+    _apply_cli_overrides(config_manager, kwargs)
+    
+    # Determine format from file extension
+    config_path = Path(config_path)
+    if config_path.suffix.lower() in ['.yaml', '.yml']:
+        format_type = 'yaml'
+    elif config_path.suffix.lower() == '.json':
+        format_type = 'json'
+    else:
+        # Default to YAML if no extension
+        format_type = 'yaml'
+        if not config_path.suffix:
+            config_path = config_path.with_suffix('.yaml')
+    
+    try:
+        config_manager.save_config(config_path, format_type)
+        click.echo(f"✅ Configuration file generated: {config_path}")
+        click.echo(f"📝 Edit the file to customize settings, then use: --config {config_path}")
+    except Exception as e:
+        click.echo(f"❌ Failed to generate configuration file: {e}", err=True)
+        sys.exit(1)
+
+
+def _apply_cli_overrides(config_manager: ConfigManager, kwargs):
+    """Apply CLI argument overrides to configuration."""
+    # Detection parameters
+    if kwargs.get('min_contig_length') is not None:
+        config_manager.config.detection.min_contig_length = kwargs['min_contig_length']
+    if kwargs.get('min_coverage') is not None:
+        config_manager.config.detection.min_coverage = kwargs['min_coverage']
+    if kwargs.get('coverage_fold_change') is not None:
+        config_manager.config.detection.coverage_fold_change = kwargs['coverage_fold_change']
+    if kwargs.get('gc_content_threshold') is not None:
+        config_manager.config.detection.gc_content_threshold = kwargs['gc_content_threshold']
+    if kwargs.get('kmer_distance_threshold') is not None:
+        config_manager.config.detection.kmer_distance_threshold = kwargs['kmer_distance_threshold']
+    if kwargs.get('confidence_threshold') is not None:
+        config_manager.config.detection.confidence_threshold = kwargs['confidence_threshold']
+    if kwargs.get('min_split_length') is not None:
+        config_manager.config.detection.min_split_length = kwargs['min_split_length']
+    
+    # Processing parameters
+    if kwargs.get('threads') is not None:
+        config_manager.config.processing.threads = kwargs['threads']
+    if kwargs.get('max_workers') is not None:
+        config_manager.config.processing.max_workers = kwargs['max_workers']
+    if kwargs.get('parallel') is not None:
+        config_manager.config.processing.parallel = kwargs['parallel']
+    if kwargs.get('keep_intermediates') is not None:
+        config_manager.config.processing.keep_intermediates = kwargs['keep_intermediates']
+    if kwargs.get('batch_size') is not None:
+        config_manager.config.processing.batch_size = kwargs['batch_size']
+    
+    # Output parameters
+    if kwargs.get('generate_report') is not None:
+        config_manager.config.output.generate_report = kwargs['generate_report']
+    if kwargs.get('log_level') is not None:
+        config_manager.config.output.log_level = kwargs['log_level']
+    
+    # Behavior parameters
+    if kwargs.get('split_technical') is not None:
+        config_manager.config.behavior.split_technical = kwargs['split_technical']
+    if kwargs.get('split_pcr') is not None:
+        config_manager.config.behavior.split_pcr = kwargs['split_pcr']
+    if kwargs.get('preserve_biological') is not None:
+        config_manager.config.behavior.preserve_biological = kwargs['preserve_biological']
+    if kwargs.get('sensitivity') is not None:
+        config_manager.config.behavior.sensitivity = kwargs['sensitivity']
+    
+    # Multi-sample parameters
+    if kwargs.get('multi_sample_mode') is not None:
+        config_manager.config.multi_sample.multi_sample_mode = kwargs['multi_sample_mode']
+    if kwargs.get('reads_pattern') is not None:
+        config_manager.config.multi_sample.reads_pattern = kwargs['reads_pattern']
 
 
 if __name__ == '__main__':

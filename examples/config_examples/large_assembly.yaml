@@ -1,0 +1,19 @@
+# Configuration for Large Assemblies (>500MB, >25K contigs)
+# Optimized for memory efficiency and performance on large datasets
+
+detection:
+  min_contig_length: 2000          # Higher threshold to reduce memory usage
+  min_coverage: 5.0
+  confidence_threshold: 0.6        # Slightly more conservative
+
+processing:
+  max_workers: 4                   # Limit workers to manage memory
+  threads: 2                       # Moderate threading
+  batch_size: 3                    # Smaller batches for memory efficiency
+  keep_intermediates: false        # Don't keep intermediates to save space
+
+behavior:
+  sensitivity: "medium"            # Balanced sensitivity for large data
+
+multi_sample:
+  multi_sample_mode: "batch"       # Use batch mode for memory efficiency

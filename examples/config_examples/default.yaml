@@ -1,0 +1,37 @@
+# Chimeric Detective Default Configuration
+# This file contains all available configuration options with their default values.
+
+# Detection algorithm parameters
+detection:
+  min_contig_length: 1000          # Minimum contig length to analyze (bp)
+  min_coverage: 5.0                # Minimum coverage threshold
+  coverage_fold_change: 2.0        # Minimum coverage fold change to consider
+  gc_content_threshold: 0.1        # Minimum GC content difference threshold
+  kmer_distance_threshold: 0.3     # Minimum k-mer distance threshold
+  confidence_threshold: 0.5        # Minimum confidence threshold for splitting
+  min_split_length: 500            # Minimum length for split contigs (bp)
+
+# Processing and performance settings
+processing:
+  threads: 1                       # Number of threads to use
+  max_workers: 4                   # Maximum parallel workers for multi-sample processing
+  parallel: true                   # Enable parallel processing of samples
+  keep_intermediates: false        # Keep intermediate files
+  batch_size: 5                    # Batch size for batch processing mode
+
+# Output and reporting settings
+output:
+  generate_report: true            # Generate interactive HTML report
+  log_level: "INFO"               # Logging level (DEBUG, INFO, WARNING, ERROR)
+
+# Chimera resolution behavior
+behavior:
+  split_technical: true            # Split technical artifacts
+  split_pcr: true                 # Split PCR chimeras
+  preserve_biological: true       # Preserve biological recombination
+  sensitivity: "medium"           # Detection sensitivity level (low, medium, high)
+
+# Multi-sample processing settings
+multi_sample:
+  multi_sample_mode: "separate"   # How to process multiple samples (separate, merged, batch)
+  reads_pattern: "*_R{1,2}.fastq.gz"  # Pattern for finding read files

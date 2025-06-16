@@ -1,0 +1,19 @@
+# HPC/SLURM Configuration
+# Optimized for high-performance computing environments with limited memory
+
+detection:
+  min_contig_length: 1500          # Moderate filtering
+  min_coverage: 4.0
+
+processing:
+  max_workers: 2                   # Conservative for memory limits
+  threads: 1                       # Single thread per worker
+  parallel: true
+  batch_size: 2                    # Small batches
+  keep_intermediates: false        # Clean up to save space
+
+behavior:
+  sensitivity: "medium"
+
+output:
+  log_level: "INFO"               # Standard logging to avoid log file bloat
