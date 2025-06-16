@@ -615,16 +615,24 @@ class ChimeraVisualizer:
             <h2>📊 Summary Visualizations</h2>
             
             <h3>Chimera Type Distribution</h3>
-            <iframe src="figures/chimera_types.html" class="plot-container"></iframe>
+            <div class="plot-container">
+                {{ chimera_types_plot | safe }}
+            </div>
             
             <h3>Confidence Score Distributions</h3>
-            <iframe src="figures/confidence_distribution.html" class="plot-container"></iframe>
+            <div class="plot-container">
+                {{ confidence_distribution_plot | safe }}
+            </div>
             
             <h3>Decision Summary</h3>
-            <iframe src="figures/decision_summary.html" class="plot-container"></iframe>
+            <div class="plot-container">
+                {{ decision_summary_plot | safe }}
+            </div>
             
             <h3>Evidence Types Overview</h3>
-            <iframe src="figures/evidence_overview.html" class="plot-container"></iframe>
+            <div class="plot-container">
+                {{ evidence_overview_plot | safe }}
+            </div>
         </div>
         
         <div class="plot-section">
@@ -718,6 +726,38 @@ class ChimeraVisualizer:
         # Create decisions lookup for template
         decisions_dict = {d.contig_id: d for d in decisions}
         
+        # Read plot HTML content for direct embedding
+        plot_content = {}
+        figures_dir = output_dir / "figures"
+        
+        # Read each plot's HTML content
+        plot_files = {
+            'chimera_types_plot': 'chimera_types.html',
+            'confidence_distribution_plot': 'confidence_distribution.html', 
+            'decision_summary_plot': 'decision_summary.html',
+            'evidence_overview_plot': 'evidence_overview.html'
+        }
+        
+        for template_var, filename in plot_files.items():
+            plot_path = figures_dir / filename
+            if plot_path.exists():
+                try:
+                    with open(plot_path, 'r', encoding='utf-8') as f:
+                        # Read the plot HTML and extract just the plot div content
+                        plot_html = f.read()
+                        # Extract the plotly div content (between <body> tags)
+                        import re
+                        body_match = re.search(r'<body[^>]*>(.*?)</body>', plot_html, re.DOTALL)
+                        if body_match:
+                            plot_content[template_var] = body_match.group(1)
+                        else:
+                            plot_content[template_var] = plot_html
+                except Exception as e:
+                    self.logger.warning(f"Could not read plot file {filename}: {e}")
+                    plot_content[template_var] = f"<p>Plot could not be loaded: {filename}</p>"
+            else:
+                plot_content[template_var] = f"<p>Plot file not found: {filename}</p>"
+        
         # Render template
         template = Template(template_str)
         html_content = template.render(
@@ -725,7 +765,8 @@ class ChimeraVisualizer:
             decisions=decisions,
             decisions_dict=decisions_dict,
             summary_stats=summary_stats,
-            plots=plots
+            plots=plots,
+            **plot_content
         )
         
         # Write HTML file
