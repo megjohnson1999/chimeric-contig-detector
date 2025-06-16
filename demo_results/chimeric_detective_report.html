@@ -1,0 +1,558 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chimeric Detective Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid #4CAF50;
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+        .plot-section {
+            margin-bottom: 40px;
+        }
+        .plot-container {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .details-table th, .details-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .details-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .details-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .confidence-high { color: #28a745; font-weight: bold; }
+        .confidence-medium { color: #ffc107; font-weight: bold; }
+        .confidence-low { color: #dc3545; font-weight: bold; }
+        .action-split { color: #dc3545; font-weight: bold; }
+        .action-preserve { color: #28a745; font-weight: bold; }
+        .action-flag { color: #ffc107; font-weight: bold; }
+        .explanation-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔬 Chimeric Detective Report</h1>
+            <p>Comprehensive Analysis of Chimeric Contigs in Viral Metagenomic Assembly</p>
+        </div>
+        
+        <div class="summary-stats">
+            <div class="stat-card">
+                <div class="stat-number">15</div>
+                <div class="stat-label">Contigs Analyzed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">0</div>
+                <div class="stat-label">Contigs Split</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">5</div>
+                <div class="stat-label">Contigs Preserved</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">0.47</div>
+                <div class="stat-label">Mean Confidence</div>
+            </div>
+        </div>
+        
+        <div class="plot-section">
+            <h2>📊 Summary Visualizations</h2>
+            
+            <h3>Chimera Type Distribution</h3>
+            <iframe src="figures/chimera_types.html" class="plot-container"></iframe>
+            
+            <h3>Confidence Score Distributions</h3>
+            <iframe src="figures/confidence_distribution.html" class="plot-container"></iframe>
+            
+            <h3>Decision Summary</h3>
+            <iframe src="figures/decision_summary.html" class="plot-container"></iframe>
+            
+            <h3>Evidence Types Overview</h3>
+            <iframe src="figures/evidence_overview.html" class="plot-container"></iframe>
+        </div>
+        
+        <div class="plot-section">
+            <h2>🔍 Detailed Analysis Results</h2>
+            
+            <table class="details-table">
+                <thead>
+                    <tr>
+                        <th>Contig ID</th>
+                        <th>Chimera Type</th>
+                        <th>Confidence</th>
+                        <th>Decision</th>
+                        <th>Breakpoint</th>
+                        <th>Evidence Types</th>
+                        <th>Explanation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <td>chimeric_001</td>
+                        <td>technical_artifact</td>
+                        <td class="confidence-low">
+                            0.5
+                        </td>
+                        <td class="action-preserve">
+                            PRESERVE
+                        </td>
+                        <td>1000</td>
+                        <td>gc_content_shift, kmer_composition_change</td>
+                        <td>
+                            <div class="explanation-box">
+                                Contig chimeric_001 shows clear evidence of being a technical chimera resulting from misassembly. At position 1,000, there is a 1.2x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.38) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.77.
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>chimeric_001</td>
+                        <td>technical_artifact</td>
+                        <td class="confidence-low">
+                            0.4
+                        </td>
+                        <td class="action-preserve">
+                            PRESERVE
+                        </td>
+                        <td>1500</td>
+                        <td>gc_content_shift, kmer_composition_change</td>
+                        <td>
+                            <div class="explanation-box">
+                                Contig chimeric_001 shows clear evidence of being a technical chimera resulting from misassembly. At position 1,500, there is a 1.1x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.28) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.64.
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>chimeric_001</td>
+                        <td>technical_artifact</td>
+                        <td class="confidence-low">
+                            0.5
+                        </td>
+                        <td class="action-preserve">
+                            PRESERVE
+                        </td>
+                        <td>500</td>
+                        <td>gc_content_shift, kmer_composition_change</td>
+                        <td>
+                            <div class="explanation-box">
+                                Contig chimeric_001 shows clear evidence of being a technical chimera resulting from misassembly. At position 500, there is a 1.6x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.31) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.66.
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>chimeric_002</td>
+                        <td>technical_artifact</td>
+                        <td class="confidence-low">
+                            0.5
+                        </td>
+                        <td class="action-preserve">
+                            PRESERVE
+                        </td>
+                        <td>1000</td>
+                        <td>gc_content_shift, kmer_composition_change</td>
+                        <td>
+                            <div class="explanation-box">
+                                Contig chimeric_002 shows clear evidence of being a technical chimera resulting from misassembly. At position 1,000, there is a 1.2x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.33) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.77.
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>chimeric_002</td>
+                        <td>technical_artifact</td>
+                        <td class="confidence-low">
+                            0.4
+                        </td>
+                        <td class="action-preserve">
+                            PRESERVE
+                        </td>
+                        <td>1500</td>
+                        <td>gc_content_shift, kmer_composition_change</td>
+                        <td>
+                            <div class="explanation-box">
+                                Contig chimeric_002 shows clear evidence of being a technical chimera resulting from misassembly. At position 1,500, there is a 1.2x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.28) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.64.
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>chimeric_002</td>
+                        <td>technical_artifact</td>
+                        <td class="confidence-low">
+                            0.5
+                        </td>
+                        <td class="action-preserve">
+                            PRESERVE
+                        </td>
+                        <td>500</td>
+                        <td>gc_content_shift, kmer_composition_change</td>
+                        <td>
+                            <div class="explanation-box">
+                                Contig chimeric_002 shows clear evidence of being a technical chimera resulting from misassembly. At position 500, there is a 1.3x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.32) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.65.
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>chimeric_003</td>
+                        <td>technical_artifact</td>
+                        <td class="confidence-low">
+                            0.5
+                        </td>
+                        <td class="action-preserve">
+                            PRESERVE
+                        </td>
+                        <td>1000</td>
+                        <td>gc_content_shift, kmer_composition_change</td>
+                        <td>
+                            <div class="explanation-box">
+                                Contig chimeric_003 shows clear evidence of being a technical chimera resulting from misassembly. At position 1,000, there is a 1.2x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.28) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.78.
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>chimeric_003</td>
+                        <td>technical_artifact</td>
+                        <td class="confidence-low">
+                            0.4
+                        </td>
+                        <td class="action-preserve">
+                            PRESERVE
+                        </td>
+                        <td>1500</td>
+                        <td>gc_content_shift, kmer_composition_change</td>
+                        <td>
+                            <div class="explanation-box">
+                                Contig chimeric_003 shows clear evidence of being a technical chimera resulting from misassembly. At position 1,500, there is a 1.0x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.37) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.68.
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>chimeric_003</td>
+                        <td>technical_artifact</td>
+                        <td class="confidence-low">
+                            0.5
+                        </td>
+                        <td class="action-preserve">
+                            PRESERVE
+                        </td>
+                        <td>500</td>
+                        <td>gc_content_shift, kmer_composition_change</td>
+                        <td>
+                            <div class="explanation-box">
+                                Contig chimeric_003 shows clear evidence of being a technical chimera resulting from misassembly. At position 500, there is a 1.5x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.28) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.66.
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>chimeric_004</td>
+                        <td>technical_artifact</td>
+                        <td class="confidence-low">
+                            0.5
+                        </td>
+                        <td class="action-preserve">
+                            PRESERVE
+                        </td>
+                        <td>1000</td>
+                        <td>gc_content_shift, kmer_composition_change</td>
+                        <td>
+                            <div class="explanation-box">
+                                Contig chimeric_004 shows clear evidence of being a technical chimera resulting from misassembly. At position 1,000, there is a 1.1x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.38) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.77.
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>chimeric_004</td>
+                        <td>technical_artifact</td>
+                        <td class="confidence-low">
+                            0.4
+                        </td>
+                        <td class="action-preserve">
+                            PRESERVE
+                        </td>
+                        <td>1500</td>
+                        <td>gc_content_shift, kmer_composition_change</td>
+                        <td>
+                            <div class="explanation-box">
+                                Contig chimeric_004 shows clear evidence of being a technical chimera resulting from misassembly. At position 1,500, there is a 1.1x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.28) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.68.
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>chimeric_004</td>
+                        <td>technical_artifact</td>
+                        <td class="confidence-low">
+                            0.5
+                        </td>
+                        <td class="action-preserve">
+                            PRESERVE
+                        </td>
+                        <td>500</td>
+                        <td>gc_content_shift, kmer_composition_change</td>
+                        <td>
+                            <div class="explanation-box">
+                                Contig chimeric_004 shows clear evidence of being a technical chimera resulting from misassembly. At position 500, there is a 1.4x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.34) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.66.
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>chimeric_005</td>
+                        <td>technical_artifact</td>
+                        <td class="confidence-low">
+                            0.5
+                        </td>
+                        <td class="action-preserve">
+                            PRESERVE
+                        </td>
+                        <td>1000</td>
+                        <td>gc_content_shift, kmer_composition_change</td>
+                        <td>
+                            <div class="explanation-box">
+                                Contig chimeric_005 shows clear evidence of being a technical chimera resulting from misassembly. At position 1,000, there is a 1.2x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.23) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.79.
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>chimeric_005</td>
+                        <td>technical_artifact</td>
+                        <td class="confidence-low">
+                            0.4
+                        </td>
+                        <td class="action-preserve">
+                            PRESERVE
+                        </td>
+                        <td>1500</td>
+                        <td>gc_content_shift, kmer_composition_change</td>
+                        <td>
+                            <div class="explanation-box">
+                                Contig chimeric_005 shows clear evidence of being a technical chimera resulting from misassembly. At position 1,500, there is a 1.1x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.30) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.68.
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>chimeric_005</td>
+                        <td>technical_artifact</td>
+                        <td class="confidence-low">
+                            0.5
+                        </td>
+                        <td class="action-preserve">
+                            PRESERVE
+                        </td>
+                        <td>500</td>
+                        <td>gc_content_shift, kmer_composition_change</td>
+                        <td>
+                            <div class="explanation-box">
+                                Contig chimeric_005 shows clear evidence of being a technical chimera resulting from misassembly. At position 500, there is a 1.3x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.35) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.66.
+                            </div>
+                        </td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="plot-section">
+            <h2>📈 Individual Contig Details</h2>
+            <p>Click on the links below to view detailed analysis for each chimeric contig:</p>
+            <ul>
+                
+                <li>
+                    <a href="figures/chimeric_001_detailed.html" target="_blank">
+                        chimeric_001 - technical_artifact
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="figures/chimeric_001_detailed.html" target="_blank">
+                        chimeric_001 - technical_artifact
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="figures/chimeric_001_detailed.html" target="_blank">
+                        chimeric_001 - technical_artifact
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="figures/chimeric_002_detailed.html" target="_blank">
+                        chimeric_002 - technical_artifact
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="figures/chimeric_002_detailed.html" target="_blank">
+                        chimeric_002 - technical_artifact
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="figures/chimeric_002_detailed.html" target="_blank">
+                        chimeric_002 - technical_artifact
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="figures/chimeric_003_detailed.html" target="_blank">
+                        chimeric_003 - technical_artifact
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="figures/chimeric_003_detailed.html" target="_blank">
+                        chimeric_003 - technical_artifact
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="figures/chimeric_003_detailed.html" target="_blank">
+                        chimeric_003 - technical_artifact
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="figures/chimeric_004_detailed.html" target="_blank">
+                        chimeric_004 - technical_artifact
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="figures/chimeric_004_detailed.html" target="_blank">
+                        chimeric_004 - technical_artifact
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="figures/chimeric_004_detailed.html" target="_blank">
+                        chimeric_004 - technical_artifact
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="figures/chimeric_005_detailed.html" target="_blank">
+                        chimeric_005 - technical_artifact
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="figures/chimeric_005_detailed.html" target="_blank">
+                        chimeric_005 - technical_artifact
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="figures/chimeric_005_detailed.html" target="_blank">
+                        chimeric_005 - technical_artifact
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+        
+        <div class="plot-section">
+            <h2>ℹ️ Methodology & Interpretation</h2>
+            <div class="explanation-box">
+                <h3>Detection Methods</h3>
+                <p>Chimeric contigs are detected using multiple complementary approaches:</p>
+                <ul>
+                    <li><strong>Coverage Discontinuities:</strong> Sharp changes in read coverage depth</li>
+                    <li><strong>Sequence Composition:</strong> Changes in GC content and k-mer frequencies</li>
+                    <li><strong>Taxonomic Classification:</strong> Transitions between different viral/host lineages</li>
+                    <li><strong>Read Pair Orientation:</strong> Inconsistent paired-end read orientations</li>
+                </ul>
+                
+                <h3>Classification Categories</h3>
+                <ul>
+                    <li><strong>Technical Artifacts:</strong> Assembly errors, typically split</li>
+                    <li><strong>PCR Chimeras:</strong> Amplification artifacts, typically split</li>
+                    <li><strong>Biological Recombination:</strong> Genuine recombination events, preserved</li>
+                    <li><strong>Provirus Integration:</strong> Virus-host integration sites, flagged</li>
+                </ul>
+                
+                <h3>Confidence Scores</h3>
+                <p>Confidence scores range from 0-1, with higher scores indicating stronger evidence for the classification. 
+                Scores above 0.8 are considered high confidence, 0.5-0.8 medium confidence, and below 0.5 low confidence.</p>
+            </div>
+        </div>
+        
+        <footer style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; color: #666;">
+            <p>Generated by Chimeric Detective v1.0.0 | 
+            <a href="https://github.com/yourusername/chimeric-detective">Documentation</a></p>
+        </footer>
+    </div>
+</body>
+</html>
+        
