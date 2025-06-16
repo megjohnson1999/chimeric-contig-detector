@@ -1,0 +1,55 @@
+# Git and development files
+.git
+.github
+.gitignore
+*.md
+!README.md
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Test files and outputs
+tests/
+test_output/
+large_test_output/
+single_test_output/
+htmlcov/
+coverage.xml
+.coverage
+.pytest_cache/
+
+# Development tools
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+
+# Documentation
+docs/
+DEVELOPMENT_PLAN.md
+SESSION_SUMMARY_*.md
+
+# Test data (large files)
+test_data_large/
+*.fastq.gz
+*.bam
+*.sam
+
+# Local development files
+simple_detection_test.py
+create_test_dataset.py
+compare_checkv_ccd.py
+analyze_assembly_lengths.py

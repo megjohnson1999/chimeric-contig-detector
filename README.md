@@ -22,9 +22,43 @@ A comprehensive command-line tool for detecting, analyzing, explaining, and reso
 
 ## Installation
 
-### Option 1: Conda (Recommended)
+### Option 1: Docker (Recommended)
 
-Conda will automatically install all dependencies including external bioinformatics tools:
+The easiest way to get started with all dependencies pre-installed:
+
+```bash
+# Pull and run the container
+docker pull ghcr.io/megjohnson1999/chimeric-contig-detector:latest
+
+# Run analysis
+docker run --rm -v $(pwd):/data \
+    ghcr.io/megjohnson1999/chimeric-contig-detector:latest \
+    --assembly /data/assembly.fasta \
+    --reads-dir /data/reads \
+    --out /data/results
+```
+
+See [DOCKER.md](DOCKER.md) for detailed Docker usage instructions.
+
+### Option 2: PyPI (Python Package)
+
+Install from PyPI with automatic dependency management:
+
+```bash
+# Install the package
+pip install chimeric-detective
+
+# Install external bioinformatics tools
+conda install -c bioconda bwa minimap2 samtools
+# OR on Ubuntu/Debian:
+sudo apt-get install bwa minimap2 samtools ncbi-blast+
+# OR on macOS:
+brew install bwa minimap2 samtools blast
+```
+
+### Option 3: Conda Environment
+
+Full environment setup with all dependencies:
 
 ```bash
 # Clone the repository
@@ -35,31 +69,20 @@ cd chimeric-contig-detector
 conda env create -f environment.yml
 conda activate chimeric-detective
 
-# Install the package
+# Install the package in development mode
 pip install -e .
 ```
 
-### Option 2: Pip + Manual Dependencies
+### Option 4: From Source
 
-```bash
-# Install external tools manually (Ubuntu/Debian)
-sudo apt-get install bwa minimap2 samtools ncbi-blast+
-
-# Or on macOS with Homebrew
-brew install bwa minimap2 samtools blast
-
-# Install Python package
-pip install chimeric-detective
-```
-
-### Option 3: From Source
+For developers and contributors:
 
 ```bash
 git clone https://github.com/megjohnson1999/chimeric-contig-detector.git
 cd chimeric-contig-detector
 pip install -e .
 
-# You'll need to install external tools separately (see Option 2)
+# Install external tools separately (see Option 2)
 ```
 
 ### Dependencies
