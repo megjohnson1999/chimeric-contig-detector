@@ -528,6 +528,34 @@ conda install -c bioconda bwa minimap2 samtools
 - Process subsets of your assembly
 - Increase available memory
 
+#### 5. "Start out of range" Error
+```
+pipeline failed: start out of range (-238)
+```
+**Cause**: Window size larger than sequence length, creating negative range endpoints.
+
+**Solution**: This was fixed in v1.1.1. Update to the latest version:
+```bash
+git pull origin main
+```
+
+If you're still seeing this error:
+- Check that you have the latest code (commit a1af75a or later)
+- Verify your input sequences aren't extremely short
+- Consider increasing `--min-contig-length` to filter very short sequences
+
+#### 6. CI Test Failures
+If you're developing and seeing test failures:
+```bash
+# Run tests with proper Python path
+PYTHONPATH=/path/to/chimeric_detective/src python3 -m pytest
+
+# Check specific detector tests
+PYTHONPATH=/path/to/chimeric_detective/src python3 -m pytest tests/test_detector.py -v
+```
+
+**Expected**: All 80 tests should pass. If not, ensure you have the latest fixes from v1.1.1.
+
 ### Getting Help
 
 ```bash

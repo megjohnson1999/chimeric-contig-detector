@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2025-06-16
+
+### Fixed
+- **Critical Runtime Error**: Fixed "start out of range" crashes when window size exceeds sequence length
+- **CI Test Failures**: Improved GC breakpoint detection algorithm to handle plateaus of equal differences  
+- **Bounds Checking**: Added comprehensive range validation in profile calculation methods
+- **Test Compatibility**: All 80 tests now pass, ensuring robust CI/CD pipeline
+
+### Improved
+- **Error Handling**: Enhanced bounds checking prevents negative range endpoints
+- **Algorithm Robustness**: Better handling of edge cases with short sequences
+- **Test Coverage**: Comprehensive validation across all detection methods
+
 ## [1.1.0] - 2024-12-20
 
 ### Added

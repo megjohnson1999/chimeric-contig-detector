@@ -21,6 +21,7 @@ A comprehensive command-line tool for detecting, analyzing, explaining, and reso
 - **Interactive Visualization**: Generate comprehensive HTML reports with detailed visualizations
 - **Flexible Input**: Support for FASTA assemblies with FASTQ reads or pre-aligned BAM files
 - **Robust Tool Integration**: Automatic fallback between minimap2 and BWA with intelligent error handling
+- **Production-Ready Stability**: Comprehensive bounds checking and error handling (v1.1.1+)
 
 ## Installation
 
