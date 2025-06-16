@@ -236,30 +236,45 @@ class ChimeraDetector:
         return str(sorted_bam)
     
     def _analyze_contig(self, contig_id: str, sequence: str, bam_file: str) -> List[ChimeraCandidate]:
-        """Analyze a single contig for chimeric signatures."""
+        """Analyze a single contig for chimeric signatures with adaptive window sizing."""
         candidates = []
+        
+        # Critical Fix #2: Adaptive window sizing based on contig length
+        contig_length = len(sequence)
+        adaptive_window = max(200, min(2000, contig_length // 20))
+        adaptive_step = max(50, adaptive_window // 8)  # Finer step size for better resolution
+        
+        self.logger.debug(f"Contig {contig_id}: length={contig_length}, window={adaptive_window}, step={adaptive_step}")
         
         # Calculate coverage profile
         coverage = self._calculate_coverage(contig_id, len(sequence), bam_file)
         
-        # Calculate GC content profile
-        gc_profile = calculate_gc_content(sequence, self.window_size)
+        # Calculate GC content profile with adaptive window
+        gc_profile = self._calculate_adaptive_gc_profile(sequence, adaptive_window, adaptive_step)
         
-        # Calculate k-mer profiles
-        kmer_profile = self._calculate_kmer_profile(sequence)
+        # Calculate k-mer profiles with adaptive window
+        kmer_profile = self._calculate_adaptive_kmer_profile(sequence, adaptive_window, adaptive_step)
         
-        # Detect breakpoints using multiple methods
-        coverage_breakpoints = self._detect_coverage_breakpoints(coverage)
-        gc_breakpoints = self._detect_gc_breakpoints(gc_profile)
-        kmer_breakpoints = self._detect_kmer_breakpoints(kmer_profile)
+        # Detect breakpoints using multiple methods with adaptive parameters
+        coverage_breakpoints = self._detect_coverage_breakpoints_adaptive(coverage, adaptive_window)
+        gc_breakpoints = self._detect_gc_breakpoints_adaptive(gc_profile, sequence, adaptive_step)
+        kmer_breakpoints = self._detect_kmer_breakpoints_adaptive(kmer_profile, sequence, adaptive_step)
         
-        # Combine and score breakpoints
-        all_breakpoints = set(coverage_breakpoints + gc_breakpoints + kmer_breakpoints)
+        # Critical Fix #4: Sub-grid detection - scan between detected breakpoints
+        sub_grid_breakpoints = self._detect_sub_grid_breakpoints(
+            sequence, coverage_breakpoints + gc_breakpoints + kmer_breakpoints, adaptive_window
+        )
         
-        for breakpoint in all_breakpoints:
-            candidate = self._evaluate_breakpoint(
-                contig_id, sequence, breakpoint, bam_file,
-                coverage, gc_profile, kmer_profile
+        # Combine all breakpoints
+        all_breakpoints = set(coverage_breakpoints + gc_breakpoints + kmer_breakpoints + sub_grid_breakpoints)
+        
+        for initial_breakpoint in all_breakpoints:
+            # Critical Fix #1: True breakpoint refinement at nucleotide resolution
+            refined_breakpoint = self._refine_breakpoint(sequence, initial_breakpoint, adaptive_window // 4)
+            
+            candidate = self._evaluate_breakpoint_adaptive(
+                contig_id, sequence, refined_breakpoint, bam_file,
+                coverage, gc_profile, kmer_profile, adaptive_window
             )
             if candidate:
                 candidates.append(candidate)
@@ -295,12 +310,128 @@ class ChimeraDetector:
         
         return kmer_profile
     
-    def _detect_coverage_breakpoints(self, coverage: np.ndarray) -> List[int]:
+    def _calculate_adaptive_gc_profile(self, sequence: str, window_size: int, step_size: int) -> List[float]:
+        """Calculate GC content profile with adaptive window sizing."""
+        gc_profile = []
+        seq_len = len(sequence)
+        
+        for i in range(0, seq_len - window_size + 1, step_size):
+            window_seq = sequence[i:i + window_size]
+            gc_content = (window_seq.count('G') + window_seq.count('C')) / len(window_seq)
+            gc_profile.append(gc_content)
+        
+        return gc_profile
+    
+    def _calculate_adaptive_kmer_profile(self, sequence: str, window_size: int, step_size: int) -> List[Dict[str, int]]:
+        """Calculate k-mer frequency profiles with adaptive window sizing."""
+        kmer_profile = []
+        seq_len = len(sequence)
+        
+        for i in range(0, seq_len - window_size + 1, step_size):
+            window_seq = sequence[i:i + window_size]
+            kmers = calculate_kmer_frequencies(window_seq, k=4)
+            kmer_profile.append(kmers)
+        
+        return kmer_profile
+    
+    def _refine_breakpoint(self, sequence: str, initial_pos: int, window: int = 100) -> int:
+        """Critical Fix #1: Actually refine breakpoint position at nucleotide resolution."""
+        if initial_pos < window or initial_pos > len(sequence) - window:
+            return initial_pos
+        
+        # Analyze GC/k-mer patterns at 1bp resolution around initial_pos
+        max_signal = 0.0
+        best_position = initial_pos
+        
+        # Scan in fine resolution around the initial position
+        for pos in range(initial_pos - window, initial_pos + window + 1):
+            if pos < 50 or pos > len(sequence) - 50:
+                continue
+            
+            # Calculate GC content discontinuity at this position
+            left_seq = sequence[max(0, pos-50):pos]
+            right_seq = sequence[pos:min(len(sequence), pos+50)]
+            
+            if len(left_seq) >= 20 and len(right_seq) >= 20:
+                left_gc = (left_seq.count('G') + left_seq.count('C')) / len(left_seq)
+                right_gc = (right_seq.count('G') + right_seq.count('C')) / len(right_seq)
+                gc_signal = abs(left_gc - right_gc)
+                
+                # Calculate k-mer composition discontinuity
+                left_kmers = calculate_kmer_frequencies(left_seq, k=4)
+                right_kmers = calculate_kmer_frequencies(right_seq, k=4)
+                kmer_signal = calculate_kmer_distance(left_kmers, right_kmers)
+                
+                # Combined signal strength
+                total_signal = gc_signal + kmer_signal
+                
+                if total_signal > max_signal:
+                    max_signal = total_signal
+                    best_position = pos
+        
+        return best_position
+    
+    def _detect_sub_grid_breakpoints(self, sequence: str, detected_breakpoints: List[int], window_size: int) -> List[int]:
+        """Critical Fix #4: Add fine-scale analysis between grid points to catch breakpoints at arbitrary positions."""
+        sub_grid_breakpoints = []
+        
+        if len(detected_breakpoints) < 2:
+            return sub_grid_breakpoints
+        
+        # Sort breakpoints
+        sorted_breakpoints = sorted(detected_breakpoints)
+        
+        # Scan between each pair of detected breakpoints
+        for i in range(len(sorted_breakpoints) - 1):
+            start_pos = sorted_breakpoints[i]
+            end_pos = sorted_breakpoints[i + 1]
+            
+            # If gap is large enough, scan for additional breakpoints
+            if end_pos - start_pos > window_size * 2:
+                scan_start = start_pos + window_size // 2
+                scan_end = end_pos - window_size // 2
+                scan_step = max(25, window_size // 20)  # Fine scanning resolution
+                
+                for pos in range(scan_start, scan_end, scan_step):
+                    # Quick signal check at this position
+                    if self._quick_signal_check(sequence, pos):
+                        # Refine this position
+                        refined_pos = self._refine_breakpoint(sequence, pos, window_size // 8)
+                        
+                        # Only add if it's not too close to existing breakpoints
+                        if all(abs(refined_pos - bp) > window_size // 4 for bp in detected_breakpoints + sub_grid_breakpoints):
+                            sub_grid_breakpoints.append(refined_pos)
+        
+        return sub_grid_breakpoints
+    
+    def _quick_signal_check(self, sequence: str, pos: int, window: int = 100) -> bool:
+        """Quick check for potential breakpoint signal at a position."""
+        if pos < window or pos > len(sequence) - window:
+            return False
+        
+        left_seq = sequence[pos-window:pos]
+        right_seq = sequence[pos:pos+window]
+        
+        # Quick GC content check
+        left_gc = (left_seq.count('G') + left_seq.count('C')) / len(left_seq)
+        right_gc = (right_seq.count('G') + right_seq.count('C')) / len(right_seq)
+        
+        # Return True if GC difference exceeds threshold
+        return abs(left_gc - right_gc) > self.gc_content_threshold * 0.5
+    
+    def _detect_coverage_breakpoints_adaptive(self, coverage: np.ndarray, window_size: int) -> List[int]:
+        """Detect coverage breakpoints with adaptive window sizing."""
+        return self._detect_coverage_breakpoints(coverage, window_size)
+    
+    def _detect_coverage_breakpoints(self, coverage: np.ndarray, window_size: int = None) -> List[int]:
         """Detect potential breakpoints based on coverage discontinuities."""
         breakpoints = []
         
+        if window_size is None:
+            window_size = self.window_size
+        
         # Smooth coverage to reduce noise
-        window = np.ones(self.window_size) / self.window_size
+        window = np.ones(window_size) / window_size
         smoothed_coverage = np.convolve(coverage, window, mode='same')
         
         # Find significant changes in coverage
@@ -396,6 +527,76 @@ class ChimeraDetector:
         
         return breakpoints
     
+    def _detect_gc_breakpoints_adaptive(self, gc_profile: List[float], sequence: str, step_size: int) -> List[int]:
+        """Detect GC breakpoints with adaptive parameters."""
+        breakpoints = []
+        
+        if len(gc_profile) < 4:
+            return breakpoints
+        
+        # Calculate GC differences between adjacent windows
+        gc_diffs = []
+        for i in range(len(gc_profile) - 1):
+            diff = abs(gc_profile[i+1] - gc_profile[i])
+            gc_diffs.append(diff)
+        
+        # Find peaks in GC differences that exceed threshold
+        for i, diff in enumerate(gc_diffs):
+            if diff >= self.gc_content_threshold:
+                # Check if this is a local maximum (actual discontinuity)
+                is_peak = True
+                
+                # Compare with neighbors (if they exist)
+                if i > 0 and gc_diffs[i-1] >= diff:
+                    is_peak = False
+                if i < len(gc_diffs) - 1 and gc_diffs[i+1] >= diff:
+                    is_peak = False
+                
+                if is_peak:
+                    # Calculate position as the boundary between windows
+                    position = (i + 1) * step_size
+                    
+                    # Ensure position is valid
+                    if 0 < position < len(sequence):
+                        breakpoints.append(position)
+        
+        return breakpoints
+    
+    def _detect_kmer_breakpoints_adaptive(self, kmer_profile: List[Dict[str, int]], sequence: str, step_size: int) -> List[int]:
+        """Detect k-mer breakpoints with adaptive parameters."""
+        breakpoints = []
+        
+        if len(kmer_profile) < 2:
+            return breakpoints
+        
+        # Calculate k-mer distances between adjacent windows
+        kmer_dists = []
+        for i in range(len(kmer_profile) - 1):
+            dist = calculate_kmer_distance(kmer_profile[i], kmer_profile[i+1])
+            kmer_dists.append(dist)
+        
+        # Find peaks in k-mer distances that exceed threshold
+        for i, dist in enumerate(kmer_dists):
+            if dist >= self.kmer_distance_threshold:
+                # Check if this is a local maximum (actual discontinuity)
+                is_peak = True
+                
+                # Compare with neighbors (if they exist) 
+                if i > 0 and kmer_dists[i-1] >= dist:
+                    is_peak = False
+                if i < len(kmer_dists) - 1 and kmer_dists[i+1] >= dist:
+                    is_peak = False
+                
+                if is_peak:
+                    # Calculate position as the boundary between windows
+                    position = (i + 1) * step_size
+                    
+                    # Ensure position is valid
+                    if 0 < position < len(sequence):
+                        breakpoints.append(position)
+        
+        return breakpoints
+    
     def _refine_gc_breakpoint(self, gc_profile: List[float], peak_idx: int, step: int, initial_position: int) -> int:
         """Refine GC breakpoint position by analyzing at higher resolution."""
         # For now, return the window boundary position
@@ -476,6 +677,86 @@ class ChimeraDetector:
                 gc_content_left=left_gc if 'gc_content_shift' in evidence_types else 0.0,
                 gc_content_right=right_gc if 'gc_content_shift' in evidence_types else 0.0,
                 kmer_distance=kmer_dist if 'kmer_composition_change' in evidence_types else 0.0,
+                spanning_reads=spanning_reads,
+                read_orientation_score=orientation_score
+            )
+        
+        return None
+    
+    def _evaluate_breakpoint_adaptive(self, 
+                                    contig_id: str,
+                                    sequence: str,
+                                    breakpoint: int,
+                                    bam_file: str,
+                                    coverage: np.ndarray,
+                                    gc_profile: List[float],
+                                    kmer_profile: List[Dict[str, int]],
+                                    window_size: int) -> Optional[ChimeraCandidate]:
+        """Evaluate a potential breakpoint with adaptive window sizing."""
+        
+        # Calculate evidence scores with adaptive window
+        evidence_types = []
+        
+        # Coverage evidence
+        left_cov = np.mean(coverage[max(0, breakpoint-window_size):breakpoint])
+        right_cov = np.mean(coverage[breakpoint:min(len(coverage), breakpoint+window_size)])
+        
+        cov_fold_change = 1.0
+        if left_cov > 0 and right_cov > 0:
+            cov_fold_change = max(left_cov, right_cov) / min(left_cov, right_cov)
+            if cov_fold_change >= self.coverage_fold_change:
+                evidence_types.append("coverage_discontinuity")
+        
+        # GC content evidence using high-resolution analysis
+        left_seq = sequence[max(0, breakpoint-50):breakpoint]
+        right_seq = sequence[breakpoint:min(len(sequence), breakpoint+50)]
+        
+        left_gc = 0.0
+        right_gc = 0.0
+        gc_diff = 0.0
+        
+        if len(left_seq) >= 20 and len(right_seq) >= 20:
+            left_gc = (left_seq.count('G') + left_seq.count('C')) / len(left_seq)
+            right_gc = (right_seq.count('G') + right_seq.count('C')) / len(right_seq)
+            gc_diff = abs(left_gc - right_gc)
+            
+            if gc_diff >= self.gc_content_threshold:
+                evidence_types.append("gc_content_shift")
+        
+        # K-mer evidence using high-resolution analysis
+        kmer_dist = 0.0
+        if len(left_seq) >= 20 and len(right_seq) >= 20:
+            left_kmers = calculate_kmer_frequencies(left_seq, k=4)
+            right_kmers = calculate_kmer_frequencies(right_seq, k=4)
+            kmer_dist = calculate_kmer_distance(left_kmers, right_kmers)
+            
+            if kmer_dist >= self.kmer_distance_threshold:
+                evidence_types.append("kmer_composition_change")
+        
+        # Spanning reads evidence
+        spanning_reads = self._count_spanning_reads(contig_id, breakpoint, bam_file)
+        
+        # Read orientation evidence
+        orientation_score = self._calculate_orientation_score(contig_id, breakpoint, bam_file)
+        
+        # Calculate confidence score
+        confidence_score = self._calculate_confidence_score(
+            evidence_types, cov_fold_change,
+            gc_diff, kmer_dist, spanning_reads, orientation_score
+        )
+        
+        # Only create candidate if we have sufficient evidence
+        if len(evidence_types) >= 2 or confidence_score > 0.7:
+            return ChimeraCandidate(
+                contig_id=contig_id,
+                breakpoint=breakpoint,
+                confidence_score=confidence_score,
+                evidence_types=evidence_types,
+                coverage_left=left_cov,
+                coverage_right=right_cov,
+                gc_content_left=left_gc,
+                gc_content_right=right_gc,
+                kmer_distance=kmer_dist,
                 spanning_reads=spanning_reads,
                 read_orientation_score=orientation_score
             )

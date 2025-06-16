@@ -88,7 +88,7 @@ class ChimeraResolver:
         
         # Write output files
         output_files = self._write_output_files(
-            cleaned_contigs, decisions, analyses, output_dir
+            cleaned_contigs, decisions, analyses, output_dir, original_contigs
         )
         
         # Generate summary statistics
@@ -236,7 +236,8 @@ class ChimeraResolver:
                           cleaned_contigs: Dict[str, str],
                           decisions: List[SplittingDecision],
                           analyses: List[ChimeraAnalysis],
-                          output_dir: str) -> Dict[str, str]:
+                          output_dir: str,
+                          original_contigs: Dict[str, str] = None) -> Dict[str, str]:
         """Write all output files."""
         
         output_dir = Path(output_dir)
@@ -259,7 +260,8 @@ class ChimeraResolver:
         
         # Write detailed results JSON
         results_path = output_dir / "chimeric_detective_results.json"
-        self._write_results_json(analyses, decisions, results_path)
+        total_contigs = len(original_contigs) if original_contigs else None
+        self._write_results_json(analyses, decisions, results_path, total_contigs)
         output_files['results_json'] = str(results_path)
         
         return output_files
@@ -337,12 +339,14 @@ class ChimeraResolver:
     def _write_results_json(self,
                           analyses: List[ChimeraAnalysis],
                           decisions: List[SplittingDecision],
-                          output_path: Path):
+                          output_path: Path,
+                          total_contigs: int = None):
         """Write comprehensive results to JSON file."""
         import json
         
         results = {
             'summary': {
+                'total_contigs': total_contigs if total_contigs is not None else len(analyses),
                 'total_analyses': len(analyses),
                 'total_decisions': len(decisions),
                 'contigs_split': len([d for d in decisions if d.action == 'split']),

@@ -80,8 +80,11 @@ class ChimeraVisualizer:
             self.logger.error(f"Failed to generate plots: {e}")
             plots = {}
         
+        # Count total contigs in assembly
+        total_contigs = self._count_contigs_in_assembly(assembly_file)
+        
         # Create summary statistics
-        summary_stats = self._calculate_summary_statistics(analyses, decisions)
+        summary_stats = self._calculate_summary_statistics(analyses, decisions, total_contigs)
         
         # Generate HTML report
         report_path = self._generate_html_report(
@@ -439,13 +442,23 @@ class ChimeraVisualizer:
         
         return str(html_path)
     
+    def _count_contigs_in_assembly(self, assembly_file: str) -> int:
+        """Count total number of contigs in assembly file."""
+        try:
+            from Bio import SeqIO
+            return len(list(SeqIO.parse(assembly_file, "fasta")))
+        except Exception as e:
+            self.logger.warning(f"Could not count contigs in assembly: {e}")
+            return 0
+    
     def _calculate_summary_statistics(self,
                                     analyses: List[ChimeraAnalysis],
-                                    decisions: List[SplittingDecision]) -> Dict:
+                                    decisions: List[SplittingDecision],
+                                    total_contigs: int = None) -> Dict:
         """Calculate summary statistics for the report."""
         
         stats = {
-            'total_contigs_analyzed': len(analyses),
+            'total_contigs_analyzed': total_contigs if total_contigs is not None else len(analyses),
             'chimera_types': {},
             'decision_types': {},
             'mean_detection_confidence': 0.0,
