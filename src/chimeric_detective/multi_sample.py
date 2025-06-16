@@ -456,11 +456,14 @@ class MultiSampleProcessor:
             self.logger.info(f"Resolving {len(analyses)} chimera analyses")
             output_files = resolver.resolve_chimeras(analyses, assembly_file, output_dir)
             
+            # Extract decisions from resolver
+            decisions = resolver.splitting_decisions if hasattr(resolver, 'splitting_decisions') else []
+            
             # Generate visualization report
             if kwargs.get('generate_report', True):
                 self.logger.info("Creating interactive HTML report")
-                report_path = visualizer.create_html_report(
-                    analyses, decisions, output_dir
+                report_path = visualizer.create_report(
+                    analyses, decisions, output_dir, assembly_file
                 )
             
             # Generate multi-sample summary
