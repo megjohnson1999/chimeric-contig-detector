@@ -564,7 +564,7 @@ class ChimeraVisualizer:
                 <div class="stat-label">Contigs Preserved</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">{{ "%.2f"|format(summary_stats.mean_classification_confidence) }}</div>
+                <div class="stat-number">{{ summary_stats.mean_classification_confidence|round(2) }}</div>
                 <div class="stat-label">Mean Confidence</div>
             </div>
         </div>
@@ -606,12 +606,12 @@ class ChimeraVisualizer:
                         <td>{{ analysis.candidate.contig_id }}</td>
                         <td>{{ analysis.chimera_type }}</td>
                         <td class="{% if analysis.classification_confidence > 0.8 %}confidence-high{% elif analysis.classification_confidence > 0.5 %}confidence-medium{% else %}confidence-low{% endif %}">
-                            {{ "%.3f"|format(analysis.classification_confidence) }}
+                            {{ analysis.classification_confidence|round(3) }}
                         </td>
                         <td class="action-{{ decisions_dict[analysis.candidate.contig_id].action }}">
                             {{ decisions_dict[analysis.candidate.contig_id].action.upper() }}
                         </td>
-                        <td>{{ "{:,}"|format(analysis.candidate.breakpoint) }}</td>
+                        <td>{{ analysis.candidate.breakpoint }}</td>
                         <td>{{ analysis.candidate.evidence_types|join(", ") }}</td>
                         <td>
                             <div class="explanation-box">
