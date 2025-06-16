@@ -20,7 +20,8 @@ COPY . /tmp/chimeric-detective
 WORKDIR /tmp/chimeric-detective
 
 USER root
-RUN /opt/conda/bin/pip install . && \
+RUN /opt/conda/bin/pip install --upgrade pip setuptools wheel && \
+    /opt/conda/bin/pip install . && \
     rm -rf /tmp/chimeric-detective
 
 # Create non-root user for security
