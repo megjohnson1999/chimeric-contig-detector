@@ -10,8 +10,10 @@ A comprehensive command-line tool for detecting, analyzing, explaining, and reso
 
 ## Features
 
+- **Advanced Signal-Based Detection**: Nucleotide-resolution breakpoint analysis with adaptive window sizing
+- **Biologically Meaningful Analysis**: Window sizes automatically scale with contig length for optimal sensitivity
 - **Multi-Method Chimera Detection**: Coverage discontinuities, GC content shifts, k-mer composition changes, and read orientation patterns
-- **Precise Breakpoint Identification**: Accurately locate chimeric junctions with statistical confidence
+- **True Breakpoint Refinement**: Sub-grid detection and 1bp-resolution refinement for precise junction identification
 - **Intelligent Classification**: Distinguish between technical artifacts (PCR chimeras, assembly errors) and biological recombination
 - **Automated Resolution**: Split technical chimeras while preserving biological events
 - **Memory-Optimized Processing**: Efficient handling of large assemblies (50K+ contigs) with configurable resource usage

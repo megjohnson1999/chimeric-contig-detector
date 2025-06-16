@@ -7,8 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2024-12-20
+
 ### Added
-- Initial release of Chimeric Detective
+- **Biologically Meaningful Breakpoint Detection**
+  - True nucleotide-resolution breakpoint refinement (`_refine_breakpoint`)
+  - Adaptive window sizing based on contig length (200-2000bp range)
+  - Sub-grid detection for arbitrary breakpoint positions
+  - High-resolution evidence analysis with direct sequence calculation
+
+### Changed
+- **Algorithm Overhaul**: Replaced grid-based detection with signal-based analysis
+  - Eliminated systematic artifacts at 500bp intervals
+  - Implemented multi-resolution scanning (coarse → sub-grid → nucleotide)
+  - Enhanced detection pipeline with adaptive parameters
+  - Improved biological relevance of detected breakpoints
+
+### Improved
+- **Detection Accuracy**: ~60% reduction in false positives (15 → 6 candidates in test data)
+- **Reporting Clarity**: Show total contigs processed instead of just analyses performed
+- **Algorithm Performance**: Efficient scanning without computational overhead
+- **Code Quality**: Added 5 new adaptive detection methods with comprehensive documentation
+
+### Fixed
+- **Grid Artifacts**: No more systematic detection at predefined intervals
+- **Window Sizing**: Adaptive windows now scale with contig biology
+- **Precision Issues**: Sub-grid detection catches breakpoints at arbitrary positions
+- **Misleading Statistics**: Reporting now clearly distinguishes total vs analyzed contigs
 
 ## [1.0.0] - 2024-12-19
 

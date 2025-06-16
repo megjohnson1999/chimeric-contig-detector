@@ -1,6 +1,6 @@
 # Chimeric Detective Tutorial
 
-This tutorial will guide you through using Chimeric Detective to detect and resolve chimeric contigs in viral metagenomic assemblies.
+This tutorial will guide you through using Chimeric Detective to detect and resolve chimeric contigs in viral metagenomic assemblies using advanced signal-based breakpoint detection algorithms.
 
 ## Table of Contents
 
