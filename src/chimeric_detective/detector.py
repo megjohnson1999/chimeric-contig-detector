@@ -156,23 +156,28 @@ class ChimeraDetector:
                 cmd = ["minimap2", "-ax", "sr", assembly_file, reads1]
             
             with open(sam_file, 'w') as f:
-                run_command(cmd, capture_output=False).stdout
-            
-        except Exception:
-            self.logger.warning("minimap2 failed, trying BWA")
-            
-            # Index assembly
-            run_command(["bwa", "index", assembly_file])
-            
-            # Align reads
-            if reads2:
-                cmd = ["bwa", "mem", assembly_file, reads1, reads2]
-            else:
-                cmd = ["bwa", "mem", assembly_file, reads1]
-            
-            with open(sam_file, 'w') as f:
                 result = run_command(cmd, capture_output=True)
                 f.write(result.stdout)
+            
+        except Exception as e:
+            self.logger.warning(f"minimap2 failed: {e}, trying BWA")
+            
+            try:
+                # Index assembly
+                run_command(["bwa", "index", assembly_file])
+                
+                # Align reads
+                if reads2:
+                    cmd = ["bwa", "mem", assembly_file, reads1, reads2]
+                else:
+                    cmd = ["bwa", "mem", assembly_file, reads1]
+                
+                with open(sam_file, 'w') as f:
+                    result = run_command(cmd, capture_output=True)
+                    f.write(result.stdout)
+            except Exception as bwa_error:
+                self.logger.error(f"Both minimap2 and BWA failed. minimap2 error: {e}, BWA error: {bwa_error}")
+                raise RuntimeError("No aligner available. Please install minimap2 or BWA.")
         
         # Convert to BAM and sort
         run_command(["samtools", "view", "-bS", str(sam_file), "-o", str(bam_file)])

@@ -143,6 +143,10 @@ class MultiSampleProcessor:
                     sample_kwargs.pop('reads2', None)
                     sample_kwargs.pop('reads', None)
                     sample_kwargs.pop('bam', None)
+                    sample_kwargs.pop('assembly', None)
+                    sample_kwargs.pop('reads_dir', None)
+                    sample_kwargs.pop('reads_pattern', None)
+                    sample_kwargs.pop('out', None)
                     
                     future = executor.submit(
                         self._process_single_sample,
@@ -177,6 +181,10 @@ class MultiSampleProcessor:
                     sample_kwargs.pop('reads2', None)
                     sample_kwargs.pop('reads', None)
                     sample_kwargs.pop('bam', None)
+                    sample_kwargs.pop('assembly', None)
+                    sample_kwargs.pop('reads_dir', None)
+                    sample_kwargs.pop('reads_pattern', None)
+                    sample_kwargs.pop('out', None)
                     
                     sample_result = self._process_single_sample(
                         assembly_file, reads1, reads2, sample_name,
@@ -283,6 +291,10 @@ class MultiSampleProcessor:
         sample_kwargs.pop('reads2', None)
         sample_kwargs.pop('reads', None)
         sample_kwargs.pop('bam', None)
+        sample_kwargs.pop('assembly', None)
+        sample_kwargs.pop('reads_dir', None)
+        sample_kwargs.pop('reads_pattern', None)
+        sample_kwargs.pop('out', None)
         
         # Process as single sample
         result = self._process_single_sample(
