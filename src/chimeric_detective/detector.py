@@ -244,6 +244,16 @@ class ChimeraDetector:
         adaptive_window = max(200, min(2000, contig_length // 20))
         adaptive_step = max(50, adaptive_window // 8)  # Finer step size for better resolution
         
+        # Ensure we don't try to analyze contigs that are too short
+        if contig_length < 100:  # Skip very short contigs
+            self.logger.debug(f"Skipping contig {contig_id}: too short ({contig_length}bp)")
+            return candidates
+        
+        # Adjust window and step if they're too large for the sequence
+        if adaptive_window > contig_length // 2:
+            adaptive_window = max(50, contig_length // 4)
+            adaptive_step = max(25, adaptive_window // 4)
+        
         self.logger.debug(f"Contig {contig_id}: length={contig_length}, window={adaptive_window}, step={adaptive_step}")
         
         # Calculate coverage profile
@@ -315,10 +325,19 @@ class ChimeraDetector:
         gc_profile = []
         seq_len = len(sequence)
         
+        # Ensure we don't have negative range endpoints
+        if seq_len < window_size:
+            # If sequence is shorter than window, just analyze the whole sequence
+            if seq_len > 0:
+                gc_content = (sequence.count('G') + sequence.count('C')) / seq_len
+                gc_profile.append(gc_content)
+            return gc_profile
+        
         for i in range(0, seq_len - window_size + 1, step_size):
             window_seq = sequence[i:i + window_size]
-            gc_content = (window_seq.count('G') + window_seq.count('C')) / len(window_seq)
-            gc_profile.append(gc_content)
+            if len(window_seq) >= 20:  # Minimum sequence for meaningful analysis
+                gc_content = (window_seq.count('G') + window_seq.count('C')) / len(window_seq)
+                gc_profile.append(gc_content)
         
         return gc_profile
     
@@ -327,10 +346,19 @@ class ChimeraDetector:
         kmer_profile = []
         seq_len = len(sequence)
         
+        # Ensure we don't have negative range endpoints
+        if seq_len < window_size:
+            # If sequence is shorter than window, just analyze the whole sequence
+            if seq_len >= 4:  # Need minimum length for k-mer analysis
+                kmers = calculate_kmer_frequencies(sequence, k=4)
+                kmer_profile.append(kmers)
+            return kmer_profile
+        
         for i in range(0, seq_len - window_size + 1, step_size):
             window_seq = sequence[i:i + window_size]
-            kmers = calculate_kmer_frequencies(window_seq, k=4)
-            kmer_profile.append(kmers)
+            if len(window_seq) >= 20:  # Minimum sequence for meaningful analysis
+                kmers = calculate_kmer_frequencies(window_seq, k=4)
+                kmer_profile.append(kmers)
         
         return kmer_profile
     
