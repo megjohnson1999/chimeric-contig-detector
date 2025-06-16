@@ -432,15 +432,25 @@ class MultiSampleProcessor:
             
             # Step 3: Analyze chimeras with multi-sample context
             self.logger.info(f"Analyzing {len(candidates)} chimera candidates")
-            analyses = []
             
-            for candidate in tqdm(candidates, desc="Analyzing candidates"):
-                # Analyze with awareness of multiple samples
-                analysis = analyzer.analyze_chimera(candidate)
-                analysis.multi_sample_support = self._calculate_multi_sample_support(
-                    candidate, sample_candidates
+            # Use the first sample's BAM file for analysis (since they're all from the same assembly)
+            representative_bam = list(sample_bam_files.values())[0] if sample_bam_files else None
+            
+            if representative_bam:
+                analyses = analyzer.analyze_chimeras(
+                    candidates=candidates,
+                    assembly_file=assembly_file,
+                    bam_file=representative_bam
                 )
-                analyses.append(analysis)
+                
+                # Add multi-sample support information to each analysis
+                for analysis in analyses:
+                    analysis.multi_sample_support = self._calculate_multi_sample_support(
+                        analysis.candidate, sample_candidates
+                    )
+            else:
+                self.logger.error("No BAM files available for analysis")
+                return {"coassembly": str(output_dir)}
             
             # Step 4: Resolve chimeras
             self.logger.info(f"Resolving {len(analyses)} chimera analyses")
