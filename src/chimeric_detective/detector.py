@@ -146,22 +146,35 @@ class ChimeraDetector:
         
         self.logger.info("Aligning reads to assembly")
         
-        # Try minimap2 first, then BWA
-        try:
-            if reads2:
-                # Paired-end
-                cmd = ["minimap2", "-ax", "sr", assembly_file, reads1, reads2]
-            else:
-                # Single-end
-                cmd = ["minimap2", "-ax", "sr", assembly_file, reads1]
-            
-            with open(sam_file, 'w') as f:
-                result = run_command(cmd, capture_output=True)
-                f.write(result.stdout)
-            
-        except Exception as e:
-            self.logger.warning(f"minimap2 failed: {e}, trying BWA")
-            
+        # Check available tools first
+        from .utils import check_external_tools
+        available_tools = check_external_tools()
+        
+        aligner_success = False
+        
+        # Try minimap2 first if available
+        if available_tools.get('minimap2', False):
+            try:
+                if reads2:
+                    # Paired-end
+                    cmd = ["minimap2", "-ax", "sr", assembly_file, reads1, reads2]
+                else:
+                    # Single-end
+                    cmd = ["minimap2", "-ax", "sr", assembly_file, reads1]
+                
+                with open(sam_file, 'w') as f:
+                    result = run_command(cmd, capture_output=True)
+                    f.write(result.stdout)
+                aligner_success = True
+                self.logger.info("Successfully aligned reads using minimap2")
+                
+            except Exception as e:
+                self.logger.warning(f"minimap2 failed: {e}")
+        else:
+            self.logger.warning("minimap2 not available, trying BWA")
+        
+        # Try BWA if minimap2 failed or not available
+        if not aligner_success and available_tools.get('bwa', False):
             try:
                 # Index assembly
                 run_command(["bwa", "index", assembly_file])
@@ -175,9 +188,23 @@ class ChimeraDetector:
                 with open(sam_file, 'w') as f:
                     result = run_command(cmd, capture_output=True)
                     f.write(result.stdout)
+                aligner_success = True
+                self.logger.info("Successfully aligned reads using BWA")
+                
             except Exception as bwa_error:
-                self.logger.error(f"Both minimap2 and BWA failed. minimap2 error: {e}, BWA error: {bwa_error}")
-                raise RuntimeError("No aligner available. Please install minimap2 or BWA.")
+                self.logger.error(f"BWA failed: {bwa_error}")
+        
+        if not aligner_success:
+            error_msg = "No alignment tool succeeded. "
+            if not available_tools.get('minimap2', False) and not available_tools.get('bwa', False):
+                error_msg += "Neither minimap2 nor BWA are available. Please install one of these aligners."
+            else:
+                error_msg += f"Available tools: {[k for k, v in available_tools.items() if v]}. Check tool installation and file paths."
+            raise RuntimeError(error_msg)
+        
+        # Check if samtools is available for BAM processing
+        if not available_tools.get('samtools', False):
+            raise RuntimeError("samtools is required but not available. Please install samtools.")
         
         # Convert to BAM and sort
         run_command(["samtools", "view", "-bS", str(sam_file), "-o", str(bam_file)])
