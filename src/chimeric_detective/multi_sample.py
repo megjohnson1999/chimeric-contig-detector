@@ -8,6 +8,7 @@ import tempfile
 from pathlib import Path
 from typing import List, Dict, Tuple, Optional, Union
 import json
+import numpy as np
 import pandas as pd
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from tqdm import tqdm
@@ -401,51 +402,35 @@ class MultiSampleProcessor:
         sample_bam_files = {}
         sample_coverages = {}
         
+        # Step 1: Run chimera detection for each sample separately
+        self.logger.info("Running chimera detection for each sample")
+        sample_candidates = {}
+        sample_bam_files = {}
+        
         with tempfile.TemporaryDirectory() as temp_dir:
-            # Map each sample's reads independently to maintain sample identity
             for sample_name, (reads1, reads2) in tqdm(sample_files.items(), 
-                                                     desc="Mapping samples"):
-                self.logger.debug(f"Mapping {sample_name} to co-assembly")
+                                                     desc="Processing samples"):
+                self.logger.debug(f"Processing {sample_name}")
                 
-                # Create sample-specific BAM file
-                sample_bam = Path(temp_dir) / f"{sample_name}_aligned.bam"
-                
-                # Use detector's alignment method for each sample
-                detector._align_reads(assembly_file, reads1, reads2, 
-                                    str(sample_bam), temp_dir)
-                
-                sample_bam_files[sample_name] = str(sample_bam)
-                
-                # Calculate coverage for this sample
-                contigs = detector._load_assembly(assembly_file)
-                sample_coverage = detector._calculate_coverage(str(sample_bam), contigs)
-                sample_coverages[sample_name] = sample_coverage
-            
-            # Step 2: Aggregate coverage across all samples
-            self.logger.info("Aggregating coverage information across samples")
-            aggregated_coverage = self._aggregate_sample_coverages(sample_coverages)
-            
-            # Step 3: Detect chimeras using aggregated coverage
-            self.logger.info("Detecting chimeras using multi-sample evidence")
-            candidates = []
-            
-            for contig_id, coverages in aggregated_coverage.items():
-                # Use the aggregated coverage data for chimera detection
-                contig_candidates = detector._analyze_contig_coverage(
-                    contig_id, coverages['mean_coverage'], contigs[contig_id]
+                # Run detection for this sample
+                candidates, bam_file = detector.detect_chimeras(
+                    assembly_file=assembly_file,
+                    reads1=reads1,
+                    reads2=reads2,
+                    temp_dir=temp_dir,
+                    return_bam_path=True
                 )
-                candidates.extend(contig_candidates)
+                
+                sample_candidates[sample_name] = candidates
+                sample_bam_files[sample_name] = bam_file
             
-            # Add sample-specific coverage information to candidates
-            for candidate in candidates:
-                candidate.sample_coverages = {
-                    sample: sample_coverages[sample].get(candidate.contig_id, {})
-                    for sample in sample_files
-                }
+            # Step 2: Aggregate candidates across samples
+            self.logger.info("Aggregating chimera candidates across samples")
+            candidates = self._aggregate_chimera_candidates(sample_candidates)
             
-            self.logger.info(f"Detected {len(candidates)} chimera candidates")
+            self.logger.info(f"Detected {len(candidates)} aggregated chimera candidates")
             
-            # Step 4: Analyze chimeras with multi-sample context
+            # Step 3: Analyze chimeras with multi-sample context
             self.logger.info(f"Analyzing {len(candidates)} chimera candidates")
             analyses = []
             
@@ -453,15 +438,16 @@ class MultiSampleProcessor:
                 # Analyze with awareness of multiple samples
                 analysis = analyzer.analyze_chimera(candidate)
                 analysis.multi_sample_support = self._calculate_multi_sample_support(
-                    candidate, sample_coverages
+                    candidate, sample_candidates
                 )
                 analyses.append(analysis)
             
-            # Step 5: Resolve chimeras
+            # Step 4: Resolve chimeras
             self.logger.info(f"Resolving {len(analyses)} chimera analyses")
+            contigs = detector._load_assembly(assembly_file)  # Load contigs for resolver
             decisions = resolver.resolve_chimeras(analyses, contigs)
             
-            # Step 6: Generate outputs
+            # Step 5: Generate outputs
             resolver.write_outputs(decisions, contigs, output_dir)
             
             # Generate visualization report
@@ -484,7 +470,76 @@ class MultiSampleProcessor:
             
             return {"coassembly": str(output_dir)}
     
-    def _aggregate_sample_coverages(self, sample_coverages: Dict[str, Dict]) -> Dict:
+    def _aggregate_chimera_candidates(self, sample_candidates: Dict[str, List[ChimeraCandidate]]) -> List[ChimeraCandidate]:
+        """Aggregate chimera candidates across samples."""
+        # Create a mapping of (contig_id, breakpoint) -> list of candidates
+        candidate_groups = {}
+        
+        for sample_name, candidates in sample_candidates.items():
+            for candidate in candidates:
+                # Group candidates by contig and approximate breakpoint (within 100bp)
+                key = self._get_candidate_key(candidate)
+                if key not in candidate_groups:
+                    candidate_groups[key] = []
+                candidate_groups[key].append((sample_name, candidate))
+        
+        # Create consensus candidates
+        aggregated_candidates = []
+        for group_key, sample_candidate_pairs in candidate_groups.items():
+            consensus_candidate = self._create_consensus_candidate(sample_candidate_pairs)
+            aggregated_candidates.append(consensus_candidate)
+        
+        return aggregated_candidates
+    
+    def _get_candidate_key(self, candidate: ChimeraCandidate) -> Tuple[str, int]:
+        """Get a grouping key for candidate aggregation."""
+        # Round breakpoint to nearest 100bp for grouping
+        rounded_breakpoint = (candidate.breakpoint // 100) * 100
+        return (candidate.contig_id, rounded_breakpoint)
+    
+    def _create_consensus_candidate(self, sample_candidate_pairs: List[Tuple[str, ChimeraCandidate]]) -> ChimeraCandidate:
+        """Create a consensus candidate from multiple samples."""
+        sample_names = [pair[0] for pair in sample_candidate_pairs]
+        candidates = [pair[1] for pair in sample_candidate_pairs]
+        
+        # Use the first candidate as base and aggregate evidence
+        base_candidate = candidates[0]
+        
+        # Calculate consensus values
+        consensus_breakpoint = int(np.mean([c.breakpoint for c in candidates]))
+        consensus_confidence = np.mean([c.confidence_score for c in candidates])
+        
+        # Aggregate evidence types
+        all_evidence = set()
+        for candidate in candidates:
+            all_evidence.update(candidate.evidence_types)
+        
+        # Aggregate coverage (average across samples)
+        avg_coverage_left = np.mean([c.coverage_left for c in candidates])
+        avg_coverage_right = np.mean([c.coverage_right for c in candidates])
+        
+        # Create consensus candidate
+        consensus = ChimeraCandidate(
+            contig_id=base_candidate.contig_id,
+            breakpoint=consensus_breakpoint,
+            confidence_score=consensus_confidence,
+            evidence_types=list(all_evidence),
+            coverage_left=avg_coverage_left,
+            coverage_right=avg_coverage_right,
+            gc_content_left=np.mean([c.gc_content_left for c in candidates]),
+            gc_content_right=np.mean([c.gc_content_right for c in candidates]),
+            kmer_distance=np.mean([c.kmer_distance for c in candidates]),
+            spanning_reads=int(np.mean([c.spanning_reads for c in candidates])),
+            read_orientation_score=np.mean([c.read_orientation_score for c in candidates])
+        )
+        
+        # Add multi-sample metadata
+        consensus.supporting_samples = sample_names
+        consensus.sample_count = len(sample_names)
+        
+        return consensus
+    
+    def _aggregate_sample_coverages_old(self, sample_coverages: Dict[str, Dict]) -> Dict:
         """Aggregate coverage information across samples."""
         aggregated = {}
         
@@ -538,49 +593,37 @@ class MultiSampleProcessor:
         return merged
     
     def _calculate_multi_sample_support(self, candidate: ChimeraCandidate, 
-                                      sample_coverages: Dict) -> Dict:
+                                      sample_candidates: Dict) -> Dict:
         """Calculate how many samples support this chimera candidate."""
-        support = {
-            'samples_with_contig': 0,
-            'samples_with_breakpoint_evidence': 0,
-            'sample_coverage_variance': 0,
-            'consistent_across_samples': False
-        }
-        
-        contig_id = candidate.contig_id
-        breakpoint = candidate.breakpoint
-        
-        sample_breakpoint_evidences = []
-        
-        for sample_name, coverages in sample_coverages.items():
-            if contig_id in coverages:
-                support['samples_with_contig'] += 1
-                
-                # Check if this sample shows evidence at the breakpoint
-                cov_array = coverages[contig_id].get('coverage', [])
-                if cov_array and breakpoint < len(cov_array):
-                    # Simple check: significant coverage change around breakpoint
-                    window = 100
-                    before_start = max(0, breakpoint - window)
-                    before_end = breakpoint
-                    after_start = breakpoint
-                    after_end = min(len(cov_array), breakpoint + window)
-                    
-                    if before_end > before_start and after_end > after_start:
-                        before_cov = sum(cov_array[before_start:before_end]) / (before_end - before_start)
-                        after_cov = sum(cov_array[after_start:after_end]) / (after_end - after_start)
-                        
-                        if before_cov > 0:
-                            fold_change = abs(after_cov - before_cov) / before_cov
-                            if fold_change > 0.5:  # 50% coverage change
-                                support['samples_with_breakpoint_evidence'] += 1
-                                sample_breakpoint_evidences.append(fold_change)
-        
-        # Calculate consistency
-        if len(sample_breakpoint_evidences) > 1:
-            # Check if evidence is consistent across samples
-            support['sample_coverage_variance'] = pd.Series(sample_breakpoint_evidences).std()
-            support['consistent_across_samples'] = support['sample_coverage_variance'] < 0.5
+        # If candidate has multi-sample metadata, use it
+        if hasattr(candidate, 'supporting_samples'):
+            support = {
+                'supporting_samples': candidate.supporting_samples,
+                'total_samples': len(sample_candidates),
+                'sample_count': candidate.sample_count,
+                'sample_support_ratio': candidate.sample_count / len(sample_candidates),
+                'consistent_across_samples': candidate.sample_count > 1
+            }
+        else:
+            # Fallback: calculate based on similar candidates in other samples
+            contig_id = candidate.contig_id
+            breakpoint = candidate.breakpoint
+            supporting_samples = []
+            
+            for sample_name, candidates in sample_candidates.items():
+                for sample_candidate in candidates:
+                    if (sample_candidate.contig_id == contig_id and 
+                        abs(sample_candidate.breakpoint - breakpoint) <= 100):
+                        supporting_samples.append(sample_name)
+                        break
+            
+            support = {
+                'supporting_samples': supporting_samples,
+                'total_samples': len(sample_candidates),
+                'sample_count': len(supporting_samples),
+                'sample_support_ratio': len(supporting_samples) / len(sample_candidates),
+                'consistent_across_samples': len(supporting_samples) > 1
+            }
         
         return support
     
