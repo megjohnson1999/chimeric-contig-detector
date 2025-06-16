@@ -23,7 +23,7 @@ class MultiSampleProcessor:
     """Processor for handling multiple samples in a directory."""
     
     def __init__(self,
-                 processing_mode: str = "separate",  # "separate", "merged", "batch"
+                 processing_mode: str = "separate",  # "separate", "merged", "batch", "coassembly"
                  max_workers: int = 4,
                  log_level: str = "INFO"):
         """
@@ -34,6 +34,7 @@ class MultiSampleProcessor:
                 - "separate": Process each sample independently
                 - "merged": Merge all reads and process as one sample
                 - "batch": Process in batches for memory efficiency
+                - "coassembly": Process a co-assembly with multiple samples' reads
             max_workers: Maximum number of parallel workers
             log_level: Logging level
         """
@@ -85,6 +86,10 @@ class MultiSampleProcessor:
             )
         elif self.processing_mode == "batch":
             return self._process_samples_batch(
+                assembly_file, sample_files, output_dir, **kwargs
+            )
+        elif self.processing_mode == "coassembly":
+            return self._process_coassembly(
                 assembly_file, sample_files, output_dir, **kwargs
             )
         else:
@@ -355,6 +360,255 @@ class MultiSampleProcessor:
             results.update(batch_results)
         
         return results
+    
+    def _process_coassembly(self,
+                           assembly_file: str,
+                           sample_files: Dict[str, Tuple[str, Optional[str]]],
+                           output_dir: str,
+                           **kwargs) -> Dict[str, str]:
+        """Process a co-assembly with multiple samples' reads.
+        
+        This mode is for when you have a co-assembly created from multiple samples,
+        and you want to use all samples' reads together to evaluate chimeras.
+        Unlike 'merged' mode, this keeps track of per-sample coverage information.
+        """
+        
+        self.logger.info(f"Processing co-assembly with {len(sample_files)} samples")
+        
+        # Initialize components
+        detector = ChimeraDetector(**kwargs)
+        analyzer = ChimeraAnalyzer(**kwargs)
+        resolver = ChimeraResolver(**kwargs)
+        visualizer = ChimeraVisualizer()
+        
+        # Step 1: Map all samples' reads to the assembly and collect coverage data
+        self.logger.info("Mapping all samples to co-assembly")
+        sample_bam_files = {}
+        sample_coverages = {}
+        
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Map each sample's reads independently to maintain sample identity
+            for sample_name, (reads1, reads2) in tqdm(sample_files.items(), 
+                                                     desc="Mapping samples"):
+                self.logger.debug(f"Mapping {sample_name} to co-assembly")
+                
+                # Create sample-specific BAM file
+                sample_bam = Path(temp_dir) / f"{sample_name}_aligned.bam"
+                
+                # Use detector's alignment method for each sample
+                detector._align_reads(assembly_file, reads1, reads2, 
+                                    str(sample_bam), temp_dir)
+                
+                sample_bam_files[sample_name] = str(sample_bam)
+                
+                # Calculate coverage for this sample
+                contigs = detector._load_assembly(assembly_file)
+                sample_coverage = detector._calculate_coverage(str(sample_bam), contigs)
+                sample_coverages[sample_name] = sample_coverage
+            
+            # Step 2: Aggregate coverage across all samples
+            self.logger.info("Aggregating coverage information across samples")
+            aggregated_coverage = self._aggregate_sample_coverages(sample_coverages)
+            
+            # Step 3: Detect chimeras using aggregated coverage
+            self.logger.info("Detecting chimeras using multi-sample evidence")
+            candidates = []
+            
+            for contig_id, coverages in aggregated_coverage.items():
+                # Use the aggregated coverage data for chimera detection
+                contig_candidates = detector._analyze_contig_coverage(
+                    contig_id, coverages['mean_coverage'], contigs[contig_id]
+                )
+                candidates.extend(contig_candidates)
+            
+            # Add sample-specific coverage information to candidates
+            for candidate in candidates:
+                candidate.sample_coverages = {
+                    sample: sample_coverages[sample].get(candidate.contig_id, {})
+                    for sample in sample_files
+                }
+            
+            self.logger.info(f"Detected {len(candidates)} chimera candidates")
+            
+            # Step 4: Analyze chimeras with multi-sample context
+            self.logger.info(f"Analyzing {len(candidates)} chimera candidates")
+            analyses = []
+            
+            for candidate in tqdm(candidates, desc="Analyzing candidates"):
+                # Analyze with awareness of multiple samples
+                analysis = analyzer.analyze_chimera(candidate)
+                analysis.multi_sample_support = self._calculate_multi_sample_support(
+                    candidate, sample_coverages
+                )
+                analyses.append(analysis)
+            
+            # Step 5: Resolve chimeras
+            self.logger.info(f"Resolving {len(analyses)} chimera analyses")
+            decisions = resolver.resolve_chimeras(analyses, contigs)
+            
+            # Step 6: Generate outputs
+            resolver.write_outputs(decisions, contigs, output_dir)
+            
+            # Generate visualization report
+            if kwargs.get('generate_report', True):
+                self.logger.info("Creating interactive HTML report")
+                report_path = visualizer.create_html_report(
+                    analyses, decisions, output_dir
+                )
+            
+            # Generate multi-sample summary
+            summary = self._generate_coassembly_summary(
+                candidates, analyses, decisions, sample_files
+            )
+            
+            summary_path = Path(output_dir) / "coassembly_summary.json"
+            with open(summary_path, 'w') as f:
+                json.dump(summary, f, indent=2)
+            
+            self.logger.info("Co-assembly analysis completed successfully!")
+            
+            return {"coassembly": str(output_dir)}
+    
+    def _aggregate_sample_coverages(self, sample_coverages: Dict[str, Dict]) -> Dict:
+        """Aggregate coverage information across samples."""
+        aggregated = {}
+        
+        # Get all contigs
+        all_contigs = set()
+        for sample_cov in sample_coverages.values():
+            all_contigs.update(sample_cov.keys())
+        
+        # Aggregate coverage for each contig
+        for contig_id in all_contigs:
+            contig_coverages = []
+            
+            for sample_name, coverages in sample_coverages.items():
+                if contig_id in coverages:
+                    contig_coverages.append(coverages[contig_id])
+            
+            if contig_coverages:
+                # Calculate aggregated statistics
+                aggregated[contig_id] = {
+                    'mean_coverage': sum(c.get('mean_coverage', 0) for c in contig_coverages) / len(contig_coverages),
+                    'coverage_array': self._merge_coverage_arrays([c.get('coverage', []) for c in contig_coverages]),
+                    'num_samples': len(contig_coverages),
+                    'sample_presence': len(contig_coverages) / len(sample_coverages)
+                }
+        
+        return aggregated
+    
+    def _merge_coverage_arrays(self, coverage_arrays: List[List[float]]) -> List[float]:
+        """Merge coverage arrays from multiple samples."""
+        if not coverage_arrays:
+            return []
+        
+        # Ensure all arrays have the same length
+        max_len = max(len(arr) for arr in coverage_arrays)
+        
+        # Pad arrays to same length if needed
+        padded_arrays = []
+        for arr in coverage_arrays:
+            if len(arr) < max_len:
+                padded = arr + [0] * (max_len - len(arr))
+                padded_arrays.append(padded)
+            else:
+                padded_arrays.append(arr)
+        
+        # Calculate mean coverage at each position
+        merged = []
+        for i in range(max_len):
+            values = [arr[i] for arr in padded_arrays if i < len(arr)]
+            merged.append(sum(values) / len(values) if values else 0)
+        
+        return merged
+    
+    def _calculate_multi_sample_support(self, candidate: ChimeraCandidate, 
+                                      sample_coverages: Dict) -> Dict:
+        """Calculate how many samples support this chimera candidate."""
+        support = {
+            'samples_with_contig': 0,
+            'samples_with_breakpoint_evidence': 0,
+            'sample_coverage_variance': 0,
+            'consistent_across_samples': False
+        }
+        
+        contig_id = candidate.contig_id
+        breakpoint = candidate.breakpoint
+        
+        sample_breakpoint_evidences = []
+        
+        for sample_name, coverages in sample_coverages.items():
+            if contig_id in coverages:
+                support['samples_with_contig'] += 1
+                
+                # Check if this sample shows evidence at the breakpoint
+                cov_array = coverages[contig_id].get('coverage', [])
+                if cov_array and breakpoint < len(cov_array):
+                    # Simple check: significant coverage change around breakpoint
+                    window = 100
+                    before_start = max(0, breakpoint - window)
+                    before_end = breakpoint
+                    after_start = breakpoint
+                    after_end = min(len(cov_array), breakpoint + window)
+                    
+                    if before_end > before_start and after_end > after_start:
+                        before_cov = sum(cov_array[before_start:before_end]) / (before_end - before_start)
+                        after_cov = sum(cov_array[after_start:after_end]) / (after_end - after_start)
+                        
+                        if before_cov > 0:
+                            fold_change = abs(after_cov - before_cov) / before_cov
+                            if fold_change > 0.5:  # 50% coverage change
+                                support['samples_with_breakpoint_evidence'] += 1
+                                sample_breakpoint_evidences.append(fold_change)
+        
+        # Calculate consistency
+        if len(sample_breakpoint_evidences) > 1:
+            # Check if evidence is consistent across samples
+            support['sample_coverage_variance'] = pd.Series(sample_breakpoint_evidences).std()
+            support['consistent_across_samples'] = support['sample_coverage_variance'] < 0.5
+        
+        return support
+    
+    def _generate_coassembly_summary(self, candidates: List[ChimeraCandidate],
+                                   analyses: List[ChimeraAnalysis],
+                                   decisions: List[SplittingDecision],
+                                   sample_files: Dict) -> Dict:
+        """Generate summary for co-assembly analysis."""
+        
+        decision_dict = {d.contig_id: d for d in decisions}
+        
+        summary = {
+            'mode': 'coassembly',
+            'num_samples': len(sample_files),
+            'sample_names': list(sample_files.keys()),
+            'total_candidates': len(candidates),
+            'total_analyses': len(analyses),
+            'decisions': {
+                'split': sum(1 for d in decisions if d.action == 'split'),
+                'preserve': sum(1 for d in decisions if d.action == 'preserve'),
+                'flag': sum(1 for d in decisions if d.action == 'flag')
+            },
+            'multi_sample_statistics': {
+                'candidates_in_all_samples': 0,
+                'candidates_in_multiple_samples': 0,
+                'candidates_in_single_sample': 0
+            }
+        }
+        
+        # Calculate multi-sample statistics
+        for analysis in analyses:
+            if hasattr(analysis, 'multi_sample_support'):
+                support = analysis.multi_sample_support
+                num_samples = support.get('samples_with_contig', 0)
+                
+                if num_samples == len(sample_files):
+                    summary['multi_sample_statistics']['candidates_in_all_samples'] += 1
+                elif num_samples > 1:
+                    summary['multi_sample_statistics']['candidates_in_multiple_samples'] += 1
+                else:
+                    summary['multi_sample_statistics']['candidates_in_single_sample'] += 1
+        
+        return summary
     
     def _merge_read_files(self, 
                          sample_files: Dict[str, Tuple[str, Optional[str]]],

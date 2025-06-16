@@ -47,8 +47,8 @@ from .config import ConfigManager
               help='Directory containing multiple read files')
 @click.option('--reads-pattern', default='*_R{1,2}.fastq.gz',
               help='Pattern for finding read files in reads-dir [default: *_R{1,2}.fastq.gz]')
-@click.option('--multi-sample-mode', type=click.Choice(['separate', 'merged', 'batch']), 
-              default='separate', help='How to process multiple samples [default: separate]')
+@click.option('--multi-sample-mode', type=click.Choice(['separate', 'merged', 'batch', 'coassembly']), 
+              default='coassembly', help='How to process multiple samples [default: coassembly]')
 @click.option('--max-workers', default=4, type=int,
               help='Maximum parallel workers for multi-sample processing [default: 4]')
 @click.option('--batch-size', default=5, type=int,
