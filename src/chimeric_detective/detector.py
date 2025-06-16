@@ -5,7 +5,7 @@ Chimera detection module for identifying potential chimeric contigs.
 import logging
 import os
 import tempfile
-from typing import List, Dict, Tuple, Optional, Set
+from typing import List, Dict, Tuple, Optional, Set, Union
 from dataclasses import dataclass
 from pathlib import Path
 import numpy as np
@@ -82,7 +82,8 @@ class ChimeraDetector:
                        bam_file: Optional[str] = None,
                        reads1: Optional[str] = None,
                        reads2: Optional[str] = None,
-                       temp_dir: Optional[str] = None) -> List[ChimeraCandidate]:
+                       temp_dir: Optional[str] = None,
+                       return_bam_path: bool = False) -> Union[List[ChimeraCandidate], Tuple[List[ChimeraCandidate], str]]:
         """
         Main method to detect chimeric contigs.
         
@@ -92,9 +93,10 @@ class ChimeraDetector:
             reads1: Path to forward reads (if BAM not provided)
             reads2: Path to reverse reads (if BAM not provided)
             temp_dir: Temporary directory for intermediate files
+            return_bam_path: If True, return tuple of (candidates, bam_path)
             
         Returns:
-            List of ChimeraCandidate objects
+            List of ChimeraCandidate objects, or tuple of (candidates, bam_path) if return_bam_path=True
         """
         self.logger.info("Starting chimera detection")
         
@@ -103,10 +105,11 @@ class ChimeraDetector:
         self.logger.info(f"Loaded {len(contigs)} contigs from assembly")
         
         # Prepare BAM file
-        if bam_file is None:
+        bam_file_to_use = bam_file
+        if bam_file_to_use is None:
             if reads1 is None:
                 raise ValueError("Either bam_file or reads1 must be provided")
-            bam_file = self._align_reads(assembly_file, reads1, reads2, temp_dir)
+            bam_file_to_use = self._align_reads(assembly_file, reads1, reads2, temp_dir)
         
         # Analyze each contig
         candidates = []
@@ -115,13 +118,16 @@ class ChimeraDetector:
                 continue
                 
             self.logger.debug(f"Analyzing contig {contig_id}")
-            contig_candidates = self._analyze_contig(contig_id, sequence, bam_file)
+            contig_candidates = self._analyze_contig(contig_id, sequence, bam_file_to_use)
             candidates.extend(contig_candidates)
         
         self.chimera_candidates = candidates
         self.logger.info(f"Detected {len(candidates)} chimera candidates")
         
-        return candidates
+        if return_bam_path:
+            return candidates, bam_file_to_use
+        else:
+            return candidates
     
     def _load_assembly(self, assembly_file: str) -> Dict[str, str]:
         """Load assembly sequences from FASTA file."""

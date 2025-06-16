@@ -165,6 +165,14 @@ class MultiSampleProcessor:
                         sample_outputs.append(sample_result)
                     except Exception as e:
                         self.logger.error(f"Failed to process sample {sample_name}: {e}")
+                        # Create minimal output directory for failed sample
+                        failed_output_dir = Path(output_dir) / f"sample_{sample_name}"
+                        create_output_directory(str(failed_output_dir))
+                        
+                        # Save error status
+                        self._save_failed_sample_results(sample_name, str(e), str(failed_output_dir))
+                        results[sample_name] = str(failed_output_dir)
+                        sample_outputs.append(str(failed_output_dir))
         
         else:
             # Sequential processing
@@ -194,6 +202,14 @@ class MultiSampleProcessor:
                     sample_outputs.append(sample_result)
                 except Exception as e:
                     self.logger.error(f"Failed to process sample {sample_name}: {e}")
+                    # Create minimal output directory for failed sample
+                    failed_output_dir = Path(output_dir) / f"sample_{sample_name}"
+                    create_output_directory(str(failed_output_dir))
+                    
+                    # Save error status
+                    self._save_failed_sample_results(sample_name, str(e), str(failed_output_dir))
+                    results[sample_name] = str(failed_output_dir)
+                    sample_outputs.append(str(failed_output_dir))
         
         # Generate combined report
         self._generate_multi_sample_report(sample_outputs, output_dir)
@@ -236,23 +252,22 @@ class MultiSampleProcessor:
         )
         
         # Process sample
-        candidates = detector.detect_chimeras(
+        candidates, bam_file = detector.detect_chimeras(
             assembly_file=assembly_file,
             reads1=reads1,
             reads2=reads2,
-            temp_dir=kwargs.get('temp_dir')
+            temp_dir=kwargs.get('temp_dir'),
+            return_bam_path=True
         )
         
         if candidates:
-            # Create a temporary BAM file path for analysis
-            # In real implementation, this would come from the detector
-            with tempfile.NamedTemporaryFile(suffix='.bam', delete=False) as tmp_bam:
-                temp_bam_path = tmp_bam.name
+            if not bam_file:
+                raise ValueError(f"No BAM file generated for sample {sample_name}")
             
             analyses = analyzer.analyze_chimeras(
                 candidates=candidates,
                 assembly_file=assembly_file,
-                bam_file=temp_bam_path
+                bam_file=bam_file
             )
             
             output_files = resolver.resolve_chimeras(
@@ -270,6 +285,16 @@ class MultiSampleProcessor:
                     output_dir=sample_output_dir,
                     assembly_file=assembly_file
                 )
+            
+            # Save sample results summary
+            self._save_sample_results_summary(
+                sample_name, analyses, resolver.splitting_decisions, sample_output_dir
+            )
+        else:
+            # No chimeras detected - still save empty results
+            self._save_sample_results_summary(
+                sample_name, [], [], sample_output_dir
+            )
         
         return sample_output_dir
     
@@ -529,6 +554,67 @@ class MultiSampleProcessor:
             f.write(html_content)
         
         self.logger.info(f"Multi-sample HTML report generated: {report_path}")
+    
+    def _save_sample_results_summary(self, 
+                                   sample_name: str, 
+                                   analyses: List, 
+                                   decisions: List, 
+                                   output_dir: str):
+        """Save a summary of sample results to JSON file."""
+        import json
+        
+        # Create summary data
+        summary = {
+            'sample_name': sample_name,
+            'total_analyses': len(analyses),
+            'contigs_split': len([d for d in decisions if d.action == 'split']),
+            'contigs_preserved': len([d for d in decisions if d.action == 'preserve']),
+            'contigs_flagged': len([d for d in decisions if d.action == 'flag']),
+            'high_confidence': len([a for a in analyses if hasattr(a, 'confidence_score') and a.confidence_score > 0.8]),
+            'medium_confidence': len([a for a in analyses if hasattr(a, 'confidence_score') and 0.5 < a.confidence_score <= 0.8]),
+            'low_confidence': len([a for a in analyses if hasattr(a, 'confidence_score') and a.confidence_score <= 0.5]),
+        }
+        
+        # Save to file
+        results_data = {
+            'sample_name': sample_name,
+            'summary': summary,
+            'timestamp': pd.Timestamp.now().isoformat(),
+            'processing_status': 'completed'
+        }
+        
+        results_file = Path(output_dir) / "chimeric_detective_results.json"
+        with open(results_file, 'w') as f:
+            json.dump(results_data, f, indent=2)
+    
+    def _save_failed_sample_results(self, sample_name: str, error_message: str, output_dir: str):
+        """Save error information for failed sample."""
+        import json
+        
+        # Create error summary
+        summary = {
+            'sample_name': sample_name,
+            'total_analyses': 0,
+            'contigs_split': 0,
+            'contigs_preserved': 0,
+            'contigs_flagged': 0,
+            'high_confidence': 0,
+            'medium_confidence': 0,
+            'low_confidence': 0,
+        }
+        
+        # Save error info
+        results_data = {
+            'sample_name': sample_name,
+            'summary': summary,
+            'timestamp': pd.Timestamp.now().isoformat(),
+            'processing_status': 'failed',
+            'error_message': error_message
+        }
+        
+        results_file = Path(output_dir) / "chimeric_detective_results.json"
+        with open(results_file, 'w') as f:
+            json.dump(results_data, f, indent=2)
 
 
 def process_multi_sample_directory(assembly_file: str,
