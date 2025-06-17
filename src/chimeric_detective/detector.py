@@ -40,6 +40,8 @@ class ChimeraCandidate:
     kmer_distance: float
     spanning_reads: int
     read_orientation_score: float
+    breakpoint_region: Optional[Tuple[int, int]] = None  # (start, end) of breakpoint region
+    supporting_candidates: int = 1  # Number of nearby candidates consolidated into this one
 
 
 class ChimeraDetector:
@@ -54,6 +56,7 @@ class ChimeraDetector:
                  window_size: int = 1000,
                  step_size: int = 500,
                  min_spanning_reads: int = 5,
+                 evidence_requirements: Optional[dict] = None,
                  log_level: str = "INFO"):
         """
         Initialize ChimeraDetector.
@@ -77,6 +80,12 @@ class ChimeraDetector:
         self.window_size = window_size
         self.step_size = step_size
         self.min_spanning_reads = min_spanning_reads
+        
+        # Set evidence requirements (default to conservative)
+        if evidence_requirements is None:
+            from .constants import get_evidence_requirements
+            evidence_requirements = get_evidence_requirements('conservative')
+        self.evidence_requirements = evidence_requirements
         
         self.logger = setup_logging(log_level)
         self.chimera_candidates: List[ChimeraCandidate] = []
@@ -341,14 +350,22 @@ class ChimeraDetector:
             profiles['kmer'], sequence, window_params['step']
         )
         
-        # Sub-grid detection - scan between detected breakpoints
-        initial_breakpoints = coverage_breakpoints + gc_breakpoints + kmer_breakpoints
+        # Combine all initial breakpoints
+        all_breakpoints = coverage_breakpoints + gc_breakpoints + kmer_breakpoints
+        
+        # Consolidate nearby breakpoints before sub-grid detection
+        consolidated_initial = self._consolidate_breakpoints(all_breakpoints)
+        
+        # Sub-grid detection - scan between consolidated breakpoints
         sub_grid_breakpoints = self._detect_sub_grid_breakpoints(
-            sequence, initial_breakpoints, window_params['window']
+            sequence, consolidated_initial, window_params['window']
         )
         
-        # Combine all breakpoints
-        return set(coverage_breakpoints + gc_breakpoints + kmer_breakpoints + sub_grid_breakpoints)
+        # Final consolidation of all breakpoints
+        all_final_breakpoints = consolidated_initial + sub_grid_breakpoints
+        final_consolidated = self._consolidate_breakpoints(all_final_breakpoints)
+        
+        return set(final_consolidated)
     
     def _evaluate_breakpoints_to_candidates(self, contig_id: str, sequence: str, bam_file: str, 
                                            breakpoints: set, profiles: dict, window_params: dict) -> List[ChimeraCandidate]:
@@ -370,7 +387,145 @@ class ChimeraDetector:
             if candidate:
                 candidates.append(candidate)
         
-        return candidates
+        # Consolidate candidates before returning
+        return self._consolidate_candidates(candidates)
+    
+    def _consolidate_breakpoints(self, breakpoints: List[int], min_distance: int = None) -> List[int]:
+        """Consolidate nearby breakpoints into representative positions."""
+        if not breakpoints:
+            return []
+        
+        if min_distance is None:
+            min_distance = AlgorithmConstants.BREAKPOINT_MERGE_DISTANCE
+        
+        # Sort breakpoints
+        sorted_bp = sorted(breakpoints)
+        consolidated = []
+        
+        # Group nearby breakpoints
+        current_group = [sorted_bp[0]]
+        
+        for bp in sorted_bp[1:]:
+            if bp - current_group[-1] < min_distance:
+                current_group.append(bp)
+            else:
+                # Take the median of the group as representative
+                consolidated.append(int(np.median(current_group)))
+                current_group = [bp]
+        
+        # Don't forget the last group
+        if current_group:
+            consolidated.append(int(np.median(current_group)))
+        
+        return consolidated
+    
+    def _consolidate_candidates(self, candidates: List[ChimeraCandidate]) -> List[ChimeraCandidate]:
+        """Consolidate multiple candidates per contig to primary breakpoints."""
+        if not candidates:
+            return []
+        
+        # Group candidates by contig
+        contig_candidates = {}
+        for candidate in candidates:
+            if candidate.contig_id not in contig_candidates:
+                contig_candidates[candidate.contig_id] = []
+            contig_candidates[candidate.contig_id].append(candidate)
+        
+        # Select primary breakpoint(s) for each contig
+        consolidated = []
+        for contig_id, contig_cands in contig_candidates.items():
+            # Option 1: Select only the single best candidate per contig
+            # This is the most aggressive consolidation - one breakpoint per contig
+            best_candidate = self._select_primary_candidate(contig_cands)
+            if best_candidate:
+                best_candidate.supporting_candidates = len(contig_cands)
+                # Set breakpoint region to span all candidates
+                all_breakpoints = [c.breakpoint for c in contig_cands]
+                best_candidate.breakpoint_region = (min(all_breakpoints), max(all_breakpoints))
+                consolidated.append(best_candidate)
+            
+            # Option 2 (commented out): Group nearby candidates and select best from each group
+            # This allows multiple breakpoints per contig if they're far apart
+            # grouped = self._group_nearby_candidates(contig_cands)
+            # for group in grouped:
+            #     primary = self._select_primary_candidate(group)
+            #     if primary:
+            #         consolidated.append(primary)
+        
+        return consolidated
+    
+    def _group_nearby_candidates(self, candidates: List[ChimeraCandidate]) -> List[List[ChimeraCandidate]]:
+        """Group candidates that are within MIN_BREAKPOINT_SEPARATION of each other."""
+        if not candidates:
+            return []
+        
+        # Sort by breakpoint position
+        sorted_cands = sorted(candidates, key=lambda x: x.breakpoint)
+        groups = []
+        current_group = [sorted_cands[0]]
+        
+        for cand in sorted_cands[1:]:
+            if cand.breakpoint - current_group[-1].breakpoint < AlgorithmConstants.MIN_BREAKPOINT_SEPARATION:
+                current_group.append(cand)
+            else:
+                groups.append(current_group)
+                current_group = [cand]
+        
+        # Don't forget the last group
+        if current_group:
+            groups.append(current_group)
+        
+        return groups
+    
+    def _select_primary_candidate(self, candidates: List[ChimeraCandidate]) -> Optional[ChimeraCandidate]:
+        """Select the most biologically significant breakpoint from a group of candidates."""
+        if not candidates:
+            return None
+        
+        # Score each candidate based on multiple evidence types and confidence
+        scored_candidates = []
+        for candidate in candidates:
+            score = 0
+            
+            # Weight different evidence types
+            if 'coverage_discontinuity' in candidate.evidence_types:
+                score += 3  # Coverage is strongest signal
+            if 'gc_content_shift' in candidate.evidence_types:
+                score += 2
+            if 'kmer_composition_change' in candidate.evidence_types:
+                score += 2
+            if 'read_orientation_anomaly' in candidate.evidence_types:
+                score += 1
+                
+            # Multiply by confidence
+            score *= candidate.confidence_score
+            
+            # Bonus for multiple evidence types
+            if len(candidate.evidence_types) >= 3:
+                score *= 1.2
+            
+            scored_candidates.append((score, candidate))
+        
+        # Return highest scoring candidate with additional metadata
+        scored_candidates.sort(key=lambda x: x[0], reverse=True)
+        best_candidate = scored_candidates[0][1]
+        
+        # Calculate breakpoint region from all candidates in group
+        all_breakpoints = [c.breakpoint for c in candidates]
+        min_bp = min(all_breakpoints)
+        max_bp = max(all_breakpoints)
+        
+        # Set breakpoint region with some margin
+        margin = AlgorithmConstants.BREAKPOINT_REGION_MARGIN
+        best_candidate.breakpoint_region = (
+            max(0, min_bp - margin),
+            max_bp + margin
+        )
+        
+        # Set number of supporting candidates
+        best_candidate.supporting_candidates = len(candidates)
+        
+        return best_candidate
     
     def _calculate_coverage(self, contig_id: str, contig_length: int, bam_file: str) -> np.ndarray:
         """Calculate coverage profile for a contig."""
@@ -829,8 +984,11 @@ class ChimeraDetector:
             spanning_reads, orientation_score
         )
         
-        # Only create candidate if we have sufficient evidence
-        if len(evidence_types) >= 2 or confidence_score > 0.7:
+        # Only create candidate if we have sufficient evidence (DYNAMIC)
+        # Use evidence requirements based on sensitivity mode
+        min_types = self.evidence_requirements['min_types']
+        min_confidence = self.evidence_requirements['min_confidence']
+        if len(evidence_types) >= min_types and confidence_score > min_confidence:
             return ChimeraCandidate(
                 contig_id=contig_id,
                 breakpoint=breakpoint,
@@ -924,8 +1082,11 @@ class ChimeraDetector:
             gc_diff, kmer_dist, spanning_reads, orientation_score
         )
         
-        # Only create candidate if we have sufficient evidence
-        if len(evidence_types) >= 2 or confidence_score > 0.7:
+        # Only create candidate if we have sufficient evidence (DYNAMIC)
+        # Use evidence requirements based on sensitivity mode
+        min_types = self.evidence_requirements['min_types']
+        min_confidence = self.evidence_requirements['min_confidence']
+        if len(evidence_types) >= min_types and confidence_score > min_confidence:
             return ChimeraCandidate(
                 contig_id=contig_id,
                 breakpoint=breakpoint,

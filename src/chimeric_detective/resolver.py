@@ -371,6 +371,13 @@ class ChimeraResolver:
                 'taxonomic_left': analysis.taxonomic_left,
                 'taxonomic_right': analysis.taxonomic_right
             }
+            
+            # Add new consolidation fields if they exist
+            if hasattr(analysis.candidate, 'breakpoint_region') and analysis.candidate.breakpoint_region:
+                analysis_dict['breakpoint_region'] = list(analysis.candidate.breakpoint_region)
+            if hasattr(analysis.candidate, 'supporting_candidates'):
+                analysis_dict['supporting_candidates'] = analysis.candidate.supporting_candidates
+                
             results['analyses'].append(analysis_dict)
         
         # Add decisions

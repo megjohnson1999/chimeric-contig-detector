@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.3] - 2025-06-17
+
+### Added
+- **New Sensitivity Modes**: Four sensitivity levels for different use cases
+  - `conservative` (default): High specificity, minimal false positives
+  - `balanced`: Moderate sensitivity and specificity
+  - `sensitive`: Higher sensitivity for challenging samples
+  - `very_sensitive`: Maximum detection for difficult cases
+- **Biological Validation Guidelines**: Comprehensive validation recommendations
+- **Adaptive Thresholds**: Sensitivity-based adjustment of all detection parameters
+- **Evidence Requirements**: Dynamic evidence thresholds based on sensitivity mode
+
+### Changed
+- **Default Sensitivity**: Changed from `medium` to `conservative` for higher specificity
+- **Detection Thresholds**: More stringent defaults to reduce false positives
+  - GC content threshold: 10% → 15%
+  - Coverage fold change: 2.0x → 3.0x
+  - K-mer distance threshold: 0.3 → 0.4
+  - Minimum coverage: 5.0x → 10.0x
+  - Confidence threshold: 50% → 70%
+- **Evidence Logic**: Changed from OR to AND logic (multiple evidence types AND high confidence)
+- **Consolidation**: Improved candidate consolidation to show primary breakpoints per contig
+
+### Improved
+- **Reduced False Positives**: ~85% reduction in candidate count with conservative settings
+- **Biological Relevance**: Thresholds based on viral genome biology and assembly characteristics
+- **User Guidance**: Detailed recommendations for different sample types and quality levels
+- **Quality Control**: Metrics and guidelines for validating detection accuracy
+
+### Fixed
+- **HTML Output Size**: Dramatically reduced table rows through better consolidation
+- **Over-Detection**: Eliminated detection of trivial sequence variations as chimeras
+
 ## [1.0.2] - 2025-06-17
 
 ### Fixed

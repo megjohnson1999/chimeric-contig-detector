@@ -451,13 +451,30 @@ chimeric_detective -a assembly.fasta --reads-dir samples/ \
 
 ### Sensitivity Settings
 
-```bash
-# High sensitivity (more chimeras detected, potential false positives)
-chimeric_detective -a assembly.fasta -b reads.bam -o results/ --sensitivity high
+Choose the appropriate sensitivity level based on your tolerance for false positives vs false negatives:
 
-# Low sensitivity (conservative, fewer false positives)
-chimeric_detective -a assembly.fasta -b reads.bam -o results/ --sensitivity low
+```bash
+# Conservative (default): High specificity, minimal false positives
+chimeric_detective -a assembly.fasta -b reads.bam -o results/ --sensitivity conservative
+
+# Balanced: Moderate sensitivity and specificity  
+chimeric_detective -a assembly.fasta -b reads.bam -o results/ --sensitivity balanced
+
+# Sensitive: Higher sensitivity, may increase false positives
+chimeric_detective -a assembly.fasta -b reads.bam -o results/ --sensitivity sensitive
+
+# Very sensitive: Maximum sensitivity for difficult samples
+chimeric_detective -a assembly.fasta -b reads.bam -o results/ --sensitivity very_sensitive
 ```
+
+**Sensitivity Mode Comparison:**
+
+| Mode | GC Threshold | Coverage Change | K-mer Distance | Evidence Required | Best For |
+|------|-------------|----------------|----------------|------------------|----------|
+| Conservative | 15% | 3.0x | 0.4 | 2+ types, 75% conf | High-quality assemblies, minimal false splits |
+| Balanced | 12% | 2.4x | 0.32 | 2+ types, 65% conf | General use, moderate tolerance for false positives |
+| Sensitive | 9% | 1.8x | 0.24 | 1+ type, 60% conf | Low-coverage samples, suspected chimeras |
+| Very Sensitive | 6% | 1.2x | 0.16 | 1+ type, 50% conf | Challenging samples, maximum detection |
 
 ### Custom Thresholds
 
@@ -603,6 +620,74 @@ python simple_detection_test.py
 ```
 
 This validates that chimeric contigs are correctly identified with expected confidence scores and evidence types.
+
+## Validation and Best Practices
+
+### Choosing the Right Sensitivity Mode
+
+1. **Start Conservative**: Begin with `--sensitivity conservative` to minimize false positives
+2. **Validate Results**: Manually inspect a few detected chimeras to assess accuracy
+3. **Adjust if Needed**: Increase sensitivity if missing known chimeras, decrease if too many false positives
+
+### Biological Validation Guidelines
+
+#### Expected Chimera Rates by Sample Type:
+- **High-quality viral assemblies**: 1-5% of contigs
+- **Mixed metagenomes**: 5-15% of contigs  
+- **Low-coverage assemblies**: 10-25% of contigs
+- **PCR-amplified samples**: 15-30% of contigs
+
+#### Red Flags (Possible Over-Detection):
+- >50% of contigs flagged as chimeric
+- Many short-range breakpoints (<500bp from ends)
+- Breakpoints in highly repetitive regions
+- Consistent patterns across unrelated samples
+
+#### Manual Validation Steps:
+1. **Visual inspection**: Plot coverage and GC content around breakpoints
+2. **Taxonomic validation**: BLAST left/right segments separately
+3. **Read support**: Check paired-read spanning across junctions
+4. **Assembly validation**: Re-assemble with different parameters
+
+### Dataset-Specific Recommendations
+
+#### For Viral Metagenomes:
+- Use `conservative` mode for publication-quality assemblies
+- Consider `balanced` mode for exploratory analysis
+- Validate against known viral reference genomes
+
+#### For Challenging Samples:
+- Low coverage (<10x): Use `sensitive` or `very_sensitive`
+- Mixed communities: Start with `conservative`, then `balanced`
+- PCR-amplified: Consider `conservative` to avoid PCR artifact over-detection
+
+#### For Different Viral Families:
+- **High GC viruses** (>60%): May need `sensitive` mode
+- **Low GC viruses** (<30%): `Conservative` mode usually sufficient
+- **Segmented viruses**: Expect legitimate biological recombination
+
+### Quality Control Metrics
+
+Monitor these metrics across your analyses:
+
+```bash
+# Check detection rates
+grep "chimera candidates" *.log
+
+# Check confidence distributions  
+jq '.analyses[].confidence_score' results.json | sort -n
+
+# Check evidence type frequencies
+jq '.analyses[].evidence_types[]' results.json | sort | uniq -c
+```
+
+### When to Re-evaluate Thresholds
+
+Consider adjusting sensitivity if you observe:
+- Very low detection rates (<1%) in known problematic samples
+- Very high detection rates (>30%) in high-quality assemblies
+- Systematic bias toward short or long contigs
+- Poor correlation with independent quality metrics
 
 ## License
 

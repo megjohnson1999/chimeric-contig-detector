@@ -58,25 +58,29 @@ class WindowConstants:
 # =============================================================================
 
 class DetectionThresholds:
-    """Thresholds for chimera detection algorithms."""
+    """Thresholds for chimera detection algorithms.
     
-    # Coverage analysis thresholds
-    MIN_COVERAGE_DEPTH = 5.0                 # Minimum coverage for analysis
-    COVERAGE_FOLD_CHANGE_THRESHOLD = 2.0     # Fold change for coverage breakpoints
+    Default values are set for high specificity (minimal false positives).
+    Use sensitivity multipliers to adjust for different use cases.
+    """
     
-    # GC content analysis thresholds
-    GC_CONTENT_DIFFERENCE_THRESHOLD = 0.1    # Minimum GC difference for breakpoint
+    # Coverage analysis thresholds (default: conservative)
+    MIN_COVERAGE_DEPTH = 10.0                # Minimum coverage for reliable analysis
+    COVERAGE_FOLD_CHANGE_THRESHOLD = 3.0     # Fold change indicating real breakpoint (vs noise)
     
-    # K-mer composition thresholds
-    KMER_DISTANCE_THRESHOLD = 0.3            # Jensen-Shannon distance threshold
+    # GC content analysis thresholds (default: conservative)  
+    GC_CONTENT_DIFFERENCE_THRESHOLD = 0.15   # 15% GC difference (substantial compositional shift)
     
-    # Confidence and classification thresholds
-    CONFIDENCE_THRESHOLD = 0.5               # Minimum confidence for splitting
-    HIGH_CONFIDENCE_THRESHOLD = 0.8          # High confidence classification
-    MEDIUM_CONFIDENCE_THRESHOLD = 0.5        # Medium confidence classification
+    # K-mer composition thresholds (default: conservative)
+    KMER_DISTANCE_THRESHOLD = 0.4            # Jensen-Shannon distance (substantial composition change)
+    
+    # Confidence and classification thresholds (default: conservative)
+    CONFIDENCE_THRESHOLD = 0.7               # High confidence required for splitting
+    HIGH_CONFIDENCE_THRESHOLD = 0.85         # Very high confidence classification
+    MEDIUM_CONFIDENCE_THRESHOLD = 0.7        # Medium confidence classification
     
     # Signal analysis thresholds
-    PEAK_DETECTION_MIN_HEIGHT = 0.1          # Minimum peak height for detection
+    PEAK_DETECTION_MIN_HEIGHT = 0.15         # Minimum peak height for detection
     SIGNAL_SMOOTHING_WINDOW = 5              # Window for signal smoothing
 
 
@@ -87,9 +91,21 @@ class DetectionThresholds:
 class AlgorithmConstants:
     """Constants for algorithm behavior and performance tuning."""
     
-    # Sensitivity adjustments for different presets
-    SENSITIVE_PRESET_MULTIPLIER = 0.7        # Multiply thresholds for sensitive mode
-    CONSERVATIVE_PRESET_MULTIPLIER = 1.3     # Multiply thresholds for conservative mode
+    # Sensitivity mode multipliers (applied to detection thresholds)
+    SENSITIVITY_MULTIPLIERS = {
+        'conservative': 1.0,     # Default: high specificity, low false positives
+        'balanced': 0.8,         # Moderate sensitivity and specificity  
+        'sensitive': 0.6,        # High sensitivity, may increase false positives
+        'very_sensitive': 0.4    # Maximum sensitivity for difficult samples
+    }
+    
+    # Evidence requirement adjustments
+    EVIDENCE_REQUIREMENTS = {
+        'conservative': {'min_types': 2, 'min_confidence': 0.75},
+        'balanced': {'min_types': 2, 'min_confidence': 0.65},
+        'sensitive': {'min_types': 1, 'min_confidence': 0.60},
+        'very_sensitive': {'min_types': 1, 'min_confidence': 0.50}
+    }
     
     # Refinement parameters
     REFINEMENT_WINDOW_DIVISOR = 4             # Refinement window = window / divisor
@@ -100,6 +116,11 @@ class AlgorithmConstants:
     
     # Adaptive analysis parameters
     ADAPTIVE_THRESHOLD_FACTOR = 0.8          # Factor for adaptive threshold adjustment
+    
+    # Breakpoint consolidation parameters
+    BREAKPOINT_MERGE_DISTANCE = 200          # bp - Merge breakpoints within this distance
+    MIN_BREAKPOINT_SEPARATION = 500          # bp - Minimum distance between reported breakpoints
+    BREAKPOINT_REGION_MARGIN = 50            # bp - Margin for breakpoint region reporting
     
 
 # =============================================================================
@@ -154,9 +175,26 @@ def adjust_window_for_sequence_length(window_size: int, sequence_length: int) ->
 
 def get_sensitivity_multiplier(sensitivity: str) -> float:
     """Get threshold multiplier for different sensitivity settings."""
-    multipliers = {
-        'sensitive': AlgorithmConstants.SENSITIVE_PRESET_MULTIPLIER,
-        'conservative': AlgorithmConstants.CONSERVATIVE_PRESET_MULTIPLIER,
-        'default': 1.0
+    return AlgorithmConstants.SENSITIVITY_MULTIPLIERS.get(sensitivity.lower(), 1.0)
+
+
+def get_evidence_requirements(sensitivity: str) -> dict:
+    """Get evidence requirements for different sensitivity settings."""
+    return AlgorithmConstants.EVIDENCE_REQUIREMENTS.get(
+        sensitivity.lower(), 
+        AlgorithmConstants.EVIDENCE_REQUIREMENTS['conservative']
+    )
+
+
+def apply_sensitivity_to_thresholds(sensitivity: str) -> dict:
+    """Apply sensitivity multiplier to all detection thresholds."""
+    multiplier = get_sensitivity_multiplier(sensitivity)
+    
+    return {
+        'min_coverage': DetectionThresholds.MIN_COVERAGE_DEPTH * multiplier,
+        'coverage_fold_change': DetectionThresholds.COVERAGE_FOLD_CHANGE_THRESHOLD / multiplier,
+        'gc_threshold': DetectionThresholds.GC_CONTENT_DIFFERENCE_THRESHOLD * multiplier,
+        'kmer_threshold': DetectionThresholds.KMER_DISTANCE_THRESHOLD * multiplier,
+        'confidence_threshold': DetectionThresholds.CONFIDENCE_THRESHOLD * multiplier,
+        'peak_height': DetectionThresholds.PEAK_DETECTION_MIN_HEIGHT * multiplier
     }
-    return multipliers.get(sensitivity.lower(), 1.0)

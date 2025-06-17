@@ -75,8 +75,9 @@ from .config import ConfigManager
               help='Minimum length for split contigs [default: 500]')
 @click.option('--threads', '-t', default=1, type=int,
               help='Number of threads to use [default: 1]')
-@click.option('--sensitivity', type=click.Choice(['low', 'medium', 'high']), default='medium',
-              help='Detection sensitivity level [default: medium]')
+@click.option('--sensitivity', type=click.Choice(['conservative', 'balanced', 'sensitive', 'very_sensitive']), 
+              default='conservative',
+              help='Detection sensitivity level [default: conservative]')
 @click.option('--split-technical/--no-split-technical', default=True,
               help='Split technical artifacts [default: enabled]')
 @click.option('--split-pcr/--no-split-pcr', default=True,
@@ -286,39 +287,31 @@ def _check_dependencies(logger):
 
 def _adjust_sensitivity_parameters(kwargs):
     """Adjust detection parameters based on sensitivity level."""
+    from .constants import apply_sensitivity_to_thresholds, get_evidence_requirements
     
     sensitivity = kwargs['sensitivity']
     
-    if sensitivity == 'low':
-        detector_params = {
-            'coverage_fold_change': kwargs['coverage_fold_change'] * 1.5,
-            'gc_content_threshold': kwargs['gc_content_threshold'] * 1.5,
-            'kmer_distance_threshold': kwargs['kmer_distance_threshold'] * 1.5,
-        }
-        analyzer_params = {
-            'min_blast_identity': 85.0,
-            'min_blast_coverage': 60.0,
-        }
-    elif sensitivity == 'high':
-        detector_params = {
-            'coverage_fold_change': kwargs['coverage_fold_change'] * 0.7,
-            'gc_content_threshold': kwargs['gc_content_threshold'] * 0.7,
-            'kmer_distance_threshold': kwargs['kmer_distance_threshold'] * 0.7,
-        }
-        analyzer_params = {
-            'min_blast_identity': 75.0,
-            'min_blast_coverage': 40.0,
-        }
-    else:  # medium
-        detector_params = {
-            'coverage_fold_change': kwargs['coverage_fold_change'],
-            'gc_content_threshold': kwargs['gc_content_threshold'],
-            'kmer_distance_threshold': kwargs['kmer_distance_threshold'],
-        }
-        analyzer_params = {
-            'min_blast_identity': 80.0,
-            'min_blast_coverage': 50.0,
-        }
+    # Apply sensitivity multipliers to thresholds
+    adjusted_thresholds = apply_sensitivity_to_thresholds(sensitivity)
+    evidence_reqs = get_evidence_requirements(sensitivity)
+    
+    detector_params = {
+        'min_coverage': adjusted_thresholds['min_coverage'],
+        'coverage_fold_change': adjusted_thresholds['coverage_fold_change'],
+        'gc_content_threshold': adjusted_thresholds['gc_threshold'],
+        'kmer_distance_threshold': adjusted_thresholds['kmer_threshold'],
+        'evidence_requirements': evidence_reqs,
+    }
+    
+    # Analyzer parameters based on sensitivity
+    analyzer_sensitivity_map = {
+        'conservative': {'min_blast_identity': 85.0, 'min_blast_coverage': 60.0},
+        'balanced': {'min_blast_identity': 80.0, 'min_blast_coverage': 50.0},
+        'sensitive': {'min_blast_identity': 75.0, 'min_blast_coverage': 40.0},
+        'very_sensitive': {'min_blast_identity': 70.0, 'min_blast_coverage': 30.0}
+    }
+    
+    analyzer_params = analyzer_sensitivity_map.get(sensitivity, analyzer_sensitivity_map['conservative'])
     
     return detector_params, analyzer_params
 
@@ -373,12 +366,16 @@ def _run_pipeline(logger, **kwargs):
         # Step 1: Chimera Detection
         logger.info("🔍 Step 1: Detecting chimeric contigs...")
         
+        # Adjust parameters based on sensitivity
+        detector_params, analyzer_params = _adjust_sensitivity_parameters(kwargs)
+        
         detector = ChimeraDetector(
             min_contig_length=kwargs['min_contig_length'],
-            min_coverage=kwargs['min_coverage'],
-            coverage_fold_change=kwargs['coverage_fold_change'],
-            gc_content_threshold=kwargs['gc_content_threshold'],
-            kmer_distance_threshold=kwargs['kmer_distance_threshold'],
+            min_coverage=detector_params['min_coverage'],
+            coverage_fold_change=detector_params['coverage_fold_change'],
+            gc_content_threshold=detector_params['gc_content_threshold'],
+            kmer_distance_threshold=detector_params['kmer_distance_threshold'],
+            evidence_requirements=detector_params['evidence_requirements'],
             log_level=kwargs['log_level']
         )
         
@@ -404,7 +401,7 @@ def _run_pipeline(logger, **kwargs):
         logger.info("🧬 Step 2: Analyzing and classifying chimeras...")
         
         analyzer = ChimeraAnalyzer(
-            reference_db=kwargs['reference'],
+            reference_db=kwargs.get('reference'),
             log_level=kwargs['log_level']
         )
         
