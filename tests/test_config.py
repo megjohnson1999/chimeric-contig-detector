@@ -52,7 +52,7 @@ class TestConfigDataClasses:
         assert config.split_technical is True
         assert config.split_pcr is True
         assert config.preserve_biological is True
-        assert config.sensitivity == "medium"
+        assert config.sensitivity == "conservative"
     
     def test_multi_sample_config_defaults(self):
         """Test MultiSampleConfig default values."""
@@ -146,7 +146,7 @@ class TestConfigManager:
         """Test loading configuration from JSON file."""
         config_data = {
             "behavior": {
-                "sensitivity": "high",
+                "sensitivity": "sensitive",
                 "split_technical": False
             },
             "output": {
@@ -162,7 +162,7 @@ class TestConfigManager:
             manager = ConfigManager()
             manager.load_config(config_file)
             
-            assert manager.config.behavior.sensitivity == "high"
+            assert manager.config.behavior.sensitivity == "sensitive"
             assert manager.config.behavior.split_technical is False
             assert manager.config.output.log_level == "DEBUG"
             
@@ -214,7 +214,7 @@ class TestConfigManager:
     def test_config_saving_json(self):
         """Test saving configuration to JSON file."""
         manager = ConfigManager()
-        manager.config.behavior.sensitivity = "low"
+        manager.config.behavior.sensitivity = "conservative"
         
         with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
             output_file = f.name
@@ -226,7 +226,7 @@ class TestConfigManager:
             with open(output_file, 'r') as f:
                 loaded_data = json.load(f)
             
-            assert loaded_data["behavior"]["sensitivity"] == "low"
+            assert loaded_data["behavior"]["sensitivity"] == "conservative"
             
         finally:
             os.unlink(output_file)
@@ -342,7 +342,7 @@ class TestConfigValidation:
         manager = ConfigManager()
         manager.config.behavior.sensitivity = "invalid"
         
-        with pytest.raises(ValueError, match="sensitivity must be one of: low, medium, high"):
+        with pytest.raises(ValueError, match="sensitivity must be one of: conservative, balanced, sensitive, very_sensitive"):
             manager.validate_config()
     
     def test_invalid_log_level(self):
@@ -383,11 +383,11 @@ class TestEnvironmentOverrides:
     
     def test_env_override_sensitivity(self):
         """Test environment override for sensitivity."""
-        with patch.dict(os.environ, {"CHIMERIC_DETECTIVE_SENSITIVITY": "high"}):
+        with patch.dict(os.environ, {"CHIMERIC_DETECTIVE_SENSITIVITY": "sensitive"}):
             manager = ConfigManager()
             manager.apply_env_overrides()
             
-            assert manager.config.behavior.sensitivity == "high"
+            assert manager.config.behavior.sensitivity == "sensitive"
     
     def test_invalid_env_override(self):
         """Test handling of invalid environment override values."""
