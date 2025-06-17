@@ -448,12 +448,20 @@ class ChimeraDetector:
         if safe_window < 10:  # Too small to be meaningful
             return initial_pos
         
+        # Ensure safe_window doesn't make range start negative
+        safe_window = min(safe_window, initial_pos - min_margin)
+        if safe_window <= 0:
+            return initial_pos
+        
         # Analyze GC/k-mer patterns at 1bp resolution around initial_pos
         max_signal = 0.0
         best_position = initial_pos
         
         # Scan in fine resolution around the initial position
-        for pos in range(initial_pos - safe_window, initial_pos + safe_window + 1):
+        scan_start = max(min_margin, initial_pos - safe_window)
+        scan_end = min(len(sequence) - min_margin, initial_pos + safe_window)
+        
+        for pos in range(scan_start, scan_end + 1):
             if pos < min_margin or pos > len(sequence) - min_margin:
                 continue
             
@@ -557,6 +565,9 @@ class ChimeraDetector:
         smoothed_coverage = np.convolve(coverage, window, mode='same')
         
         # Find significant changes in coverage
+        if len(smoothed_coverage) <= 2 * window_size:
+            return breakpoints  # Sequence too short for windowed analysis
+        
         for i in range(window_size, len(smoothed_coverage) - window_size):
             left_cov = np.mean(smoothed_coverage[i-window_size:i])
             right_cov = np.mean(smoothed_coverage[i:i+window_size])
