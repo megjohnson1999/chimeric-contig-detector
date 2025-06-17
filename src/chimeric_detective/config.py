@@ -50,7 +50,7 @@ class BehaviorConfig:
     split_technical: bool = True
     split_pcr: bool = True
     preserve_biological: bool = True
-    sensitivity: str = "medium"  # low, medium, high
+    sensitivity: str = "conservative"  # conservative, balanced, sensitive, very_sensitive
 
 
 @dataclass
@@ -85,7 +85,7 @@ PRESETS = {
                 "threads": 4
             },
             "behavior": {
-                "sensitivity": "medium"
+                "sensitivity": "balanced"
             }
         }
     },
@@ -104,7 +104,7 @@ PRESETS = {
                 "batch_size": 3
             },
             "behavior": {
-                "sensitivity": "medium"
+                "sensitivity": "balanced"
             }
         }
     },
@@ -119,7 +119,7 @@ PRESETS = {
                 "confidence_threshold": 0.4
             },
             "behavior": {
-                "sensitivity": "high"
+                "sensitivity": "sensitive"
             }
         }
     },
@@ -134,7 +134,7 @@ PRESETS = {
                 "confidence_threshold": 0.7
             },
             "behavior": {
-                "sensitivity": "low"
+                "sensitivity": "conservative"
             }
         }
     },
@@ -293,7 +293,7 @@ class ConfigManager:
             errors.append("max_workers must be at least 1")
         
         # Validate behavior parameters
-        valid_sensitivities = ["low", "medium", "high"]
+        valid_sensitivities = ["conservative", "balanced", "sensitive", "very_sensitive"]
         if self.config.behavior.sensitivity not in valid_sensitivities:
             errors.append(f"sensitivity must be one of: {', '.join(valid_sensitivities)}")
         
