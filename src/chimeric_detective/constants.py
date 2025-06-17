@@ -15,7 +15,7 @@ class SequenceConstants:
     # Minimum sequence lengths for meaningful analysis
     MIN_CONTIG_LENGTH_FOR_ANALYSIS = 100      # bp - Skip very short contigs
     MIN_SEQUENCE_FOR_GC_ANALYSIS = 20         # bp - Minimum for GC content
-    MIN_SEQUENCE_FOR_KMER_ANALYSIS = 4        # bp - Minimum for k-mer analysis
+    MIN_SEQUENCE_FOR_KMER_ANALYSIS = 6        # bp - Minimum for k-mer analysis
     MIN_SEQUENCE_FOR_WINDOW_ANALYSIS = 20     # bp - Minimum for windowed analysis
     
     # Default contig length thresholds
@@ -23,7 +23,7 @@ class SequenceConstants:
     MIN_SPLIT_CONTIG_LENGTH = 500             # bp - Minimum length after splitting
     
     # K-mer analysis parameters
-    DEFAULT_KMER_SIZE = 4                     # Standard k-mer size for viral analysis
+    DEFAULT_KMER_SIZE = 6                     # Standard k-mer size for viral analysis
     
 
 # =============================================================================

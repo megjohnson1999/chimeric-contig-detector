@@ -402,7 +402,7 @@ class ChimeraDetector:
         end_pos = max(1, seq_len - self.window_size + 1)
         for i in range(0, end_pos, self.step_size):
             window_seq = sequence[i:i + self.window_size]
-            kmers = calculate_kmer_frequencies(window_seq, k=4)
+            kmers = calculate_kmer_frequencies(window_seq, k=6)
             kmer_profile.append(kmers)
         
         return kmer_profile
@@ -498,8 +498,8 @@ class ChimeraDetector:
                     gc_signal = abs(left_gc - right_gc)
                     
                     # Calculate k-mer composition discontinuity
-                    left_kmers = calculate_kmer_frequencies(left_seq, k=4)
-                    right_kmers = calculate_kmer_frequencies(right_seq, k=4)
+                    left_kmers = calculate_kmer_frequencies(left_seq, k=6)
+                    right_kmers = calculate_kmer_frequencies(right_seq, k=6)
                     kmer_signal = calculate_kmer_distance(left_kmers, right_kmers)
                     
                     # Combined signal strength

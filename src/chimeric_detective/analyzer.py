@@ -282,7 +282,7 @@ class ChimeraAnalyzer:
         from .utils import calculate_gc_content_difference
         return calculate_gc_content_difference(sequence, breakpoint, window_size)
     
-    def _calculate_kmer_distance(self, sequence: str, breakpoint: int, k: int = 4, window_size: int = 500) -> float:
+    def _calculate_kmer_distance(self, sequence: str, breakpoint: int, k: int = 6, window_size: int = 500) -> float:
         """Calculate k-mer composition distance across breakpoint."""
         from .utils import calculate_kmer_distance_across_breakpoint
         return calculate_kmer_distance_across_breakpoint(sequence, breakpoint, k, window_size)

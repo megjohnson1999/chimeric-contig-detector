@@ -181,7 +181,7 @@ class TestChimeraDetectorComprehensive:
             assert isinstance(profile, dict), "Each profile should be a dictionary"
             if profile:  # Non-empty profile
                 for kmer, count in profile.items():
-                    assert len(kmer) == 4, "Default k-mer size should be 4"
+                    assert len(kmer) == 6, "Default k-mer size should be 6"
                     assert count > 0, "K-mer counts should be positive"
                     assert 'N' not in kmer, "K-mers should not contain N"
         
@@ -201,8 +201,8 @@ class TestChimeraDetectorComprehensive:
         # Should handle short sequences without crashing
         try:
             # These methods should not crash on short sequences
-            gc_profile = calculate_gc_content(sample_sequences['short_sequence'], window_size=4)
-            kmer_freq = calculate_kmer_frequencies(sample_sequences['short_sequence'], k=4)
+            gc_profile = calculate_gc_content(sample_sequences['short_sequence'], window_size=6)
+            kmer_freq = calculate_kmer_frequencies(sample_sequences['short_sequence'], k=6)
             assert True, "Edge case handling successful"
         except Exception as e:
             pytest.fail(f"Edge case handling failed: {e}")

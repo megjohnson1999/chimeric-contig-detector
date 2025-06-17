@@ -76,7 +76,7 @@ def calculate_gc_content(sequence: str, window_size: int = 1000) -> List[float]:
     return gc_contents
 
 
-def calculate_kmer_frequencies(sequence: str, k: int = 4, normalize: bool = False) -> Dict[str, float]:
+def calculate_kmer_frequencies(sequence: str, k: int = 6, normalize: bool = False) -> Dict[str, float]:
     """Calculate k-mer frequencies in a sequence.
     
     Args:
@@ -164,7 +164,7 @@ def calculate_gc_content_difference(sequence: str, breakpoint: int, window_size:
     return abs(left_gc - right_gc)
 
 
-def calculate_kmer_distance_across_breakpoint(sequence: str, breakpoint: int, k: int = 4, window_size: int = 500) -> float:
+def calculate_kmer_distance_across_breakpoint(sequence: str, breakpoint: int, k: int = 6, window_size: int = 500) -> float:
     """Calculate k-mer composition distance across a breakpoint.
     
     Args:
