@@ -943,10 +943,12 @@ class ChimeraDetector:
         spanning_count = 0
         window = 100  # Window around breakpoint
         
+        # Ensure fetch coordinates are non-negative
+        start = max(0, breakpoint - window)
+        end = breakpoint + window
+        
         with pysam.AlignmentFile(bam_file, "rb") as bam:
-            for read in bam.fetch(contig_id, 
-                                breakpoint - window, 
-                                breakpoint + window):
+            for read in bam.fetch(contig_id, start, end):
                 if (read.reference_start <= breakpoint - 50 and 
                     read.reference_end >= breakpoint + 50):
                     spanning_count += 1
@@ -959,10 +961,12 @@ class ChimeraDetector:
         improper_pairs = 0
         window = 500
         
+        # Ensure fetch coordinates are non-negative
+        start = max(0, breakpoint - window)
+        end = breakpoint + window
+        
         with pysam.AlignmentFile(bam_file, "rb") as bam:
-            for read in bam.fetch(contig_id, 
-                                breakpoint - window, 
-                                breakpoint + window):
+            for read in bam.fetch(contig_id, start, end):
                 if read.is_paired and not read.is_unmapped and not read.mate_is_unmapped:
                     if read.is_proper_pair:
                         proper_pairs += 1
