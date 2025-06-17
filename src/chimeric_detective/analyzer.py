@@ -279,94 +279,13 @@ class ChimeraAnalyzer:
     
     def _calculate_gc_content_difference(self, sequence: str, breakpoint: int, window_size: int = 500) -> float:
         """Calculate GC content difference across breakpoint."""
-        seq_len = len(sequence)
-        
-        # Define windows around breakpoint
-        left_start = max(0, breakpoint - window_size)
-        left_end = breakpoint
-        right_start = breakpoint
-        right_end = min(seq_len, breakpoint + window_size)
-        
-        # Ensure we have sufficient sequence on both sides
-        if left_end <= left_start or right_end <= right_start:
-            return 0.0
-        
-        left_seq = sequence[left_start:left_end]
-        right_seq = sequence[right_start:right_end]
-        
-        # Calculate GC content for each side
-        left_gc = (left_seq.count('G') + left_seq.count('C')) / len(left_seq) if left_seq else 0.0
-        right_gc = (right_seq.count('G') + right_seq.count('C')) / len(right_seq) if right_seq else 0.0
-        
-        return abs(left_gc - right_gc)
+        from .utils import calculate_gc_content_difference
+        return calculate_gc_content_difference(sequence, breakpoint, window_size)
     
     def _calculate_kmer_distance(self, sequence: str, breakpoint: int, k: int = 4, window_size: int = 500) -> float:
         """Calculate k-mer composition distance across breakpoint."""
-        seq_len = len(sequence)
-        
-        # Define windows around breakpoint
-        left_start = max(0, breakpoint - window_size)
-        left_end = breakpoint
-        right_start = breakpoint
-        right_end = min(seq_len, breakpoint + window_size)
-        
-        # Ensure we have sufficient sequence on both sides
-        if left_end <= left_start or right_end <= right_start:
-            return 0.0
-        
-        left_seq = sequence[left_start:left_end]
-        right_seq = sequence[right_start:right_end]
-        
-        # Calculate k-mer frequencies
-        left_kmers = self._get_kmer_frequencies(left_seq, k)
-        right_kmers = self._get_kmer_frequencies(right_seq, k)
-        
-        # Calculate Jensen-Shannon distance
-        return self._jensen_shannon_distance(left_kmers, right_kmers)
-    
-    def _get_kmer_frequencies(self, sequence: str, k: int) -> Dict[str, float]:
-        """Get normalized k-mer frequencies."""
-        kmers = {}
-        total = 0
-        
-        for i in range(len(sequence) - k + 1):
-            kmer = sequence[i:i+k]
-            if 'N' not in kmer:  # Skip ambiguous k-mers
-                kmers[kmer] = kmers.get(kmer, 0) + 1
-                total += 1
-        
-        # Normalize frequencies
-        if total > 0:
-            return {kmer: count / total for kmer, count in kmers.items()}
-        return {}
-    
-    def _jensen_shannon_distance(self, freq1: Dict[str, float], freq2: Dict[str, float]) -> float:
-        """Calculate Jensen-Shannon distance between two frequency distributions."""
-        import math
-        
-        # Get all k-mers from both distributions
-        all_kmers = set(freq1.keys()) | set(freq2.keys())
-        
-        if not all_kmers:
-            return 0.0
-        
-        # Calculate Jensen-Shannon divergence
-        js_div = 0.0
-        
-        for kmer in all_kmers:
-            p = freq1.get(kmer, 0.0)
-            q = freq2.get(kmer, 0.0)
-            m = (p + q) / 2.0
-            
-            if p > 0 and m > 0:
-                js_div += p * math.log2(p / m)
-            if q > 0 and m > 0:
-                js_div += q * math.log2(q / m)
-        
-        js_div /= 2.0
-        
-        # Convert divergence to distance (0 to 1)
-        return math.sqrt(js_div)
+        from .utils import calculate_kmer_distance_across_breakpoint
+        return calculate_kmer_distance_across_breakpoint(sequence, breakpoint, k, window_size)
     
     def _calculate_taxonomic_similarity(self, tax1: str, tax2: str) -> float:
         """Calculate taxonomic similarity between two classifications."""
@@ -411,6 +330,9 @@ class ChimeraAnalyzer:
         repeats = []
         min_repeat_len = 4
         
+        if len(left_seq) < min_repeat_len or len(right_seq) < min_repeat_len:
+            return repeats
+            
         for i in range(len(left_seq) - min_repeat_len + 1):
             for j in range(len(right_seq) - min_repeat_len + 1):
                 for k in range(min_repeat_len, min(len(left_seq) - i, len(right_seq) - j) + 1):
@@ -429,6 +351,9 @@ class ChimeraAnalyzer:
         min_repeat_len = 4
         right_rc = reverse_complement(right_seq)
         
+        if len(left_seq) < min_repeat_len or len(right_rc) < min_repeat_len:
+            return repeats
+            
         for i in range(len(left_seq) - min_repeat_len + 1):
             for j in range(len(right_rc) - min_repeat_len + 1):
                 for k in range(min_repeat_len, min(len(left_seq) - i, len(right_rc) - j) + 1):

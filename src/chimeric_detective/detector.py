@@ -20,6 +20,10 @@ from .utils import (
     calculate_gc_content, calculate_kmer_frequencies, calculate_kmer_distance,
     run_command, merge_overlapping_intervals, setup_logging
 )
+from .constants import (
+    SequenceConstants, WindowConstants, DetectionThresholds, AlgorithmConstants,
+    get_adaptive_window_size, get_adaptive_step_size, adjust_window_for_sequence_length
+)
 
 
 @dataclass
@@ -236,56 +240,120 @@ class ChimeraDetector:
         return str(sorted_bam)
     
     def _analyze_contig(self, contig_id: str, sequence: str, bam_file: str) -> List[ChimeraCandidate]:
-        """Analyze a single contig for chimeric signatures with adaptive window sizing."""
-        candidates = []
+        """Analyze a single contig for chimeric signatures using adaptive window sizing."""
+        # Step 1: Validate sequence and calculate parameters
+        if not self._is_valid_contig_for_analysis(contig_id, sequence):
+            return []
         
-        # Critical Fix #2: Adaptive window sizing based on contig length
+        window_params = self._calculate_adaptive_window_parameters(sequence)
+        
+        # Step 2: Calculate all signal profiles
+        profiles = self._calculate_contig_profiles(contig_id, sequence, bam_file, window_params)
+        
+        # Step 3: Detect all potential breakpoints
+        breakpoints = self._detect_all_breakpoints(sequence, profiles, window_params)
+        
+        # Step 4: Evaluate each breakpoint and create candidates
+        return self._evaluate_breakpoints_to_candidates(
+            contig_id, sequence, bam_file, breakpoints, profiles, window_params
+        )
+    
+    def _is_valid_contig_for_analysis(self, contig_id: str, sequence: str) -> bool:
+        """Check if contig is suitable for chimera analysis."""
         contig_length = len(sequence)
-        adaptive_window = max(200, min(2000, contig_length // 20))
-        adaptive_step = max(50, adaptive_window // 8)  # Finer step size for better resolution
         
-        # Ensure we don't try to analyze contigs that are too short
-        if contig_length < 100:  # Skip very short contigs
+        if contig_length < SequenceConstants.MIN_CONTIG_LENGTH_FOR_ANALYSIS:
             self.logger.debug(f"Skipping contig {contig_id}: too short ({contig_length}bp)")
-            return candidates
+            return False
+            
+        return True
+    
+    def _calculate_adaptive_window_parameters(self, sequence: str) -> dict:
+        """Calculate adaptive window and step sizes based on sequence length."""
+        contig_length = len(sequence)
         
-        # Adjust window and step if they're too large for the sequence
-        if adaptive_window > contig_length // 2:
-            adaptive_window = max(50, contig_length // 4)
-            adaptive_step = max(25, adaptive_window // 4)
+        # Calculate adaptive window size using biological constants
+        adaptive_window = get_adaptive_window_size(contig_length)
+        adaptive_step = get_adaptive_step_size(adaptive_window)
         
-        self.logger.debug(f"Contig {contig_id}: length={contig_length}, window={adaptive_window}, step={adaptive_step}")
+        # Adjust window if it's too large for the sequence
+        adaptive_window = adjust_window_for_sequence_length(adaptive_window, contig_length)
+        
+        # Recalculate step size if window was adjusted
+        if adaptive_window < get_adaptive_window_size(contig_length):
+            adaptive_step = max(
+                WindowConstants.MIN_ADAPTIVE_STEP,
+                adaptive_window // WindowConstants.STEP_TO_WINDOW_RATIO
+            )
+        
+        params = {
+            'length': contig_length,
+            'window': adaptive_window,
+            'step': adaptive_step,
+            'refinement_window': adaptive_window // AlgorithmConstants.REFINEMENT_WINDOW_DIVISOR
+        }
+        
+        self.logger.debug(f"Window parameters: {params}")
+        return params
+    
+    def _calculate_contig_profiles(self, contig_id: str, sequence: str, bam_file: str, window_params: dict) -> dict:
+        """Calculate all signal profiles for the contig."""
+        profiles = {}
         
         # Calculate coverage profile
-        coverage = self._calculate_coverage(contig_id, len(sequence), bam_file)
+        profiles['coverage'] = self._calculate_coverage(contig_id, len(sequence), bam_file)
         
         # Calculate GC content profile with adaptive window
-        gc_profile = self._calculate_adaptive_gc_profile(sequence, adaptive_window, adaptive_step)
+        profiles['gc'] = self._calculate_adaptive_gc_profile(
+            sequence, window_params['window'], window_params['step']
+        )
         
         # Calculate k-mer profiles with adaptive window
-        kmer_profile = self._calculate_adaptive_kmer_profile(sequence, adaptive_window, adaptive_step)
+        profiles['kmer'] = self._calculate_adaptive_kmer_profile(
+            sequence, window_params['window'], window_params['step']
+        )
         
+        return profiles
+    
+    def _detect_all_breakpoints(self, sequence: str, profiles: dict, window_params: dict) -> set:
+        """Detect breakpoints using all available methods."""
         # Detect breakpoints using multiple methods with adaptive parameters
-        coverage_breakpoints = self._detect_coverage_breakpoints_adaptive(coverage, adaptive_window)
-        gc_breakpoints = self._detect_gc_breakpoints_adaptive(gc_profile, sequence, adaptive_step)
-        kmer_breakpoints = self._detect_kmer_breakpoints_adaptive(kmer_profile, sequence, adaptive_step)
+        coverage_breakpoints = self._detect_coverage_breakpoints_adaptive(
+            profiles['coverage'], window_params['window']
+        )
+        gc_breakpoints = self._detect_gc_breakpoints_adaptive(
+            profiles['gc'], sequence, window_params['step']
+        )
+        kmer_breakpoints = self._detect_kmer_breakpoints_adaptive(
+            profiles['kmer'], sequence, window_params['step']
+        )
         
-        # Critical Fix #4: Sub-grid detection - scan between detected breakpoints
+        # Sub-grid detection - scan between detected breakpoints
+        initial_breakpoints = coverage_breakpoints + gc_breakpoints + kmer_breakpoints
         sub_grid_breakpoints = self._detect_sub_grid_breakpoints(
-            sequence, coverage_breakpoints + gc_breakpoints + kmer_breakpoints, adaptive_window
+            sequence, initial_breakpoints, window_params['window']
         )
         
         # Combine all breakpoints
-        all_breakpoints = set(coverage_breakpoints + gc_breakpoints + kmer_breakpoints + sub_grid_breakpoints)
+        return set(coverage_breakpoints + gc_breakpoints + kmer_breakpoints + sub_grid_breakpoints)
+    
+    def _evaluate_breakpoints_to_candidates(self, contig_id: str, sequence: str, bam_file: str, 
+                                           breakpoints: set, profiles: dict, window_params: dict) -> List[ChimeraCandidate]:
+        """Evaluate each breakpoint and create chimera candidates."""
+        candidates = []
         
-        for initial_breakpoint in all_breakpoints:
-            # Critical Fix #1: True breakpoint refinement at nucleotide resolution
-            refined_breakpoint = self._refine_breakpoint(sequence, initial_breakpoint, adaptive_window // 4)
+        for initial_breakpoint in breakpoints:
+            # Refine breakpoint to nucleotide resolution
+            refined_breakpoint = self._refine_breakpoint(
+                sequence, initial_breakpoint, window_params['refinement_window']
+            )
             
+            # Evaluate the refined breakpoint
             candidate = self._evaluate_breakpoint_adaptive(
                 contig_id, sequence, refined_breakpoint, bam_file,
-                coverage, gc_profile, kmer_profile, adaptive_window
+                profiles['coverage'], profiles['gc'], profiles['kmer'], window_params['window']
             )
+            
             if candidate:
                 candidates.append(candidate)
         
@@ -339,7 +407,7 @@ class ChimeraDetector:
         end_pos = max(1, seq_len - window_size + 1)
         for i in range(0, end_pos, step_size):
             window_seq = sequence[i:i + window_size]
-            if len(window_seq) >= 20:  # Minimum sequence for meaningful analysis
+            if len(window_seq) >= SequenceConstants.MIN_SEQUENCE_FOR_WINDOW_ANALYSIS:
                 gc_content = (window_seq.count('G') + window_seq.count('C')) / len(window_seq)
                 gc_profile.append(gc_content)
         
@@ -353,8 +421,8 @@ class ChimeraDetector:
         # Ensure we don't have negative range endpoints
         if seq_len < window_size:
             # If sequence is shorter than window, just analyze the whole sequence
-            if seq_len >= 4:  # Need minimum length for k-mer analysis
-                kmers = calculate_kmer_frequencies(sequence, k=4)
+            if seq_len >= SequenceConstants.MIN_SEQUENCE_FOR_KMER_ANALYSIS:
+                kmers = calculate_kmer_frequencies(sequence, k=SequenceConstants.DEFAULT_KMER_SIZE)
                 kmer_profile.append(kmers)
             return kmer_profile
         
@@ -362,8 +430,8 @@ class ChimeraDetector:
         end_pos = max(1, seq_len - window_size + 1)
         for i in range(0, end_pos, step_size):
             window_seq = sequence[i:i + window_size]
-            if len(window_seq) >= 20:  # Minimum sequence for meaningful analysis
-                kmers = calculate_kmer_frequencies(window_seq, k=4)
+            if len(window_seq) >= SequenceConstants.MIN_SEQUENCE_FOR_WINDOW_ANALYSIS:
+                kmers = calculate_kmer_frequencies(window_seq, k=SequenceConstants.DEFAULT_KMER_SIZE)
                 kmer_profile.append(kmers)
         
         return kmer_profile
@@ -397,7 +465,7 @@ class ChimeraDetector:
             left_seq = sequence[pos-analysis_size:pos]
             right_seq = sequence[pos:pos+analysis_size]
             
-            if len(left_seq) >= 20 and len(right_seq) >= 20:
+            if len(left_seq) >= SequenceConstants.MIN_SEQUENCE_FOR_WINDOW_ANALYSIS and len(right_seq) >= SequenceConstants.MIN_SEQUENCE_FOR_WINDOW_ANALYSIS:
                 left_gc = (left_seq.count('G') + left_seq.count('C')) / len(left_seq)
                 right_gc = (right_seq.count('G') + right_seq.count('C')) / len(right_seq)
                 gc_signal = abs(left_gc - right_gc)
@@ -789,7 +857,7 @@ class ChimeraDetector:
         right_gc = 0.0
         gc_diff = 0.0
         
-        if len(left_seq) >= 20 and len(right_seq) >= 20:
+        if len(left_seq) >= SequenceConstants.MIN_SEQUENCE_FOR_WINDOW_ANALYSIS and len(right_seq) >= SequenceConstants.MIN_SEQUENCE_FOR_WINDOW_ANALYSIS:
             left_gc = (left_seq.count('G') + left_seq.count('C')) / len(left_seq)
             right_gc = (right_seq.count('G') + right_seq.count('C')) / len(right_seq)
             gc_diff = abs(left_gc - right_gc)
@@ -799,9 +867,9 @@ class ChimeraDetector:
         
         # K-mer evidence using high-resolution analysis
         kmer_dist = 0.0
-        if len(left_seq) >= 20 and len(right_seq) >= 20:
-            left_kmers = calculate_kmer_frequencies(left_seq, k=4)
-            right_kmers = calculate_kmer_frequencies(right_seq, k=4)
+        if len(left_seq) >= SequenceConstants.MIN_SEQUENCE_FOR_WINDOW_ANALYSIS and len(right_seq) >= SequenceConstants.MIN_SEQUENCE_FOR_WINDOW_ANALYSIS:
+            left_kmers = calculate_kmer_frequencies(left_seq, k=SequenceConstants.DEFAULT_KMER_SIZE)
+            right_kmers = calculate_kmer_frequencies(right_seq, k=SequenceConstants.DEFAULT_KMER_SIZE)
             kmer_dist = calculate_kmer_distance(left_kmers, right_kmers)
             
             if kmer_dist >= self.kmer_distance_threshold:

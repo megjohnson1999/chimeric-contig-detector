@@ -766,7 +766,7 @@ class MultiSampleProcessor:
     def _generate_multi_sample_html_report(self, combined_results: Dict, output_dir: str):
         """Generate HTML report summarizing all samples."""
         
-        from jinja2 import Template
+        from jinja2 import Template, Environment, select_autoescape
         
         html_template = """
 <!DOCTYPE html>
@@ -867,7 +867,9 @@ class MultiSampleProcessor:
 </html>
         """
         
-        template = Template(html_template)
+        # Use secure template rendering with autoescaping
+        env = Environment(autoescape=select_autoescape(['html', 'xml']))
+        template = env.from_string(html_template)
         html_content = template.render(combined_results=combined_results)
         
         report_path = Path(output_dir) / "multi_sample_report.html"

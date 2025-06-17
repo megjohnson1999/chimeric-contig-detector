@@ -15,7 +15,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
 import plotly.offline as pyo
-from jinja2 import Template
+from jinja2 import Template, Environment, select_autoescape
 
 from .analyzer import ChimeraAnalysis
 from .resolver import SplittingDecision
@@ -771,8 +771,9 @@ class ChimeraVisualizer:
             else:
                 plot_content[template_var] = f"<p>Plot file not found: {filename}</p>"
         
-        # Render template
-        template = Template(template_str)
+        # Render template with autoescaping enabled for security
+        env = Environment(autoescape=select_autoescape(['html', 'xml']))
+        template = env.from_string(template_str)
         html_content = template.render(
             analyses=analyses,
             decisions=decisions,
