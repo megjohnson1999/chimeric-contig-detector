@@ -126,14 +126,16 @@ class ChimeraDetector:
                 contig_candidates = self._analyze_contig(contig_id, sequence, bam_file_to_use)
                 candidates.extend(contig_candidates)
             except Exception as e:
-                self.logger.error(f"ERROR in contig {contig_id}: {e}")
-                # Log the exact range() error location
+                self.logger.error(f"ERROR in contig {contig_id} (len={len(sequence)}): {e}")
+                # Log full traceback to find the exact error location
                 import traceback
-                tb_lines = traceback.format_exception(type(e), e, e.__traceback__)
-                for line in tb_lines:
-                    if 'range(' in line:
-                        self.logger.error(f"Range error: {line.strip()}")
-                        break
+                full_traceback = traceback.format_exc()
+                self.logger.error(f"Full traceback:\n{full_traceback}")
+                
+                # Log contig details for debugging
+                self.logger.error(f"Contig details - ID: {contig_id}, Length: {len(sequence)}")
+                self.logger.error(f"Window size: {self.window_size}, Step size: {self.step_size}")
+                
                 raise
         
         self.chimera_candidates = candidates
