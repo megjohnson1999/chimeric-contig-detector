@@ -1,386 +1,112 @@
-2025-06-16 15:02:17,480 - chimeric_detective - INFO - Starting Chimeric Detective v1.0.0
-2025-06-16 15:02:17,481 - chimeric_detective - INFO - Command: /ref/sahlab/software/miniforge3/envs/ccd_env/bin/chimeric_detective -a test_data_large/large_test_assembly.fasta --reads-dir test_data_large/reads --reads-pattern *_R{1,2}.fastq.gz --log-level DEBUG -o demo_results/
-2025-06-16 15:02:17,518 - chimeric_detective - WARNING - Missing optional tools: bwa
-2025-06-16 15:02:17,520 - chimeric_detective - WARNING - Some functionality may be limited
-2025-06-16 15:02:17,521 - chimeric_detective - INFO - 🔬 Starting multi-sample analysis
-2025-06-16 15:02:17,522 - chimeric_detective - INFO - Processing mode: coassembly
-2025-06-16 15:02:17,523 - chimeric_detective - INFO - Max workers: 4
-2025-06-16 15:02:17,524 - chimeric_detective - INFO - Processing samples from directory: test_data_large/reads
-2025-06-16 15:02:17,525 - chimeric_detective - INFO - Using pattern: *_R{1,2}.fastq.gz
-2025-06-16 15:02:17,526 - chimeric_detective - INFO - Processing mode: coassembly
-2025-06-16 15:02:17,530 - chimeric_detective - INFO - Found 8 samples
-2025-06-16 15:02:17,531 - chimeric_detective - INFO - Processing co-assembly with 8 samples
-2025-06-16 15:02:17,533 - chimeric_detective - INFO - Mapping all samples to co-assembly
-2025-06-16 15:02:17,535 - chimeric_detective - INFO - Running chimera detection for each sample
-2025-06-16 15:02:17,539 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:02:17,569 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:02:17,570 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:02:17,902 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:02:19,689 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:02:19,692 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:02:19,698 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:02:19,700 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:02:20,027 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:02:21,466 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:02:21,468 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:02:21,472 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:02:21,473 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:02:21,786 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:02:23,444 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:02:23,446 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:02:23,451 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:02:23,454 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:02:23,825 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:02:25,290 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:02:25,292 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:02:25,295 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:02:25,296 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:02:25,645 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:02:27,363 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:02:27,365 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:02:27,368 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:02:27,369 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:02:27,689 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:02:29,081 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:02:29,083 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:02:29,086 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:02:29,087 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:02:29,626 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:02:31,986 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:02:31,989 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:02:31,992 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:02:31,993 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:02:32,498 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:02:34,246 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:02:34,250 - chimeric_detective - INFO - Aggregating chimera candidates across samples
-2025-06-16 15:02:34,252 - chimeric_detective - INFO - Detected 15 aggregated chimera candidates
-2025-06-16 15:02:34,253 - chimeric_detective - INFO - Analyzing 15 chimera candidates
-2025-06-16 15:02:34,254 - chimeric_detective - INFO - Analyzing 15 chimera candidates
-2025-06-16 15:02:34,540 - chimeric_detective - INFO - Completed analysis of 15 chimeras
-2025-06-16 15:02:34,541 - chimeric_detective - INFO - Resolving 15 chimera analyses
-2025-06-16 15:02:34,542 - chimeric_detective - INFO - Resolving 15 chimera analyses
-2025-06-16 15:02:34,777 - chimeric_detective - INFO - Resolution complete. 0 contigs split, 5 preserved
-2025-06-16 15:02:34,778 - chimeric_detective - INFO - Creating interactive HTML report
-2025-06-16 15:02:34,779 - chimeric_detective - INFO - Creating interactive HTML report
-2025-06-16 15:02:47,121 - chimeric_detective - INFO - Report generated: demo_results/chimeric_detective_report.html
-2025-06-16 15:02:47,506 - chimeric_detective - INFO - Co-assembly analysis completed successfully!
-2025-06-16 15:02:47,513 - chimeric_detective - INFO - Analysis completed successfully!
-2025-06-16 15:36:15,275 - chimeric_detective - INFO - Starting Chimeric Detective v1.0.0
-2025-06-16 15:36:15,285 - chimeric_detective - INFO - Command: /ref/sahlab/software/miniforge3/envs/ccd_env/bin/chimeric_detective -a test_data_large/large_test_assembly.fasta --reads-dir test_data_large/reads --reads-pattern *_R{1,2}.fastq.gz --log-level DEBUG -o demo_results/
-2025-06-16 15:36:15,329 - chimeric_detective - WARNING - Missing optional tools: bwa
-2025-06-16 15:36:15,330 - chimeric_detective - WARNING - Some functionality may be limited
-2025-06-16 15:36:15,332 - chimeric_detective - INFO - 🔬 Starting multi-sample analysis
-2025-06-16 15:36:15,333 - chimeric_detective - INFO - Processing mode: coassembly
-2025-06-16 15:36:15,334 - chimeric_detective - INFO - Max workers: 4
-2025-06-16 15:36:15,335 - chimeric_detective - INFO - Processing samples from directory: test_data_large/reads
-2025-06-16 15:36:15,336 - chimeric_detective - INFO - Using pattern: *_R{1,2}.fastq.gz
-2025-06-16 15:36:15,337 - chimeric_detective - INFO - Processing mode: coassembly
-2025-06-16 15:36:15,342 - chimeric_detective - INFO - Found 8 samples
-2025-06-16 15:36:15,343 - chimeric_detective - INFO - Processing co-assembly with 8 samples
-2025-06-16 15:36:15,346 - chimeric_detective - INFO - Mapping all samples to co-assembly
-2025-06-16 15:36:15,347 - chimeric_detective - INFO - Running chimera detection for each sample
-2025-06-16 15:36:15,353 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:36:15,383 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:36:15,397 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:36:15,656 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:36:16,892 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:36:16,894 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:36:16,897 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:36:16,898 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:36:17,176 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:36:18,399 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:36:18,401 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:36:18,404 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:36:18,406 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:36:18,884 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:36:20,114 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:36:20,116 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:36:20,119 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:36:20,121 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:36:20,395 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:36:21,647 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:36:21,649 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:36:21,653 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:36:21,654 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:36:22,029 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:36:23,280 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:36:23,282 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:36:23,285 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:36:23,286 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:36:23,592 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:36:24,808 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:36:24,810 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:36:24,813 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:36:24,814 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:36:25,111 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:36:26,412 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:36:26,414 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:36:26,418 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:36:26,419 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:36:26,681 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:36:27,938 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:36:27,941 - chimeric_detective - INFO - Aggregating chimera candidates across samples
-2025-06-16 15:36:27,943 - chimeric_detective - INFO - Detected 15 aggregated chimera candidates
-2025-06-16 15:36:27,944 - chimeric_detective - INFO - Analyzing 15 chimera candidates
-2025-06-16 15:36:27,945 - chimeric_detective - INFO - Analyzing 15 chimera candidates
-2025-06-16 15:36:28,221 - chimeric_detective - INFO - Completed analysis of 15 chimeras
-2025-06-16 15:36:28,223 - chimeric_detective - INFO - Resolving 15 chimera analyses
-2025-06-16 15:36:28,224 - chimeric_detective - INFO - Resolving 15 chimera analyses
-2025-06-16 15:36:28,227 - chimeric_detective - INFO - Split chimeric_001 at position 1000 into 1000 bp and 2000 bp contigs
-2025-06-16 15:36:28,228 - chimeric_detective - INFO - Split chimeric_002 at position 1500 into 1500 bp and 1500 bp contigs
-2025-06-16 15:36:28,229 - chimeric_detective - INFO - Split chimeric_003 at position 1000 into 1000 bp and 2000 bp contigs
-2025-06-16 15:36:28,231 - chimeric_detective - INFO - Split chimeric_004 at position 1000 into 1000 bp and 2000 bp contigs
-2025-06-16 15:36:28,232 - chimeric_detective - INFO - Split chimeric_005 at position 1000 into 1000 bp and 2000 bp contigs
-2025-06-16 15:36:28,334 - chimeric_detective - INFO - Resolution complete. 5 contigs split, 0 preserved
-2025-06-16 15:36:28,335 - chimeric_detective - INFO - Creating interactive HTML report
-2025-06-16 15:36:28,336 - chimeric_detective - INFO - Creating interactive HTML report
-2025-06-16 15:36:35,547 - chimeric_detective - INFO - Report generated: demo_results/chimeric_detective_report.html
-2025-06-16 15:36:35,550 - chimeric_detective - INFO - Co-assembly analysis completed successfully!
-2025-06-16 15:36:35,559 - chimeric_detective - INFO - Analysis completed successfully!
-2025-06-16 15:43:17,076 - chimeric_detective - INFO - Starting Chimeric Detective v1.0.0
-2025-06-16 15:43:17,077 - chimeric_detective - INFO - Command: /ref/sahlab/software/miniforge3/envs/ccd_env/bin/chimeric_detective -a test_data_large/large_test_assembly.fasta --reads-dir test_data_large/reads --reads-pattern *_R{1,2}.fastq.gz --log-level DEBUG -o demo_results/
-2025-06-16 15:43:17,105 - chimeric_detective - WARNING - Missing optional tools: bwa
-2025-06-16 15:43:17,106 - chimeric_detective - WARNING - Some functionality may be limited
-2025-06-16 15:43:17,108 - chimeric_detective - INFO - 🔬 Starting multi-sample analysis
-2025-06-16 15:43:17,109 - chimeric_detective - INFO - Processing mode: coassembly
-2025-06-16 15:43:17,110 - chimeric_detective - INFO - Max workers: 4
-2025-06-16 15:43:17,112 - chimeric_detective - INFO - Processing samples from directory: test_data_large/reads
-2025-06-16 15:43:17,113 - chimeric_detective - INFO - Using pattern: *_R{1,2}.fastq.gz
-2025-06-16 15:43:17,114 - chimeric_detective - INFO - Processing mode: coassembly
-2025-06-16 15:43:17,118 - chimeric_detective - INFO - Found 8 samples
-2025-06-16 15:43:17,119 - chimeric_detective - INFO - Processing co-assembly with 8 samples
-2025-06-16 15:43:17,121 - chimeric_detective - INFO - Mapping all samples to co-assembly
-2025-06-16 15:43:17,122 - chimeric_detective - INFO - Running chimera detection for each sample
-2025-06-16 15:43:17,127 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:43:17,154 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:43:17,156 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:43:17,427 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:43:18,783 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:43:18,786 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:43:18,790 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:43:18,792 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:43:19,052 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:43:20,394 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:43:20,396 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:43:20,400 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:43:20,402 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:43:20,681 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:43:22,017 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:43:22,019 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:43:22,024 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:43:22,025 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:43:22,305 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:43:23,750 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:43:23,752 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:43:23,756 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:43:23,757 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:43:24,054 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:43:25,503 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:43:25,505 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:43:25,509 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:43:25,510 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:43:25,807 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:43:27,251 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:43:27,253 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:43:27,258 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:43:27,259 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:43:27,584 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:43:29,047 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:43:29,050 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:43:29,054 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:43:29,055 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:43:29,335 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:43:30,799 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:43:30,802 - chimeric_detective - INFO - Aggregating chimera candidates across samples
-2025-06-16 15:43:30,806 - chimeric_detective - INFO - Detected 15 aggregated chimera candidates
-2025-06-16 15:43:30,807 - chimeric_detective - INFO - Analyzing 15 chimera candidates
-2025-06-16 15:43:30,808 - chimeric_detective - INFO - Analyzing 15 chimera candidates
-2025-06-16 15:43:31,106 - chimeric_detective - INFO - Completed analysis of 15 chimeras
-2025-06-16 15:43:31,108 - chimeric_detective - INFO - Resolving 15 chimera analyses
-2025-06-16 15:43:31,109 - chimeric_detective - INFO - Resolving 15 chimera analyses
-2025-06-16 15:43:31,112 - chimeric_detective - INFO - Split chimeric_001 at position 1000 into 1000 bp and 2000 bp contigs
-2025-06-16 15:43:31,113 - chimeric_detective - INFO - Split chimeric_002 at position 1500 into 1500 bp and 1500 bp contigs
-2025-06-16 15:43:31,114 - chimeric_detective - INFO - Split chimeric_003 at position 1000 into 1000 bp and 2000 bp contigs
-2025-06-16 15:43:31,116 - chimeric_detective - INFO - Split chimeric_004 at position 1000 into 1000 bp and 2000 bp contigs
-2025-06-16 15:43:31,117 - chimeric_detective - INFO - Split chimeric_005 at position 1000 into 1000 bp and 2000 bp contigs
-2025-06-16 15:43:31,151 - chimeric_detective - INFO - Resolution complete. 5 contigs split, 0 preserved
-2025-06-16 15:43:31,152 - chimeric_detective - INFO - Creating interactive HTML report
-2025-06-16 15:43:31,153 - chimeric_detective - INFO - Creating interactive HTML report
-2025-06-16 15:43:40,754 - chimeric_detective - INFO - Report generated: demo_results/chimeric_detective_report.html
-2025-06-16 15:43:40,757 - chimeric_detective - INFO - Co-assembly analysis completed successfully!
-2025-06-16 15:43:40,766 - chimeric_detective - INFO - Analysis completed successfully!
-2025-06-16 15:52:03,274 - chimeric_detective - INFO - Starting Chimeric Detective v1.0.0
-2025-06-16 15:52:03,275 - chimeric_detective - INFO - Command: /ref/sahlab/software/miniforge3/envs/ccd_env/bin/chimeric_detective -a test_data_large/large_test_assembly.fasta --reads-dir test_data_large/reads --reads-pattern *_R{1,2}.fastq.gz --log-level DEBUG -o demo_results/
-2025-06-16 15:52:03,287 - chimeric_detective - WARNING - Missing optional tools: bwa
-2025-06-16 15:52:03,288 - chimeric_detective - WARNING - Some functionality may be limited
-2025-06-16 15:52:03,289 - chimeric_detective - INFO - 🔬 Starting multi-sample analysis
-2025-06-16 15:52:03,290 - chimeric_detective - INFO - Processing mode: coassembly
-2025-06-16 15:52:03,291 - chimeric_detective - INFO - Max workers: 4
-2025-06-16 15:52:03,293 - chimeric_detective - INFO - Processing samples from directory: test_data_large/reads
-2025-06-16 15:52:03,297 - chimeric_detective - INFO - Using pattern: *_R{1,2}.fastq.gz
-2025-06-16 15:52:03,298 - chimeric_detective - INFO - Processing mode: coassembly
-2025-06-16 15:52:03,301 - chimeric_detective - INFO - Found 8 samples
-2025-06-16 15:52:03,303 - chimeric_detective - INFO - Processing co-assembly with 8 samples
-2025-06-16 15:52:03,305 - chimeric_detective - INFO - Mapping all samples to co-assembly
-2025-06-16 15:52:03,306 - chimeric_detective - INFO - Running chimera detection for each sample
-2025-06-16 15:52:03,309 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:52:03,322 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:52:03,323 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:52:03,576 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:52:04,891 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:52:04,893 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:52:04,896 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:52:04,897 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:52:05,143 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:52:06,432 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:52:06,434 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:52:06,438 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:52:06,439 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:52:06,674 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:52:07,878 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:52:07,880 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:52:07,883 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:52:07,884 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:52:08,146 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:52:09,361 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:52:09,363 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:52:09,366 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:52:09,367 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:52:09,639 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:52:10,883 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:52:10,884 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:52:10,888 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:52:10,889 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:52:11,150 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:52:12,404 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:52:12,406 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:52:12,409 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:52:12,411 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:52:12,695 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:52:13,981 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:52:13,983 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 15:52:13,992 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 15:52:13,993 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 15:52:14,242 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 15:52:15,474 - chimeric_detective - INFO - Detected 15 chimera candidates
-2025-06-16 15:52:15,477 - chimeric_detective - INFO - Aggregating chimera candidates across samples
-2025-06-16 15:52:15,479 - chimeric_detective - INFO - Detected 15 aggregated chimera candidates
-2025-06-16 15:52:15,480 - chimeric_detective - INFO - Analyzing 15 chimera candidates
-2025-06-16 15:52:15,481 - chimeric_detective - INFO - Analyzing 15 chimera candidates
-2025-06-16 15:52:15,754 - chimeric_detective - INFO - Completed analysis of 15 chimeras
-2025-06-16 15:52:15,755 - chimeric_detective - INFO - Resolving 15 chimera analyses
-2025-06-16 15:52:15,757 - chimeric_detective - INFO - Resolving 15 chimera analyses
-2025-06-16 15:52:15,760 - chimeric_detective - INFO - Split chimeric_001 at position 1000 into 1000 bp and 2000 bp contigs
-2025-06-16 15:52:15,761 - chimeric_detective - INFO - Split chimeric_002 at position 1500 into 1500 bp and 1500 bp contigs
-2025-06-16 15:52:15,762 - chimeric_detective - INFO - Split chimeric_003 at position 1000 into 1000 bp and 2000 bp contigs
-2025-06-16 15:52:15,763 - chimeric_detective - INFO - Split chimeric_004 at position 1000 into 1000 bp and 2000 bp contigs
-2025-06-16 15:52:15,764 - chimeric_detective - INFO - Split chimeric_005 at position 1000 into 1000 bp and 2000 bp contigs
-2025-06-16 15:52:15,798 - chimeric_detective - INFO - Resolution complete. 5 contigs split, 0 preserved
-2025-06-16 15:52:15,799 - chimeric_detective - INFO - Creating interactive HTML report
-2025-06-16 15:52:15,800 - chimeric_detective - INFO - Creating interactive HTML report
-2025-06-16 15:52:15,802 - chimeric_detective - INFO - Generating chimera types plot...
-2025-06-16 15:52:17,780 - chimeric_detective - INFO - Generating confidence distribution plot...
-2025-06-16 15:52:18,090 - chimeric_detective - INFO - Generating decision summary plot...
-2025-06-16 15:52:18,164 - chimeric_detective - INFO - Generating individual contig plots...
-2025-06-16 15:52:24,157 - chimeric_detective - INFO - Generating evidence overview plot...
-2025-06-16 15:52:24,253 - chimeric_detective - INFO - Generated 5 plot types
-2025-06-16 15:52:24,748 - chimeric_detective - INFO - Report generated: demo_results/chimeric_detective_report.html
-2025-06-16 15:52:24,751 - chimeric_detective - INFO - Co-assembly analysis completed successfully!
-2025-06-16 15:52:24,760 - chimeric_detective - INFO - Analysis completed successfully!
-2025-06-16 16:06:51,962 - chimeric_detective - INFO - Starting Chimeric Detective v1.0.0
-2025-06-16 16:06:51,984 - chimeric_detective - INFO - Command: /ref/sahlab/software/miniforge3/envs/ccd_env/bin/chimeric_detective -a test_data_large/large_test_assembly.fasta --reads-dir test_data_large/reads --reads-pattern *_R{1,2}.fastq.gz --log-level DEBUG -o demo_results/
-2025-06-16 16:06:51,999 - chimeric_detective - WARNING - Missing optional tools: bwa
-2025-06-16 16:06:52,000 - chimeric_detective - WARNING - Some functionality may be limited
-2025-06-16 16:06:52,001 - chimeric_detective - INFO - 🔬 Starting multi-sample analysis
-2025-06-16 16:06:52,002 - chimeric_detective - INFO - Processing mode: coassembly
-2025-06-16 16:06:52,003 - chimeric_detective - INFO - Max workers: 4
-2025-06-16 16:06:52,004 - chimeric_detective - INFO - Processing samples from directory: test_data_large/reads
-2025-06-16 16:06:52,005 - chimeric_detective - INFO - Using pattern: *_R{1,2}.fastq.gz
-2025-06-16 16:06:52,007 - chimeric_detective - INFO - Processing mode: coassembly
-2025-06-16 16:06:52,010 - chimeric_detective - INFO - Found 8 samples
-2025-06-16 16:06:52,012 - chimeric_detective - INFO - Processing co-assembly with 8 samples
-2025-06-16 16:06:52,014 - chimeric_detective - INFO - Mapping all samples to co-assembly
-2025-06-16 16:06:52,015 - chimeric_detective - INFO - Running chimera detection for each sample
-2025-06-16 16:06:52,019 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 16:06:52,033 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 16:06:52,034 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 16:06:52,333 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 16:06:53,749 - chimeric_detective - INFO - Detected 6 chimera candidates
-2025-06-16 16:06:53,751 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 16:06:53,755 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 16:06:53,757 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 16:06:54,121 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 16:06:55,601 - chimeric_detective - INFO - Detected 6 chimera candidates
-2025-06-16 16:06:55,603 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 16:06:55,606 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 16:06:55,608 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 16:06:55,987 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 16:06:57,474 - chimeric_detective - INFO - Detected 6 chimera candidates
-2025-06-16 16:06:57,477 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 16:06:57,482 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 16:06:57,484 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 16:06:57,872 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 16:06:59,377 - chimeric_detective - INFO - Detected 6 chimera candidates
-2025-06-16 16:06:59,379 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 16:06:59,383 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 16:06:59,384 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 16:06:59,779 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 16:07:01,274 - chimeric_detective - INFO - Detected 6 chimera candidates
-2025-06-16 16:07:01,276 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 16:07:01,280 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 16:07:01,281 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 16:07:01,607 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 16:07:03,109 - chimeric_detective - INFO - Detected 6 chimera candidates
-2025-06-16 16:07:03,112 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 16:07:03,116 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 16:07:03,117 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 16:07:03,562 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 16:07:05,081 - chimeric_detective - INFO - Detected 6 chimera candidates
-2025-06-16 16:07:05,083 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 16:07:05,086 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 16:07:05,088 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 16:07:05,463 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 16:07:06,940 - chimeric_detective - INFO - Detected 6 chimera candidates
-2025-06-16 16:07:06,944 - chimeric_detective - INFO - Aggregating chimera candidates across samples
-2025-06-16 16:07:06,946 - chimeric_detective - INFO - Detected 6 aggregated chimera candidates
-2025-06-16 16:07:06,947 - chimeric_detective - INFO - Analyzing 6 chimera candidates
-2025-06-16 16:07:06,948 - chimeric_detective - INFO - Analyzing 6 chimera candidates
-2025-06-16 16:07:07,077 - chimeric_detective - INFO - Completed analysis of 6 chimeras
-2025-06-16 16:07:07,079 - chimeric_detective - INFO - Resolving 6 chimera analyses
-2025-06-16 16:07:07,080 - chimeric_detective - INFO - Resolving 6 chimera analyses
-2025-06-16 16:07:07,084 - chimeric_detective - INFO - Split chimeric_001 at position 1000 into 1000 bp and 2000 bp contigs
-2025-06-16 16:07:07,085 - chimeric_detective - INFO - Split chimeric_002 at position 1500 into 1500 bp and 1500 bp contigs
-2025-06-16 16:07:07,086 - chimeric_detective - INFO - Split chimeric_003 at position 1500 into 1500 bp and 1500 bp contigs
-2025-06-16 16:07:07,087 - chimeric_detective - INFO - Split chimeric_004 at position 1500 into 1500 bp and 1500 bp contigs
-2025-06-16 16:07:07,088 - chimeric_detective - INFO - Split chimeric_005 at position 1000 into 1000 bp and 2000 bp contigs
-2025-06-16 16:07:07,127 - chimeric_detective - INFO - Resolution complete. 5 contigs split, 0 preserved
-2025-06-16 16:07:07,128 - chimeric_detective - INFO - Creating interactive HTML report
-2025-06-16 16:07:07,129 - chimeric_detective - INFO - Creating interactive HTML report
-2025-06-16 16:07:07,130 - chimeric_detective - INFO - Generating chimera types plot...
-2025-06-16 16:07:08,954 - chimeric_detective - INFO - Generating confidence distribution plot...
-2025-06-16 16:07:09,454 - chimeric_detective - INFO - Generating decision summary plot...
-2025-06-16 16:07:09,542 - chimeric_detective - INFO - Generating individual contig plots...
-2025-06-16 16:07:12,361 - chimeric_detective - INFO - Generating evidence overview plot...
-2025-06-16 16:07:12,472 - chimeric_detective - INFO - Generated 5 plot types
-2025-06-16 16:07:13,041 - chimeric_detective - INFO - Report generated: demo_results/chimeric_detective_report.html
-2025-06-16 16:07:13,044 - chimeric_detective - INFO - Co-assembly analysis completed successfully!
-2025-06-16 16:07:13,052 - chimeric_detective - INFO - Analysis completed successfully!
-2025-06-16 16:31:40,374 - chimeric_detective - INFO - Starting Chimeric Detective v1.0.0
-2025-06-16 16:31:40,376 - chimeric_detective - INFO - Command: /ref/sahlab/software/miniforge3/envs/ccd_env/bin/chimeric_detective -a test_data_large/large_test_assembly.fasta --reads-dir test_data_large/reads --reads-pattern *_R{1,2}.fastq.gz --log-level DEBUG -o demo_results/
-2025-06-16 16:31:40,420 - chimeric_detective - WARNING - Missing optional tools: bwa
-2025-06-16 16:31:40,422 - chimeric_detective - WARNING - Some functionality may be limited
-2025-06-16 16:31:40,423 - chimeric_detective - INFO - 🔬 Starting multi-sample analysis
-2025-06-16 16:31:40,424 - chimeric_detective - INFO - Processing mode: coassembly
-2025-06-16 16:31:40,425 - chimeric_detective - INFO - Max workers: 4
-2025-06-16 16:31:40,427 - chimeric_detective - INFO - Processing samples from directory: test_data_large/reads
-2025-06-16 16:31:40,431 - chimeric_detective - INFO - Using pattern: *_R{1,2}.fastq.gz
-2025-06-16 16:31:40,432 - chimeric_detective - INFO - Processing mode: coassembly
-2025-06-16 16:31:40,438 - chimeric_detective - INFO - Found 8 samples
-2025-06-16 16:31:40,439 - chimeric_detective - INFO - Processing co-assembly with 8 samples
-2025-06-16 16:31:40,441 - chimeric_detective - INFO - Mapping all samples to co-assembly
-2025-06-16 16:31:40,443 - chimeric_detective - INFO - Running chimera detection for each sample
-2025-06-16 16:31:40,449 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 16:31:40,482 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 16:31:40,483 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 16:31:40,777 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 16:31:41,189 - chimeric_detective - ERROR - Pipeline failed: start out of range (-238)
+2025-06-16 16:50:21,206 - chimeric_detective - INFO - Starting Chimeric Detective v1.0.0
+2025-06-16 16:50:21,208 - chimeric_detective - INFO - Command: /ref/sahlab/software/miniforge3/envs/ccd_env/bin/chimeric_detective -a test_data_large/large_test_assembly.fasta --reads-dir test_data_large/reads --reads-pattern *_R{1,2}.fastq.gz --log-level DEBUG -o demo_results/
+2025-06-16 16:50:21,244 - chimeric_detective - WARNING - Missing optional tools: bwa
+2025-06-16 16:50:21,245 - chimeric_detective - WARNING - Some functionality may be limited
+2025-06-16 16:50:21,247 - chimeric_detective - INFO - 🔬 Starting multi-sample analysis
+2025-06-16 16:50:21,248 - chimeric_detective - INFO - Processing mode: coassembly
+2025-06-16 16:50:21,249 - chimeric_detective - INFO - Max workers: 4
+2025-06-16 16:50:21,250 - chimeric_detective - INFO - Processing samples from directory: test_data_large/reads
+2025-06-16 16:50:21,252 - chimeric_detective - INFO - Using pattern: *_R{1,2}.fastq.gz
+2025-06-16 16:50:21,253 - chimeric_detective - INFO - Processing mode: coassembly
+2025-06-16 16:50:21,257 - chimeric_detective - INFO - Found 8 samples
+2025-06-16 16:50:21,259 - chimeric_detective - INFO - Processing co-assembly with 8 samples
+2025-06-16 16:50:21,261 - chimeric_detective - INFO - Mapping all samples to co-assembly
+2025-06-16 16:50:21,262 - chimeric_detective - INFO - Running chimera detection for each sample
+2025-06-16 16:50:21,267 - chimeric_detective - INFO - Starting chimera detection
+2025-06-16 16:50:21,297 - chimeric_detective - INFO - Loaded 28 contigs from assembly
+2025-06-16 16:50:21,299 - chimeric_detective - INFO - Aligning reads to assembly
+2025-06-16 16:50:21,560 - chimeric_detective - INFO - Successfully aligned reads using minimap2
+2025-06-16 16:50:21,926 - chimeric_detective - ERROR - Pipeline failed: start out of range (-238)
+2025-06-16 16:54:29,429 - chimeric_detective - INFO - Starting Chimeric Detective v1.0.0
+2025-06-16 16:54:29,431 - chimeric_detective - INFO - Command: /ref/sahlab/software/miniforge3/envs/ccd_env/bin/chimeric_detective -a test_data_large/large_test_assembly.fasta --reads-dir test_data_large/reads --reads-pattern *_R{1,2}.fastq.gz --log-level DEBUG -o demo_results/
+2025-06-16 16:54:29,443 - chimeric_detective - WARNING - Missing optional tools: bwa
+2025-06-16 16:54:29,444 - chimeric_detective - WARNING - Some functionality may be limited
+2025-06-16 16:54:29,445 - chimeric_detective - INFO - 🔬 Starting multi-sample analysis
+2025-06-16 16:54:29,447 - chimeric_detective - INFO - Processing mode: coassembly
+2025-06-16 16:54:29,450 - chimeric_detective - INFO - Max workers: 4
+2025-06-16 16:54:29,454 - chimeric_detective - INFO - Processing samples from directory: test_data_large/reads
+2025-06-16 16:54:29,456 - chimeric_detective - INFO - Using pattern: *_R{1,2}.fastq.gz
+2025-06-16 16:54:29,458 - chimeric_detective - INFO - Processing mode: coassembly
+2025-06-16 16:54:29,460 - chimeric_detective - INFO - Found 8 samples
+2025-06-16 16:54:29,462 - chimeric_detective - INFO - Processing co-assembly with 8 samples
+2025-06-16 16:54:29,464 - chimeric_detective - INFO - Mapping all samples to co-assembly
+2025-06-16 16:54:29,467 - chimeric_detective - INFO - Running chimera detection for each sample
+2025-06-16 16:54:29,474 - chimeric_detective - INFO - Starting chimera detection
+2025-06-16 16:54:29,488 - chimeric_detective - INFO - Loaded 28 contigs from assembly
+2025-06-16 16:54:29,489 - chimeric_detective - INFO - Aligning reads to assembly
+2025-06-16 16:54:29,745 - chimeric_detective - INFO - Successfully aligned reads using minimap2
+2025-06-16 16:54:30,120 - chimeric_detective - ERROR - Pipeline failed: start out of range (-238)
+2025-06-16 20:29:13,113 - chimeric_detective - INFO - Starting Chimeric Detective v1.0.0
+2025-06-16 20:29:13,115 - chimeric_detective - INFO - Command: /ref/sahlab/software/miniforge3/envs/ccd_env/bin/chimeric_detective -a test_data_large/large_test_assembly.fasta --reads-dir test_data_large/reads --reads-pattern *_R{1,2}.fastq.gz --log-level DEBUG -o demo_results/
+2025-06-16 20:29:13,175 - chimeric_detective - WARNING - Missing optional tools: bwa
+2025-06-16 20:29:13,176 - chimeric_detective - WARNING - Some functionality may be limited
+2025-06-16 20:29:13,177 - chimeric_detective - INFO - 🔬 Starting multi-sample analysis
+2025-06-16 20:29:13,179 - chimeric_detective - INFO - Processing mode: coassembly
+2025-06-16 20:29:13,180 - chimeric_detective - INFO - Max workers: 4
+2025-06-16 20:29:13,181 - chimeric_detective - INFO - Processing samples from directory: test_data_large/reads
+2025-06-16 20:29:13,182 - chimeric_detective - INFO - Using pattern: *_R{1,2}.fastq.gz
+2025-06-16 20:29:13,184 - chimeric_detective - INFO - Processing mode: coassembly
+2025-06-16 20:29:13,189 - chimeric_detective - INFO - Found 8 samples
+2025-06-16 20:29:13,192 - chimeric_detective - INFO - Processing co-assembly with 8 samples
+2025-06-16 20:29:13,194 - chimeric_detective - INFO - Mapping all samples to co-assembly
+2025-06-16 20:29:13,195 - chimeric_detective - INFO - Running chimera detection for each sample
+2025-06-16 20:29:13,200 - chimeric_detective - INFO - Starting chimera detection
+2025-06-16 20:29:13,269 - chimeric_detective - INFO - Loaded 28 contigs from assembly
+2025-06-16 20:29:13,271 - chimeric_detective - INFO - Aligning reads to assembly
+2025-06-16 20:29:13,696 - chimeric_detective - INFO - Successfully aligned reads using minimap2
+2025-06-16 20:29:15,768 - chimeric_detective - INFO - Detected 0 chimera candidates
+2025-06-16 20:29:15,771 - chimeric_detective - INFO - Starting chimera detection
+2025-06-16 20:29:15,776 - chimeric_detective - INFO - Loaded 28 contigs from assembly
+2025-06-16 20:29:15,778 - chimeric_detective - INFO - Aligning reads to assembly
+2025-06-16 20:29:16,074 - chimeric_detective - INFO - Successfully aligned reads using minimap2
+2025-06-16 20:29:18,132 - chimeric_detective - INFO - Detected 0 chimera candidates
+2025-06-16 20:29:18,134 - chimeric_detective - INFO - Starting chimera detection
+2025-06-16 20:29:18,139 - chimeric_detective - INFO - Loaded 28 contigs from assembly
+2025-06-16 20:29:18,140 - chimeric_detective - INFO - Aligning reads to assembly
+2025-06-16 20:29:18,480 - chimeric_detective - INFO - Successfully aligned reads using minimap2
+2025-06-16 20:29:20,510 - chimeric_detective - INFO - Detected 0 chimera candidates
+2025-06-16 20:29:20,512 - chimeric_detective - INFO - Starting chimera detection
+2025-06-16 20:29:20,516 - chimeric_detective - INFO - Loaded 28 contigs from assembly
+2025-06-16 20:29:20,517 - chimeric_detective - INFO - Aligning reads to assembly
+2025-06-16 20:29:20,919 - chimeric_detective - INFO - Successfully aligned reads using minimap2
+2025-06-16 20:29:22,996 - chimeric_detective - INFO - Detected 0 chimera candidates
+2025-06-16 20:29:22,999 - chimeric_detective - INFO - Starting chimera detection
+2025-06-16 20:29:23,003 - chimeric_detective - INFO - Loaded 28 contigs from assembly
+2025-06-16 20:29:23,004 - chimeric_detective - INFO - Aligning reads to assembly
+2025-06-16 20:29:23,410 - chimeric_detective - INFO - Successfully aligned reads using minimap2
+2025-06-16 20:29:25,477 - chimeric_detective - INFO - Detected 0 chimera candidates
+2025-06-16 20:29:25,479 - chimeric_detective - INFO - Starting chimera detection
+2025-06-16 20:29:25,483 - chimeric_detective - INFO - Loaded 28 contigs from assembly
+2025-06-16 20:29:25,485 - chimeric_detective - INFO - Aligning reads to assembly
+2025-06-16 20:29:25,832 - chimeric_detective - INFO - Successfully aligned reads using minimap2
+2025-06-16 20:29:27,889 - chimeric_detective - INFO - Detected 0 chimera candidates
+2025-06-16 20:29:27,891 - chimeric_detective - INFO - Starting chimera detection
+2025-06-16 20:29:27,896 - chimeric_detective - INFO - Loaded 28 contigs from assembly
+2025-06-16 20:29:27,897 - chimeric_detective - INFO - Aligning reads to assembly
+2025-06-16 20:29:28,275 - chimeric_detective - INFO - Successfully aligned reads using minimap2
+2025-06-16 20:29:30,379 - chimeric_detective - INFO - Detected 0 chimera candidates
+2025-06-16 20:29:30,381 - chimeric_detective - INFO - Starting chimera detection
+2025-06-16 20:29:30,386 - chimeric_detective - INFO - Loaded 28 contigs from assembly
+2025-06-16 20:29:30,387 - chimeric_detective - INFO - Aligning reads to assembly
+2025-06-16 20:29:30,686 - chimeric_detective - INFO - Successfully aligned reads using minimap2
+2025-06-16 20:29:32,738 - chimeric_detective - INFO - Detected 0 chimera candidates
+2025-06-16 20:29:32,742 - chimeric_detective - INFO - Aggregating chimera candidates across samples
+2025-06-16 20:29:32,743 - chimeric_detective - INFO - Detected 0 aggregated chimera candidates
+2025-06-16 20:29:32,744 - chimeric_detective - INFO - Analyzing 0 chimera candidates
+2025-06-16 20:29:32,746 - chimeric_detective - INFO - Analyzing 0 chimera candidates
+2025-06-16 20:29:32,750 - chimeric_detective - INFO - Completed analysis of 0 chimeras
+2025-06-16 20:29:32,752 - chimeric_detective - INFO - Resolving 0 chimera analyses
+2025-06-16 20:29:32,753 - chimeric_detective - INFO - Resolving 0 chimera analyses
+2025-06-16 20:29:32,787 - chimeric_detective - INFO - Resolution complete. 0 contigs split, 0 preserved
+2025-06-16 20:29:32,788 - chimeric_detective - INFO - Creating interactive HTML report
+2025-06-16 20:29:32,789 - chimeric_detective - INFO - Creating interactive HTML report
+2025-06-16 20:29:32,791 - chimeric_detective - INFO - Generating chimera types plot...
+2025-06-16 20:29:35,056 - chimeric_detective - INFO - Generating confidence distribution plot...
+2025-06-16 20:29:35,380 - chimeric_detective - WARNING - Failed to generate confidence distribution plot: 'detection_confidence'
+2025-06-16 20:29:35,381 - chimeric_detective - INFO - Generating decision summary plot...
+2025-06-16 20:29:35,548 - chimeric_detective - INFO - Generating individual contig plots...
+2025-06-16 20:29:35,549 - chimeric_detective - INFO - Generating evidence overview plot...
+2025-06-16 20:29:35,645 - chimeric_detective - INFO - Generated 4 plot types
+2025-06-16 20:29:36,079 - chimeric_detective - INFO - Report generated: demo_results/chimeric_detective_report.html
+2025-06-16 20:29:36,082 - chimeric_detective - INFO - Co-assembly analysis completed successfully!
+2025-06-16 20:29:36,091 - chimeric_detective - INFO - Analysis completed successfully!

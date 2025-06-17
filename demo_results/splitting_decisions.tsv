@@ -1,6 +1,1 @@
-contig_id	original_length	breakpoint	action	reason	confidence	new_contigs	new_lengths
-chimeric_001	3000	1000	split	Technical artifact (confidence: 0.80)	0.8	chimeric_001_split_A;chimeric_001_split_B	1000;2000
-chimeric_002	3000	1500	split	Technical artifact (confidence: 1.00)	1.0	chimeric_002_split_A;chimeric_002_split_B	1500;1500
-chimeric_003	3000	1500	split	Technical artifact (confidence: 0.70)	0.7	chimeric_003_split_A;chimeric_003_split_B	1500;1500
-chimeric_004	3000	1500	split	Technical artifact (confidence: 0.70)	0.7	chimeric_004_split_A;chimeric_004_split_B	1500;1500
-chimeric_005	3000	1000	split	Technical artifact (confidence: 0.80)	0.8	chimeric_005_split_A;chimeric_005_split_B	1000;2000
+
