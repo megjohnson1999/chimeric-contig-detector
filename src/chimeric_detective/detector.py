@@ -461,34 +461,36 @@ class ChimeraDetector:
         scan_start = max(min_margin, initial_pos - safe_window)
         scan_end = min(len(sequence) - min_margin, initial_pos + safe_window)
         
-        for pos in range(scan_start, scan_end + 1):
-            if pos < min_margin or pos > len(sequence) - min_margin:
-                continue
-            
-            # Calculate GC content discontinuity at this position with safe bounds
-            analysis_size = min(50, pos, len(sequence) - pos)
-            if analysis_size < 20:  # Need minimum sequence for meaningful analysis
-                continue
+        # Ensure scan_start <= scan_end to avoid range errors
+        if scan_start <= scan_end:
+            for pos in range(scan_start, scan_end + 1):
+                if pos < min_margin or pos > len(sequence) - min_margin:
+                    continue
                 
-            left_seq = sequence[pos-analysis_size:pos]
-            right_seq = sequence[pos:pos+analysis_size]
-            
-            if len(left_seq) >= SequenceConstants.MIN_SEQUENCE_FOR_WINDOW_ANALYSIS and len(right_seq) >= SequenceConstants.MIN_SEQUENCE_FOR_WINDOW_ANALYSIS:
-                left_gc = (left_seq.count('G') + left_seq.count('C')) / len(left_seq)
-                right_gc = (right_seq.count('G') + right_seq.count('C')) / len(right_seq)
-                gc_signal = abs(left_gc - right_gc)
+                # Calculate GC content discontinuity at this position with safe bounds
+                analysis_size = min(50, pos, len(sequence) - pos)
+                if analysis_size < 20:  # Need minimum sequence for meaningful analysis
+                    continue
+                    
+                left_seq = sequence[pos-analysis_size:pos]
+                right_seq = sequence[pos:pos+analysis_size]
                 
-                # Calculate k-mer composition discontinuity
-                left_kmers = calculate_kmer_frequencies(left_seq, k=4)
-                right_kmers = calculate_kmer_frequencies(right_seq, k=4)
-                kmer_signal = calculate_kmer_distance(left_kmers, right_kmers)
-                
-                # Combined signal strength
-                total_signal = gc_signal + kmer_signal
-                
-                if total_signal > max_signal:
-                    max_signal = total_signal
-                    best_position = pos
+                if len(left_seq) >= SequenceConstants.MIN_SEQUENCE_FOR_WINDOW_ANALYSIS and len(right_seq) >= SequenceConstants.MIN_SEQUENCE_FOR_WINDOW_ANALYSIS:
+                    left_gc = (left_seq.count('G') + left_seq.count('C')) / len(left_seq)
+                    right_gc = (right_seq.count('G') + right_seq.count('C')) / len(right_seq)
+                    gc_signal = abs(left_gc - right_gc)
+                    
+                    # Calculate k-mer composition discontinuity
+                    left_kmers = calculate_kmer_frequencies(left_seq, k=4)
+                    right_kmers = calculate_kmer_frequencies(right_seq, k=4)
+                    kmer_signal = calculate_kmer_distance(left_kmers, right_kmers)
+                    
+                    # Combined signal strength
+                    total_signal = gc_signal + kmer_signal
+                    
+                    if total_signal > max_signal:
+                        max_signal = total_signal
+                        best_position = pos
         
         return best_position
     
@@ -513,15 +515,17 @@ class ChimeraDetector:
                 scan_end = end_pos - window_size // 2
                 scan_step = max(25, window_size // 20)  # Fine scanning resolution
                 
-                for pos in range(scan_start, scan_end, scan_step):
-                    # Quick signal check at this position
-                    if self._quick_signal_check(sequence, pos):
-                        # Refine this position
-                        refined_pos = self._refine_breakpoint(sequence, pos, window_size // 8)
-                        
-                        # Only add if it's not too close to existing breakpoints
-                        if all(abs(refined_pos - bp) > window_size // 4 for bp in detected_breakpoints + sub_grid_breakpoints):
-                            sub_grid_breakpoints.append(refined_pos)
+                # Ensure scan_start < scan_end to avoid range errors
+                if scan_start < scan_end:
+                    for pos in range(scan_start, scan_end, scan_step):
+                        # Quick signal check at this position
+                        if self._quick_signal_check(sequence, pos):
+                            # Refine this position
+                            refined_pos = self._refine_breakpoint(sequence, pos, window_size // 8)
+                            
+                            # Only add if it's not too close to existing breakpoints
+                            if all(abs(refined_pos - bp) > window_size // 4 for bp in detected_breakpoints + sub_grid_breakpoints):
+                                sub_grid_breakpoints.append(refined_pos)
         
         return sub_grid_breakpoints
     
