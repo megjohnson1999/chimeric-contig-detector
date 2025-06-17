@@ -11,16 +11,16 @@
     "sample_007",
     "sample_008"
   ],
-  "total_candidates": 655,
-  "total_analyses": 655,
+  "total_candidates": 676,
+  "total_analyses": 676,
   "decisions": {
-    "split": 7,
-    "preserve": 20,
+    "split": 9,
+    "preserve": 18,
     "flag": 0
   },
   "multi_sample_statistics": {
     "candidates_in_all_samples": 0,
     "candidates_in_multiple_samples": 0,
-    "candidates_in_single_sample": 655
+    "candidates_in_single_sample": 676
   }
 }
