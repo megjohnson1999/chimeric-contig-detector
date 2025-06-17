@@ -121,9 +121,20 @@ class ChimeraDetector:
             if len(sequence) < self.min_contig_length:
                 continue
                 
-            self.logger.debug(f"Analyzing contig {contig_id}")
-            contig_candidates = self._analyze_contig(contig_id, sequence, bam_file_to_use)
-            candidates.extend(contig_candidates)
+            self.logger.debug(f"Analyzing contig {contig_id} (length: {len(sequence)})")
+            try:
+                contig_candidates = self._analyze_contig(contig_id, sequence, bam_file_to_use)
+                candidates.extend(contig_candidates)
+            except Exception as e:
+                self.logger.error(f"ERROR in contig {contig_id}: {e}")
+                # Log the exact range() error location
+                import traceback
+                tb_lines = traceback.format_exception(type(e), e, e.__traceback__)
+                for line in tb_lines:
+                    if 'range(' in line:
+                        self.logger.error(f"Range error: {line.strip()}")
+                        break
+                raise
         
         self.chimera_candidates = candidates
         self.logger.info(f"Detected {len(candidates)} chimera candidates")
