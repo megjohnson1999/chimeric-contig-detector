@@ -1,57 +1,20 @@
-2025-06-16 20:52:56,632 - chimeric_detective - INFO - Starting Chimeric Detective v1.0.0
-2025-06-16 20:52:56,634 - chimeric_detective - INFO - Command: /ref/sahlab/software/miniforge3/envs/ccd_env/bin/chimeric_detective -a test_data_large/large_test_assembly.fasta --reads-dir test_data_large/reads --reads-pattern *_R{1,2}.fastq.gz --log-level DEBUG -o demo_results/
-2025-06-16 20:52:56,664 - chimeric_detective - WARNING - Missing optional tools: bwa
-2025-06-16 20:52:56,665 - chimeric_detective - WARNING - Some functionality may be limited
-2025-06-16 20:52:56,666 - chimeric_detective - INFO - 🔬 Starting multi-sample analysis
-2025-06-16 20:52:56,668 - chimeric_detective - INFO - Processing mode: coassembly
-2025-06-16 20:52:56,669 - chimeric_detective - INFO - Max workers: 4
-2025-06-16 20:52:56,670 - chimeric_detective - INFO - Processing samples from directory: test_data_large/reads
-2025-06-16 20:52:56,671 - chimeric_detective - INFO - Using pattern: *_R{1,2}.fastq.gz
-2025-06-16 20:52:56,673 - chimeric_detective - INFO - Processing mode: coassembly
-2025-06-16 20:52:56,677 - chimeric_detective - INFO - Found 8 samples
-2025-06-16 20:52:56,678 - chimeric_detective - INFO - Processing co-assembly with 8 samples
-2025-06-16 20:52:56,680 - chimeric_detective - INFO - Mapping all samples to co-assembly
-2025-06-16 20:52:56,682 - chimeric_detective - INFO - Running chimera detection for each sample
-2025-06-16 20:52:56,687 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 20:52:56,715 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 20:52:56,716 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 20:52:56,974 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 20:52:57,630 - chimeric_detective - ERROR - Pipeline failed: start out of range (-57)
-2025-06-16 20:57:23,323 - chimeric_detective - INFO - Starting Chimeric Detective v1.0.0
-2025-06-16 20:57:23,324 - chimeric_detective - INFO - Command: /ref/sahlab/software/miniforge3/envs/ccd_env/bin/chimeric_detective -a test_data_large/large_test_assembly.fasta --reads-dir test_data_large/reads --reads-pattern *_R{1,2}.fastq.gz --log-level DEBUG -o demo_results/
-2025-06-16 20:57:23,356 - chimeric_detective - WARNING - Missing optional tools: bwa
-2025-06-16 20:57:23,357 - chimeric_detective - WARNING - Some functionality may be limited
-2025-06-16 20:57:23,359 - chimeric_detective - INFO - 🔬 Starting multi-sample analysis
-2025-06-16 20:57:23,360 - chimeric_detective - INFO - Processing mode: coassembly
-2025-06-16 20:57:23,361 - chimeric_detective - INFO - Max workers: 4
-2025-06-16 20:57:23,362 - chimeric_detective - INFO - Processing samples from directory: test_data_large/reads
-2025-06-16 20:57:23,363 - chimeric_detective - INFO - Using pattern: *_R{1,2}.fastq.gz
-2025-06-16 20:57:23,365 - chimeric_detective - INFO - Processing mode: coassembly
-2025-06-16 20:57:23,369 - chimeric_detective - INFO - Found 8 samples
-2025-06-16 20:57:23,370 - chimeric_detective - INFO - Processing co-assembly with 8 samples
-2025-06-16 20:57:23,372 - chimeric_detective - INFO - Mapping all samples to co-assembly
-2025-06-16 20:57:23,374 - chimeric_detective - INFO - Running chimera detection for each sample
-2025-06-16 20:57:23,379 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 20:57:23,411 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 20:57:23,412 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 20:57:23,688 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 20:57:24,393 - chimeric_detective - ERROR - Pipeline failed: start out of range (-57)
-2025-06-16 21:10:33,505 - chimeric_detective - INFO - Starting Chimeric Detective v1.0.0
-2025-06-16 21:10:33,556 - chimeric_detective - INFO - Command: /ref/sahlab/software/miniforge3/envs/ccd_env/bin/chimeric_detective -a test_data_large/large_test_assembly.fasta --reads-dir test_data_large/reads --reads-pattern *_R{1,2}.fastq.gz --log-level DEBUG -o demo_results/
-2025-06-16 21:10:33,606 - chimeric_detective - WARNING - Missing optional tools: bwa
-2025-06-16 21:10:33,707 - chimeric_detective - WARNING - Some functionality may be limited
-2025-06-16 21:10:33,710 - chimeric_detective - INFO - 🔬 Starting multi-sample analysis
-2025-06-16 21:10:33,711 - chimeric_detective - INFO - Processing mode: coassembly
-2025-06-16 21:10:33,713 - chimeric_detective - INFO - Max workers: 4
-2025-06-16 21:10:33,714 - chimeric_detective - INFO - Processing samples from directory: test_data_large/reads
-2025-06-16 21:10:33,716 - chimeric_detective - INFO - Using pattern: *_R{1,2}.fastq.gz
-2025-06-16 21:10:33,717 - chimeric_detective - INFO - Processing mode: coassembly
-2025-06-16 21:10:33,747 - chimeric_detective - INFO - Found 8 samples
-2025-06-16 21:10:33,756 - chimeric_detective - INFO - Processing co-assembly with 8 samples
-2025-06-16 21:10:33,760 - chimeric_detective - INFO - Mapping all samples to co-assembly
-2025-06-16 21:10:33,761 - chimeric_detective - INFO - Running chimera detection for each sample
-2025-06-16 21:10:33,768 - chimeric_detective - INFO - Starting chimera detection
-2025-06-16 21:10:33,803 - chimeric_detective - INFO - Loaded 28 contigs from assembly
-2025-06-16 21:10:33,843 - chimeric_detective - INFO - Aligning reads to assembly
-2025-06-16 21:10:34,151 - chimeric_detective - INFO - Successfully aligned reads using minimap2
-2025-06-16 21:10:34,911 - chimeric_detective - ERROR - Pipeline failed: start out of range (-57)
+2025-06-16 21:17:58,300 - chimeric_detective - INFO - Starting Chimeric Detective v1.0.0
+2025-06-16 21:17:58,321 - chimeric_detective - INFO - Command: /ref/sahlab/software/miniforge3/envs/ccd_env/bin/chimeric_detective -a test_data_large/large_test_assembly.fasta --reads-dir test_data_large/reads --reads-pattern *_R{1,2}.fastq.gz --log-level DEBUG -o demo_results/
+2025-06-16 21:17:58,353 - chimeric_detective - WARNING - Missing optional tools: bwa
+2025-06-16 21:17:58,354 - chimeric_detective - WARNING - Some functionality may be limited
+2025-06-16 21:17:58,356 - chimeric_detective - INFO - 🔬 Starting multi-sample analysis
+2025-06-16 21:17:58,357 - chimeric_detective - INFO - Processing mode: coassembly
+2025-06-16 21:17:58,358 - chimeric_detective - INFO - Max workers: 4
+2025-06-16 21:17:58,359 - chimeric_detective - INFO - Processing samples from directory: test_data_large/reads
+2025-06-16 21:17:58,360 - chimeric_detective - INFO - Using pattern: *_R{1,2}.fastq.gz
+2025-06-16 21:17:58,363 - chimeric_detective - INFO - Processing mode: coassembly
+2025-06-16 21:17:58,368 - chimeric_detective - INFO - Found 8 samples
+2025-06-16 21:17:58,369 - chimeric_detective - INFO - Processing co-assembly with 8 samples
+2025-06-16 21:17:58,372 - chimeric_detective - INFO - Mapping all samples to co-assembly
+2025-06-16 21:17:58,373 - chimeric_detective - INFO - Running chimera detection for each sample
+2025-06-16 21:17:58,378 - chimeric_detective - INFO - Starting chimera detection
+2025-06-16 21:17:58,405 - chimeric_detective - INFO - Loaded 28 contigs from assembly
+2025-06-16 21:17:58,406 - chimeric_detective - INFO - Aligning reads to assembly
+2025-06-16 21:17:58,670 - chimeric_detective - INFO - Successfully aligned reads using minimap2
+2025-06-16 21:17:59,351 - chimeric_detective - ERROR - ERROR in contig contig_001: start out of range (-57)
+2025-06-16 21:17:59,358 - chimeric_detective - ERROR - Pipeline failed: start out of range (-57)
