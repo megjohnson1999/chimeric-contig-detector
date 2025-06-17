@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.2] - 2025-06-17
+
+### Fixed
+- **Critical BAM Processing Error**: Fixed negative index errors in pysam fetch operations
+- **Bounds Checking**: Added comprehensive bounds validation for all BAM file fetch operations
+- **Contig Validation**: Added checks to ensure contigs exist in BAM files before fetching
+
+### Improved
+- **Error Prevention**: All pysam fetch operations now validate start/end coordinates
+- **Robustness**: Better handling of edge cases with malformed BAM alignments
+
 ## [1.1.1] - 2025-06-16
 
 ### Fixed

@@ -391,7 +391,17 @@ class ChimeraAnalyzer:
         window = 200
         
         with pysam.AlignmentFile(bam_file, "rb") as bam:
-            for read in bam.fetch(contig_id, breakpoint - window, breakpoint + window):
+            # Get contig length for bounds checking
+            if contig_id not in bam.references:
+                return support
+            
+            contig_length = bam.get_reference_length(contig_id)
+            
+            # Apply bounds checking to fetch region
+            fetch_start = max(0, breakpoint - window)
+            fetch_end = min(contig_length, breakpoint + window)
+            
+            for read in bam.fetch(contig_id, fetch_start, fetch_end):
                 # Count spanning paired reads
                 if (read.is_paired and read.is_proper_pair and
                     read.reference_start <= breakpoint - 50 and

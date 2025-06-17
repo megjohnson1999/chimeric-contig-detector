@@ -2,7 +2,7 @@
 Chimeric Detective: A tool for detecting and resolving chimeric contigs in viral metagenomic assemblies.
 """
 
-__version__ = "1.0.0"
+__version__ = "1.0.2"
 __author__ = "Chimeric Detective Team"
 
 from .detector import ChimeraDetector

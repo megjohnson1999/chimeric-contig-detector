@@ -1,0 +1,9 @@
+contig_id	breakpoint	type
+chimeric_001	1500	GC_shift
+chimeric_002	1500	GC_shift
+chimeric_003	1500	GC_shift
+chimeric_004	1500	GC_shift
+chimeric_005	1500	GC_shift
+cov_chimeric_001	2000	coverage_shift
+cov_chimeric_002	2000	coverage_shift
+cov_chimeric_003	2000	coverage_shift
