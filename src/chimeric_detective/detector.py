@@ -557,9 +557,9 @@ class ChimeraDetector:
         smoothed_coverage = np.convolve(coverage, window, mode='same')
         
         # Find significant changes in coverage
-        for i in range(self.window_size, len(smoothed_coverage) - self.window_size):
-            left_cov = np.mean(smoothed_coverage[i-self.window_size:i])
-            right_cov = np.mean(smoothed_coverage[i:i+self.window_size])
+        for i in range(window_size, len(smoothed_coverage) - window_size):
+            left_cov = np.mean(smoothed_coverage[i-window_size:i])
+            right_cov = np.mean(smoothed_coverage[i:i+window_size])
             
             if left_cov > self.min_coverage and right_cov > self.min_coverage:
                 fold_change = max(left_cov, right_cov) / min(left_cov, right_cov)
@@ -638,10 +638,10 @@ class ChimeraDetector:
                 # Check if this is a local maximum (actual discontinuity)
                 is_peak = True
                 
-                # Compare with neighbors (if they exist) 
-                if i > 0 and kmer_dists[i-1] >= dist:
+                # Compare with neighbors (if they exist) - use > instead of >= to allow plateaus
+                if i > 0 and kmer_dists[i-1] > dist:
                     is_peak = False
-                if i < len(kmer_dists) - 1 and kmer_dists[i+1] >= dist:
+                if i < len(kmer_dists) - 1 and kmer_dists[i+1] > dist:
                     is_peak = False
                 
                 if is_peak:
@@ -670,14 +670,19 @@ class ChimeraDetector:
         # Find peaks in GC differences that exceed threshold
         for i, diff in enumerate(gc_diffs):
             if diff >= self.gc_content_threshold:
-                # Check if this is a local maximum (actual discontinuity)
+                # Check if this is a local maximum or start of high region
                 is_peak = True
                 
-                # Compare with neighbors (if they exist)
-                if i > 0 and gc_diffs[i-1] >= diff:
+                # Compare with neighbors (if they exist) - use > instead of >= to allow plateaus
+                if i > 0 and gc_diffs[i-1] > diff:
                     is_peak = False
-                if i < len(gc_diffs) - 1 and gc_diffs[i+1] >= diff:
+                if i < len(gc_diffs) - 1 and gc_diffs[i+1] > diff:
                     is_peak = False
+                    
+                # Also accept the start of a high plateau (prev value much lower)
+                if not is_peak and i > 0:
+                    if gc_diffs[i-1] < self.gc_content_threshold and diff >= self.gc_content_threshold:
+                        is_peak = True  # Start of high region
                 
                 if is_peak:
                     # Calculate position as the boundary between windows
@@ -708,10 +713,10 @@ class ChimeraDetector:
                 # Check if this is a local maximum (actual discontinuity)
                 is_peak = True
                 
-                # Compare with neighbors (if they exist) 
-                if i > 0 and kmer_dists[i-1] >= dist:
+                # Compare with neighbors (if they exist) - use > instead of >= to allow plateaus
+                if i > 0 and kmer_dists[i-1] > dist:
                     is_peak = False
-                if i < len(kmer_dists) - 1 and kmer_dists[i+1] >= dist:
+                if i < len(kmer_dists) - 1 and kmer_dists[i+1] > dist:
                     is_peak = False
                 
                 if is_peak:
