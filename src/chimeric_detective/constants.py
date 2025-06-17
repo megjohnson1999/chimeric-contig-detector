@@ -94,7 +94,7 @@ class AlgorithmConstants:
     # Sensitivity mode multipliers (applied to detection thresholds)
     SENSITIVITY_MULTIPLIERS = {
         'conservative': 1.0,     # Default: high specificity, low false positives
-        'balanced': 0.8,         # Moderate sensitivity and specificity  
+        'balanced': 0.7,         # Moderate sensitivity and specificity (was 0.8)
         'sensitive': 0.6,        # High sensitivity, may increase false positives
         'very_sensitive': 0.4    # Maximum sensitivity for difficult samples
     }
