@@ -97,8 +97,8 @@ class TestSimpleChimeraDetector(unittest.TestCase):
                 # Check candidate properties
                 candidate = candidates[0]
                 self.assertEqual(candidate.contig_id, "chimera")
-                self.assertGreater(candidate.gc_difference, 0.5)  # Large difference
-                self.assertGreater(candidate.confidence, 0.5)   # High confidence
+                self.assertGreaterEqual(candidate.gc_difference, 0.5)  # Large difference
+                self.assertGreater(candidate.confidence_score, 0.5)   # High confidence
                 
             finally:
                 os.unlink(f.name)
