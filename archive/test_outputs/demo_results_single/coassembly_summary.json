@@ -1,0 +1,26 @@
+{
+  "mode": "coassembly",
+  "num_samples": 8,
+  "sample_names": [
+    "sample_001",
+    "sample_002",
+    "sample_003",
+    "sample_004",
+    "sample_005",
+    "sample_006",
+    "sample_007",
+    "sample_008"
+  ],
+  "total_candidates": 105,
+  "total_analyses": 105,
+  "decisions": {
+    "split": 7,
+    "preserve": 21,
+    "flag": 0
+  },
+  "multi_sample_statistics": {
+    "candidates_in_all_samples": 0,
+    "candidates_in_multiple_samples": 0,
+    "candidates_in_single_sample": 105
+  }
+}

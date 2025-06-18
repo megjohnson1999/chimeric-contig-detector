@@ -1,0 +1,378 @@
+{
+  "summary": {
+    "total_contigs": 28,
+    "total_analyses": 14,
+    "total_decisions": 9,
+    "contigs_split": 7,
+    "contigs_preserved": 2,
+    "contigs_flagged": 0
+  },
+  "analyses": [
+    {
+      "contig_id": "contig_003",
+      "breakpoint": 3122,
+      "confidence_score": 0.7666666666666666,
+      "evidence_types": [
+        "gc_content_shift",
+        "kmer_composition_change"
+      ],
+      "chimera_type": "technical_artifact",
+      "classification_confidence": 0.8,
+      "explanation": "Contig contig_003 shows clear evidence of being a technical chimera resulting from misassembly. At position 3,122, there is a 1.1x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.33) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.77.",
+      "recommendation": "SPLIT_CAUTIOUS - Likely technical artifact, split with caution",
+      "taxonomic_left": null,
+      "taxonomic_right": null,
+      "supporting_candidates": 1
+    },
+    {
+      "contig_id": "contig_013",
+      "breakpoint": 2922,
+      "confidence_score": 0.7641666666666667,
+      "evidence_types": [
+        "gc_content_shift",
+        "kmer_composition_change"
+      ],
+      "chimera_type": "technical_artifact",
+      "classification_confidence": 0.5,
+      "explanation": "Contig contig_013 shows clear evidence of being a technical chimera resulting from misassembly. At position 2,922, there is a 1.0x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.27) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.76.",
+      "recommendation": "REVIEW - Low confidence, manual review recommended",
+      "taxonomic_left": null,
+      "taxonomic_right": null,
+      "supporting_candidates": 1
+    },
+    {
+      "contig_id": "chimeric_001",
+      "breakpoint": 1356,
+      "confidence_score": 0.7790000000000001,
+      "evidence_types": [
+        "gc_content_shift",
+        "kmer_composition_change"
+      ],
+      "chimera_type": "technical_artifact",
+      "classification_confidence": 0.7,
+      "explanation": "Contig chimeric_001 shows clear evidence of being a technical chimera resulting from misassembly. At position 1,356, there is a 1.0x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.30) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.78.",
+      "recommendation": "SPLIT_CAUTIOUS - Likely technical artifact, split with caution",
+      "taxonomic_left": null,
+      "taxonomic_right": null,
+      "supporting_candidates": 1
+    },
+    {
+      "contig_id": "chimeric_004",
+      "breakpoint": 1488,
+      "confidence_score": 0.7833333333333333,
+      "evidence_types": [
+        "gc_content_shift",
+        "kmer_composition_change"
+      ],
+      "chimera_type": "technical_artifact",
+      "classification_confidence": 0.7,
+      "explanation": "Contig chimeric_004 shows clear evidence of being a technical chimera resulting from misassembly. At position 1,488, there is a 1.0x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.32) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.78.",
+      "recommendation": "SPLIT_CAUTIOUS - Likely technical artifact, split with caution",
+      "taxonomic_left": null,
+      "taxonomic_right": null,
+      "supporting_candidates": 1
+    },
+    {
+      "contig_id": "cov_chimeric_003",
+      "breakpoint": 926,
+      "confidence_score": 0.7575000000000001,
+      "evidence_types": [
+        "gc_content_shift",
+        "kmer_composition_change"
+      ],
+      "chimera_type": "technical_artifact",
+      "classification_confidence": 0.5,
+      "explanation": "Contig cov_chimeric_003 shows clear evidence of being a technical chimera resulting from misassembly. At position 926, there is a 1.1x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.26) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.76.",
+      "recommendation": "REVIEW - Low confidence, manual review recommended",
+      "taxonomic_left": null,
+      "taxonomic_right": null,
+      "supporting_candidates": 1
+    },
+    {
+      "contig_id": "contig_009",
+      "breakpoint": 4890,
+      "confidence_score": 0.7533333333333334,
+      "evidence_types": [
+        "gc_content_shift",
+        "kmer_composition_change"
+      ],
+      "chimera_type": "technical_artifact",
+      "classification_confidence": 0.5,
+      "explanation": "Contig contig_009 shows clear evidence of being a technical chimera resulting from misassembly. At position 4,890, there is a 1.0x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.33) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.75.",
+      "recommendation": "REVIEW - Low confidence, manual review recommended",
+      "taxonomic_left": null,
+      "taxonomic_right": null,
+      "supporting_candidates": 1
+    },
+    {
+      "contig_id": "contig_018",
+      "breakpoint": 1585,
+      "confidence_score": 0.7649999999999999,
+      "evidence_types": [
+        "gc_content_shift",
+        "kmer_composition_change"
+      ],
+      "chimera_type": "technical_artifact",
+      "classification_confidence": 0.7,
+      "explanation": "Contig contig_018 shows clear evidence of being a technical chimera resulting from misassembly. At position 1,585, there is a 1.1x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.34) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.76.",
+      "recommendation": "SPLIT_CAUTIOUS - Likely technical artifact, split with caution",
+      "taxonomic_left": null,
+      "taxonomic_right": null,
+      "supporting_candidates": 1
+    },
+    {
+      "contig_id": "contig_005",
+      "breakpoint": 6302,
+      "confidence_score": 0.7583333333333334,
+      "evidence_types": [
+        "gc_content_shift",
+        "kmer_composition_change"
+      ],
+      "chimera_type": "technical_artifact",
+      "classification_confidence": 0.8,
+      "explanation": "Contig contig_005 shows clear evidence of being a technical chimera resulting from misassembly. At position 6,302, there is a 1.2x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.27) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.76.",
+      "recommendation": "SPLIT_CAUTIOUS - Likely technical artifact, split with caution",
+      "taxonomic_left": null,
+      "taxonomic_right": null,
+      "supporting_candidates": 1
+    },
+    {
+      "contig_id": "contig_013",
+      "breakpoint": 380,
+      "confidence_score": 0.7716666666666666,
+      "evidence_types": [
+        "gc_content_shift",
+        "kmer_composition_change"
+      ],
+      "chimera_type": "technical_artifact",
+      "classification_confidence": 1.0,
+      "explanation": "Contig contig_013 shows clear evidence of being a technical chimera resulting from misassembly. At position 380, there is a 1.1x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.23) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.77.",
+      "recommendation": "SPLIT - High confidence technical artifact, recommend splitting",
+      "taxonomic_left": null,
+      "taxonomic_right": null,
+      "supporting_candidates": 1
+    },
+    {
+      "contig_id": "contig_005",
+      "breakpoint": 4175,
+      "confidence_score": 0.7733333333333334,
+      "evidence_types": [
+        "gc_content_shift",
+        "kmer_composition_change"
+      ],
+      "chimera_type": "technical_artifact",
+      "classification_confidence": 0.5,
+      "explanation": "Contig contig_005 shows clear evidence of being a technical chimera resulting from misassembly. At position 4,175, there is a 1.0x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.16) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.77.",
+      "recommendation": "REVIEW - Low confidence, manual review recommended",
+      "taxonomic_left": null,
+      "taxonomic_right": null,
+      "supporting_candidates": 1
+    },
+    {
+      "contig_id": "contig_003",
+      "breakpoint": 5713,
+      "confidence_score": 0.76,
+      "evidence_types": [
+        "gc_content_shift",
+        "kmer_composition_change"
+      ],
+      "chimera_type": "technical_artifact",
+      "classification_confidence": 0.5,
+      "explanation": "Contig contig_003 shows clear evidence of being a technical chimera resulting from misassembly. At position 5,713, there is a 1.1x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.13) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.76.",
+      "recommendation": "REVIEW - Low confidence, manual review recommended",
+      "taxonomic_left": null,
+      "taxonomic_right": null,
+      "supporting_candidates": 1
+    },
+    {
+      "contig_id": "contig_005",
+      "breakpoint": 3474,
+      "confidence_score": 0.7791666666666666,
+      "evidence_types": [
+        "gc_content_shift",
+        "kmer_composition_change"
+      ],
+      "chimera_type": "technical_artifact",
+      "classification_confidence": 0.5,
+      "explanation": "Contig contig_005 shows clear evidence of being a technical chimera resulting from misassembly. At position 3,474, there is a 1.0x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.20) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.78.",
+      "recommendation": "REVIEW - Low confidence, manual review recommended",
+      "taxonomic_left": null,
+      "taxonomic_right": null,
+      "supporting_candidates": 1
+    },
+    {
+      "contig_id": "contig_006",
+      "breakpoint": 2229,
+      "confidence_score": 0.7733333333333334,
+      "evidence_types": [
+        "gc_content_shift",
+        "kmer_composition_change"
+      ],
+      "chimera_type": "technical_artifact",
+      "classification_confidence": 0.8,
+      "explanation": "Contig contig_006 shows clear evidence of being a technical chimera resulting from misassembly. At position 2,229, there is a 1.1x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.21) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.77.",
+      "recommendation": "SPLIT_CAUTIOUS - Likely technical artifact, split with caution",
+      "taxonomic_left": null,
+      "taxonomic_right": null,
+      "supporting_candidates": 1
+    },
+    {
+      "contig_id": "contig_009",
+      "breakpoint": 6261,
+      "confidence_score": 0.7533333333333334,
+      "evidence_types": [
+        "gc_content_shift",
+        "kmer_composition_change"
+      ],
+      "chimera_type": "technical_artifact",
+      "classification_confidence": 0.8,
+      "explanation": "Contig contig_009 shows clear evidence of being a technical chimera resulting from misassembly. At position 6,261, there is a 1.3x change in read coverage and a significant shift in sequence composition. The low number of paired reads spanning this junction (spanning ratio: 0.26) further supports this being an assembly artifact rather than biological recombination. Confidence: 0.75.",
+      "recommendation": "SPLIT_CAUTIOUS - Likely technical artifact, split with caution",
+      "taxonomic_left": null,
+      "taxonomic_right": null,
+      "supporting_candidates": 1
+    }
+  ],
+  "decisions": [
+    {
+      "contig_id": "contig_003",
+      "original_length": 7477,
+      "breakpoint": 3122,
+      "action": "split",
+      "reason": "Technical artifact (confidence: 0.80)",
+      "new_contig_ids": [
+        "contig_003_split_A",
+        "contig_003_split_B"
+      ],
+      "new_lengths": [
+        3122,
+        4355
+      ],
+      "confidence": 0.8
+    },
+    {
+      "contig_id": "contig_013",
+      "original_length": 5815,
+      "breakpoint": 380,
+      "action": "preserve",
+      "reason": "Technical artifact (confidence: 1.00) (split contigs too short)",
+      "new_contig_ids": [
+        "contig_013"
+      ],
+      "new_lengths": [
+        5815
+      ],
+      "confidence": 1.0
+    },
+    {
+      "contig_id": "chimeric_001",
+      "original_length": 3000,
+      "breakpoint": 1356,
+      "action": "split",
+      "reason": "Technical artifact (confidence: 0.70)",
+      "new_contig_ids": [
+        "chimeric_001_split_A",
+        "chimeric_001_split_B"
+      ],
+      "new_lengths": [
+        1356,
+        1644
+      ],
+      "confidence": 0.7
+    },
+    {
+      "contig_id": "chimeric_004",
+      "original_length": 3000,
+      "breakpoint": 1488,
+      "action": "split",
+      "reason": "Technical artifact (confidence: 0.70)",
+      "new_contig_ids": [
+        "chimeric_004_split_A",
+        "chimeric_004_split_B"
+      ],
+      "new_lengths": [
+        1488,
+        1512
+      ],
+      "confidence": 0.7
+    },
+    {
+      "contig_id": "cov_chimeric_003",
+      "original_length": 2000,
+      "breakpoint": 926,
+      "action": "preserve",
+      "reason": "Default preservation",
+      "new_contig_ids": [
+        "cov_chimeric_003"
+      ],
+      "new_lengths": [
+        2000
+      ],
+      "confidence": 0.5
+    },
+    {
+      "contig_id": "contig_009",
+      "original_length": 7393,
+      "breakpoint": 6261,
+      "action": "split",
+      "reason": "Technical artifact (confidence: 0.80)",
+      "new_contig_ids": [
+        "contig_009_split_A",
+        "contig_009_split_B"
+      ],
+      "new_lengths": [
+        6261,
+        1132
+      ],
+      "confidence": 0.8
+    },
+    {
+      "contig_id": "contig_018",
+      "original_length": 7083,
+      "breakpoint": 1585,
+      "action": "split",
+      "reason": "Technical artifact (confidence: 0.70)",
+      "new_contig_ids": [
+        "contig_018_split_A",
+        "contig_018_split_B"
+      ],
+      "new_lengths": [
+        1585,
+        5498
+      ],
+      "confidence": 0.7
+    },
+    {
+      "contig_id": "contig_005",
+      "original_length": 7438,
+      "breakpoint": 6302,
+      "action": "split",
+      "reason": "Technical artifact (confidence: 0.80)",
+      "new_contig_ids": [
+        "contig_005_split_A",
+        "contig_005_split_B"
+      ],
+      "new_lengths": [
+        6302,
+        1136
+      ],
+      "confidence": 0.8
+    },
+    {
+      "contig_id": "contig_006",
+      "original_length": 4723,
+      "breakpoint": 2229,
+      "action": "split",
+      "reason": "Technical artifact (confidence: 0.80)",
+      "new_contig_ids": [
+        "contig_006_split_A",
+        "contig_006_split_B"
+      ],
+      "new_lengths": [
+        2229,
+        2494
+      ],
+      "confidence": 0.8
+    }
+  ]
+}

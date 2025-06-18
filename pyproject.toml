@@ -82,8 +82,8 @@ Repository = "https://github.com/megjohnson1999/chimeric-contig-detector.git"
 Changelog = "https://github.com/megjohnson1999/chimeric-contig-detector/blob/main/CHANGELOG.md"
 
 [project.scripts]
-chimeric_detective = "chimeric_detective.cli:main"
 chimeric_detective_simple = "chimeric_detective.cli_simple:main"
+chimeric_detective_readpair = "chimeric_detective.readpair_based.cli:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

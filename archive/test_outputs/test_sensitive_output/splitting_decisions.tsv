@@ -1,0 +1,9 @@
+contig_id	original_length	breakpoint	action	reason	confidence	new_contigs	new_lengths
+contig_003	7477	3122	split	Technical artifact (confidence: 0.80)	0.8	contig_003_split_A;contig_003_split_B	3122;4355
+chimeric_001	3000	1356	split	Technical artifact (confidence: 0.70)	0.7	chimeric_001_split_A;chimeric_001_split_B	1356;1644
+chimeric_002	3000	1501	split	Technical artifact (confidence: 0.70)	0.7	chimeric_002_split_A;chimeric_002_split_B	1501;1499
+chimeric_004	3000	1488	split	Technical artifact (confidence: 0.70)	0.7	chimeric_004_split_A;chimeric_004_split_B	1488;1512
+contig_009	7393	6261	split	Technical artifact (confidence: 0.80)	0.8	contig_009_split_A;contig_009_split_B	6261;1132
+contig_018	7083	1585	split	Technical artifact (confidence: 0.70)	0.7	contig_018_split_A;contig_018_split_B	1585;5498
+contig_005	7438	6302	split	Technical artifact (confidence: 0.80)	0.8	contig_005_split_A;contig_005_split_B	6302;1136
+contig_013	5815	380	preserve	Technical artifact (confidence: 1.00) (split contigs too short)	1.0	contig_013	5815

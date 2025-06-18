@@ -1,0 +1,29 @@
+contig_id	original_length	breakpoint	action	reason	confidence	new_contigs	new_lengths
+contig_001	7718	7276	preserve	Technical artifact (confidence: 1.00) (split contigs too short)	1.0	contig_001	7718
+contig_002	5396	237	preserve	Technical artifact (confidence: 0.80) (split contigs too short)	0.8	contig_002	5396
+contig_003	5140	4831	preserve	Technical artifact (confidence: 1.00) (split contigs too short)	1.0	contig_003	5140
+contig_006	5512	5164	preserve	Technical artifact (confidence: 1.00) (split contigs too short)	1.0	contig_006	5512
+contig_008	3341	3125	preserve	Technical artifact (confidence: 1.00) (split contigs too short)	1.0	contig_008	3341
+contig_009	4245	4009	preserve	Technical artifact (confidence: 1.00) (split contigs too short)	1.0	contig_009	4245
+contig_010	7388	7018	preserve	Technical artifact (confidence: 1.00) (split contigs too short)	1.0	contig_010	7388
+contig_012	6683	6329	preserve	Technical artifact (confidence: 1.00) (split contigs too short)	1.0	contig_012	6683
+contig_013	5009	3412	split	Technical artifact (confidence: 0.80)	0.8	contig_013_split_A;contig_013_split_B	3412;1597
+contig_014	4575	1291	split	Technical artifact (confidence: 0.80)	0.8	contig_014_split_A;contig_014_split_B	1291;3284
+contig_015	6543	6145	preserve	Technical artifact (confidence: 0.80) (split contigs too short)	0.8	contig_015	6543
+contig_016	3008	233	preserve	Technical artifact (confidence: 1.00) (split contigs too short)	1.0	contig_016	3008
+contig_017	7158	6741	preserve	Technical artifact (confidence: 0.80) (split contigs too short)	0.8	contig_017	7158
+contig_019	5307	4971	preserve	Technical artifact (confidence: 0.80) (split contigs too short)	0.8	contig_019	5307
+contig_020	3596	3336	preserve	Technical artifact (confidence: 0.80) (split contigs too short)	0.8	contig_020	3596
+chimeric_001	3000	1159	split	Technical artifact (confidence: 1.00)	1.0	chimeric_001_split_A;chimeric_001_split_B	1159;1841
+chimeric_002	3000	167	preserve	Technical artifact (confidence: 0.80) (split contigs too short)	0.8	chimeric_002	3000
+chimeric_003	3000	2739	preserve	Technical artifact (confidence: 1.00) (split contigs too short)	1.0	chimeric_003	3000
+chimeric_004	3000	1278	split	Technical artifact (confidence: 0.70)	0.7	chimeric_004_split_A;chimeric_004_split_B	1278;1722
+chimeric_005	3000	1812	split	Technical artifact (confidence: 1.00)	1.0	chimeric_005_split_A;chimeric_005_split_B	1812;1188
+cov_chimeric_001	2000	1086	split	Technical artifact (confidence: 0.80)	0.8	cov_chimeric_001_split_A;cov_chimeric_001_split_B	1086;914
+cov_chimeric_002	2000	506	split	Technical artifact (confidence: 0.70)	0.7	cov_chimeric_002_split_A;cov_chimeric_002_split_B	506;1494
+cov_chimeric_003	2000	167	preserve	Technical artifact (confidence: 1.00) (split contigs too short)	1.0	cov_chimeric_003	2000
+contig_004	7862	7473	preserve	Technical artifact (confidence: 1.00) (split contigs too short)	1.0	contig_004	7862
+contig_011	6771	375	preserve	Technical artifact (confidence: 0.80) (split contigs too short)	0.8	contig_011	6771
+contig_018	7807	385	preserve	Technical artifact (confidence: 1.00) (split contigs too short)	1.0	contig_018	7807
+contig_005	5739	291	preserve	Technical artifact (confidence: 1.00) (split contigs too short)	1.0	contig_005	5739
+contig_007	7757	7458	preserve	Technical artifact (confidence: 1.00) (split contigs too short)	1.0	contig_007	7757
