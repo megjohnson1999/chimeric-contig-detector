@@ -39,11 +39,11 @@ ENV PATH="/opt/conda/bin:$PATH"
 ENV PYTHONPATH="/opt/conda/lib/python3.9/site-packages"
 
 # Verify installation
-RUN chimeric_detective --help
+RUN chimeric_detective_simple --help
 
-# Default command
-ENTRYPOINT ["chimeric_detective"]
-CMD ["--help"]
+# Default command shows available tools
+ENTRYPOINT ["/bin/bash", "-c"]
+CMD ["echo 'Chimeric Detective - Available commands:' && echo '  chimeric_detective_simple - GC-based detection' && echo '  chimeric_detective_readpair - Read-pair based detection' && echo 'Use --help with any command for usage info'"]
 
 # Labels for metadata
 LABEL org.opencontainers.image.title="Chimeric Detective"

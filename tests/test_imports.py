@@ -16,14 +16,21 @@ class TestImports(unittest.TestCase):
         except ImportError as e:
             self.fail(f"Failed to import chimeric_detective: {e}")
     
-    def test_import_detector(self):
-        """Test importing detector module."""
+    def test_import_simple_detector(self):
+        """Test importing simple detector module."""
         try:
-            from chimeric_detective.detector import ChimeraDetector, ChimeraCandidate
-            self.assertTrue(ChimeraDetector is not None)
-            self.assertTrue(ChimeraCandidate is not None)
+            from chimeric_detective.detector_simple import SimpleChimeraDetector
+            self.assertTrue(SimpleChimeraDetector is not None)
         except ImportError as e:
-            self.fail(f"Failed to import detector: {e}")
+            self.fail(f"Failed to import simple detector: {e}")
+    
+    def test_import_readpair_detector(self):
+        """Test importing read-pair detector module."""
+        try:
+            from chimeric_detective.readpair_based import ReadPairChimeraDetector
+            self.assertTrue(ReadPairChimeraDetector is not None)
+        except ImportError as e:
+            self.fail(f"Failed to import read-pair detector: {e}")
     
     def test_import_utils(self):
         """Test importing utils module."""
@@ -34,13 +41,21 @@ class TestImports(unittest.TestCase):
         except ImportError as e:
             self.fail(f"Failed to import utils: {e}")
     
-    def test_import_cli(self):
-        """Test importing CLI module."""
+    def test_import_simple_cli(self):
+        """Test importing simple CLI module."""
         try:
-            from chimeric_detective.cli import main
+            from chimeric_detective.cli_simple import main
             self.assertTrue(main is not None)
         except ImportError as e:
-            self.fail(f"Failed to import CLI: {e}")
+            self.fail(f"Failed to import simple CLI: {e}")
+    
+    def test_import_readpair_cli(self):
+        """Test importing read-pair CLI module."""
+        try:
+            from chimeric_detective.readpair_based.cli import main
+            self.assertTrue(main is not None)
+        except ImportError as e:
+            self.fail(f"Failed to import read-pair CLI: {e}")
 
 
 if __name__ == '__main__':
