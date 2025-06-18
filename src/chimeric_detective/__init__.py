@@ -11,10 +11,21 @@ from .resolver import ChimeraResolver
 from .visualizer import ChimeraVisualizer
 from .multi_sample import MultiSampleProcessor
 
+# Simplified GC-only modules
+from .detector_simple import SimpleChimeraDetector
+from .analyzer_simple import SimpleChimeraAnalyzer
+from .resolver_simple import SimpleChimeraResolver
+from .visualizer_simple import SimpleChimeraVisualizer
+
 __all__ = [
     "ChimeraDetector",
     "ChimeraAnalyzer", 
     "ChimeraResolver",
     "ChimeraVisualizer",
-    "MultiSampleProcessor"
+    "MultiSampleProcessor",
+    # Simplified modules
+    "SimpleChimeraDetector",
+    "SimpleChimeraAnalyzer",
+    "SimpleChimeraResolver",
+    "SimpleChimeraVisualizer"
 ]

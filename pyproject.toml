@@ -83,6 +83,7 @@ Changelog = "https://github.com/megjohnson1999/chimeric-contig-detector/blob/mai
 
 [project.scripts]
 chimeric_detective = "chimeric_detective.cli:main"
+chimeric_detective_simple = "chimeric_detective.cli_simple:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
